@@ -1,0 +1,2630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Postal del Polo Norte — Amigo Invisible Familiar</title>
+<!-- Fuentes navideñas con carga asíncrona no bloqueante (apertura en <50ms) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Mountains+of+Christmas:wght@700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+
+<style>
+  :root {
+    --paper: #FBF7F0;
+    --paper-dark: #F2E8D5;
+    --crimson: #B81D24;
+    --crimson-dark: #821015;
+    --pine: #164A31;
+    --pine-dark: #0C2B1C;
+    --gold: #C8963E;
+    --gold-light: #FDF3DF;
+    --ink: #231F20;
+    --muted: #6B6257;
+    --border: #D9CCB8;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: #113221;
+    background-image:
+      radial-gradient(#1f5438 1.5px, transparent 1.5px),
+      radial-gradient(#19422c 1.5px, #113221 1.5px);
+    background-size: 28px 28px;
+    background-position: 0 0, 14px 14px;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  /* Contenedor principal tipo Postal Navideña */
+  .postcard {
+    width: 100%;
+    max-width: 600px;
+    background: var(--paper);
+    border-radius: 24px;
+    border: 3px solid var(--gold);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.48);
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 28px;
+  }
+
+  /* Franja clásica de Correo Aéreo del Polo Norte */
+  .airmail-stripe {
+    height: 14px;
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--crimson),
+      var(--crimson) 15px,
+      var(--paper) 15px,
+      var(--paper) 23px,
+      var(--pine) 23px,
+      var(--pine) 38px,
+      var(--paper) 38px,
+      var(--paper) 46px
+    );
+    border-bottom: 2px solid var(--gold);
+  }
+  .airmail-stripe.bottom {
+    border-bottom: none;
+    border-top: 2px solid var(--gold);
+  }
+
+  /* Cabecera del Sorteo (Super limpia para entrada directa desde WhatsApp) */
+  .hero-header {
+    text-align: center;
+    padding: 22px 16px 18px;
+    border-bottom: 2px dashed var(--border);
+    position: relative;
+    background: radial-gradient(circle at top, #FFFDF9 0%, var(--paper) 100%);
+  }
+
+  .christmas-title {
+    font-family: 'Berkshire Swash', 'Mountains of Christmas', Georgia, serif;
+    font-size: 2.2rem;
+    color: var(--crimson);
+    line-height: 1.15;
+    text-shadow: 1px 2px 0px #F3D9B1;
+    margin-bottom: 6px;
+  }
+
+  .meta-pills {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .meta-pill {
+    background: var(--pine);
+    color: #fff;
+    padding: 6px 13px;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+  .meta-pill.gold {
+    background: var(--gold-light);
+    color: var(--ink);
+    border: 1.5px solid var(--gold);
+  }
+
+  .content {
+    padding: 18px 16px 14px;
+  }
+
+  /* Pie de postal discreto con acceso oculto a Organización */
+  .postal-footer {
+    padding: 12px 16px 16px;
+    text-align: center;
+    border-top: 2px dashed var(--border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .btn-stealth-admin {
+    background: var(--paper-dark);
+    border: 2px solid var(--border);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 800;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 99px;
+    font-family: inherit;
+    box-shadow: 0 3px 0 var(--border);
+    transition: transform 0.08s, box-shadow 0.08s, color 0.15s, border-color 0.15s;
+  }
+  .btn-stealth-admin:hover {
+    color: var(--pine);
+    border-color: var(--pine);
+  }
+  .btn-stealth-admin:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--border);
+  }
+
+  /* Selector de 36 Avatares con relieve 3D */
+  .avatar-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 9px;
+    margin: 14px 0;
+  }
+  .avatar-option-btn {
+    height: 50px;
+    border-radius: 16px;
+    border: 2.5px solid var(--pine);
+    background: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 0 var(--pine-dark);
+    transition: transform 0.08s, box-shadow 0.08s;
+  }
+  .avatar-option-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--pine-dark);
+  }
+  .avatar-option-btn.selected {
+    border-color: var(--crimson);
+    background: var(--gold-light);
+    box-shadow: 0 4px 0 var(--crimson-dark);
+  }
+
+  /* Botones 3D Artesanales Grandes */
+  .btn-big {
+    width: 100%;
+    padding: 16px 20px;
+    border-radius: 20px;
+    font-size: 1.04rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform 0.08s, box-shadow 0.08s;
+    border: 2.5px solid transparent;
+    text-align: center;
+    font-family: inherit;
+  }
+  .btn-big:active {
+    transform: translateY(3px);
+  }
+
+  .btn-red {
+    background: var(--crimson);
+    color: #fff;
+    border-color: var(--crimson-dark);
+    box-shadow: 0 5px 0 var(--crimson-dark);
+  }
+  .btn-red:active {
+    box-shadow: 0 2px 0 var(--crimson-dark);
+  }
+
+  .btn-green {
+    background: var(--pine);
+    color: #fff;
+    border-color: var(--pine-dark);
+    box-shadow: 0 5px 0 var(--pine-dark);
+  }
+  .btn-green:active {
+    box-shadow: 0 2px 0 var(--pine-dark);
+  }
+
+  .btn-gold {
+    background: #FDE68A;
+    color: #781014;
+    border-color: #B45309;
+    box-shadow: 0 5px 0 #92400E;
+  }
+  .btn-gold:active {
+    box-shadow: 0 2px 0 #92400E;
+  }
+
+  .btn-back {
+    background: #FFFDF9;
+    color: var(--ink);
+    border-color: var(--pine);
+    box-shadow: 0 5px 0 var(--pine-dark);
+    margin-bottom: 16px;
+  }
+  .btn-back:active {
+    box-shadow: 0 2px 0 var(--pine-dark);
+  }
+
+  /* Botones medianos 3D para Acciones de Usuario y Organización (Nada de botones cuadrados planos) */
+  .btn-3d-pill {
+    padding: 11px 16px;
+    border-radius: 16px;
+    font-size: 0.86rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 2.5px solid var(--pine);
+    background: #FFFDF9;
+    color: var(--pine);
+    box-shadow: 0 4px 0 var(--pine-dark);
+    transition: transform 0.08s, box-shadow 0.08s;
+    font-family: inherit;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .btn-3d-pill:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--pine-dark);
+  }
+  .btn-3d-pill.red {
+    background: #FFF5F5;
+    color: var(--crimson);
+    border-color: var(--crimson);
+    box-shadow: 0 4px 0 var(--crimson-dark);
+  }
+  .btn-3d-pill.red:active {
+    box-shadow: 0 1px 0 var(--crimson-dark);
+  }
+  .btn-3d-pill.red-solid {
+    background: var(--crimson);
+    color: #fff;
+    border-color: var(--crimson-dark);
+    box-shadow: 0 4px 0 var(--crimson-dark);
+  }
+  .btn-3d-pill.green-solid {
+    background: var(--pine);
+    color: #fff;
+    border-color: var(--pine-dark);
+    box-shadow: 0 4px 0 var(--pine-dark);
+  }
+  .btn-3d-pill.gold {
+    background: var(--gold-light);
+    color: #781014;
+    border-color: #B45309;
+    box-shadow: 0 4px 0 #92400E;
+  }
+  .btn-3d-pill.gold:active {
+    box-shadow: 0 1px 0 #92400E;
+  }
+  .btn-stealth-admin {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 0.74rem;
+    font-weight: 700;
+    opacity: 0.55;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-family: inherit;
+    transition: opacity 0.15s;
+  }
+  .btn-stealth-admin:hover, .btn-stealth-admin:active {
+    opacity: 1;
+    background: var(--paper-dark);
+  }
+
+  /* Selector de 36 Avatares */
+  .avatar-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .avatar-option-btn {
+    height: 46px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: #fff;
+    font-size: 1.45rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.08s;
+  }
+  .avatar-option-btn:active {
+    transform: scale(0.92);
+  }
+  .avatar-option-btn.selected {
+    border-color: var(--crimson);
+    background: var(--gold-light);
+    box-shadow: 0 3px 0 var(--crimson-dark);
+  }
+
+  /* Botones 3D Artesanales Grandes */
+  .btn-big {
+    width: 100%;
+    padding: 15px 18px;
+    border-radius: 16px;
+    font-size: 1.02rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    transition: transform 0.08s, box-shadow 0.08s;
+    border: 2.5px solid transparent;
+    text-align: center;
+    font-family: inherit;
+  }
+  .btn-big:active {
+    transform: translateY(3px);
+  }
+
+  .btn-red {
+    background: var(--crimson);
+    color: #fff;
+    border-color: var(--crimson-dark);
+    box-shadow: 0 5px 0 var(--crimson-dark);
+  }
+  .btn-green {
+    background: var(--pine);
+    color: #fff;
+    border-color: var(--pine-dark);
+    box-shadow: 0 5px 0 var(--pine-dark);
+  }
+  .btn-gold {
+    background: #FDE68A;
+    color: #781014;
+    border-color: #D97706;
+    box-shadow: 0 5px 0 #B45309;
+  }
+  .btn-back {
+    background: var(--paper-dark);
+    color: var(--ink);
+    border-color: var(--ink);
+    box-shadow: 0 4px 0 var(--ink);
+    margin-bottom: 16px;
+  }
+
+  /* Etiquetas de sección */
+  .section-label {
+    font-family: 'Mountains of Christmas', Georgia, serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--pine);
+    margin: 4px 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .divider-ready {
+    margin: 22px 0 12px;
+    padding-top: 14px;
+    border-top: 2px dashed var(--border);
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+
+  /* Cuadrícula de Participantes (2 columnas en móvil, botones grandes) */
+  .grid-users {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .user-card {
+    background: #fff;
+    border: 2.5px solid var(--pine);
+    border-radius: 18px;
+    padding: 15px 10px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--pine-dark);
+    transition: transform 0.08s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    position: relative;
+    font-family: inherit;
+  }
+  .user-card:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--pine-dark);
+  }
+
+  /* Los que faltan por elegir (ARRIBA DEL TODO, borde rojo vivo) */
+  .user-card.unclaimed {
+    background: #FFFDF9;
+    border-color: var(--crimson);
+    box-shadow: 0 5px 0 var(--crimson-dark);
+  }
+
+  /* Los que ya tienen PIN (ABAJO DEL TODO, estilo pino) */
+  .user-card.claimed {
+    background: var(--paper-dark);
+    border-color: #7D9285;
+    box-shadow: 0 3px 0 #5C6E63;
+  }
+
+  .avatar-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #fff;
+    background: var(--crimson);
+    border: 2.5px solid #fff;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.22);
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .user-card.claimed .avatar-circle {
+    background: var(--pine);
+  }
+  .avatar-circle.has-photo {
+    background: #FFFFFF !important;
+  }
+  .avatar-circle img.celeb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 12%;
+    transform: scale(1.18);
+    background: #FFFFFF;
+    border-radius: 50%;
+    display: block;
+  }
+  .avatar-circle img.celeb-img.is-crest {
+    object-fit: contain;
+    object-position: center center;
+    transform: scale(0.86);
+    padding: 3px;
+    background: #FFFFFF;
+  }
+  .avatar-circle img.celeb-img.is-flag {
+    object-fit: cover;
+    object-position: center center;
+    transform: scale(1.02);
+    background: #FFFFFF;
+  }
+
+  /* Pestañas de Carpetas de Avatares */
+  .folder-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 10px 0 12px;
+  }
+  .folder-tab-btn {
+    padding: 8px 11px;
+    border-radius: 12px;
+    border: 2px solid var(--pine);
+    background: #fff;
+    color: var(--pine);
+    font-weight: 800;
+    font-size: 0.76rem;
+    cursor: pointer;
+    box-shadow: 0 3px 0 var(--pine-dark);
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: transform 0.08s;
+  }
+  .folder-tab-btn:active {
+    transform: translateY(2px);
+  }
+  .folder-tab-btn.active {
+    background: var(--crimson);
+    border-color: var(--crimson-dark);
+    color: #fff;
+    box-shadow: 0 3px 0 var(--crimson-dark);
+  }
+
+  /* Galería de Avatares (Foto tipo carnet fondo blanco) */
+  .celeb-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 12px 0;
+  }
+  @media (min-width: 440px) {
+    .celeb-picker-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .celeb-card-btn {
+    background: #fff;
+    border: 2.5px solid var(--border);
+    border-radius: 16px;
+    padding: 10px 6px 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 0 var(--border);
+    transition: transform 0.08s, box-shadow 0.08s, border-color 0.1s;
+    font-family: inherit;
+  }
+  .celeb-card-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--border);
+  }
+  .celeb-card-btn.selected {
+    border-color: var(--crimson);
+    background: var(--gold-light);
+    box-shadow: 0 4px 0 var(--crimson-dark);
+  }
+  .celeb-card-btn .avatar-circle {
+    width: 62px;
+    height: 62px;
+    border: 2.5px solid var(--gold);
+    background: #FFFFFF;
+  }
+  .celeb-card-name {
+    font-size: 0.73rem;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.15;
+    text-align: center;
+  }
+
+  .user-name {
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+
+  .status-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 8px;
+  }
+  .tag-new {
+    background: #FEE2E2;
+    color: var(--crimson);
+  }
+  .tag-locked {
+    background: #DCFCE7;
+    color: var(--pine);
+  }
+
+  /* Teclado Numérico de PIN */
+  .pin-box {
+    background: #fff;
+    border: 2.5px solid var(--gold);
+    border-radius: 20px;
+    padding: 18px 14px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  }
+
+  .pin-dots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .pin-dot {
+    width: 50px;
+    height: 56px;
+    border: 2.5px solid var(--pine);
+    border-radius: 14px;
+    background: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--crimson);
+  }
+  .pin-dot.filled {
+    background: var(--gold-light);
+    border-color: var(--crimson);
+  }
+
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 310px;
+    margin: 0 auto;
+  }
+
+  .key-btn {
+    padding: 15px 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+    box-shadow: 0 3px 0 var(--border);
+    font-family: inherit;
+  }
+  .key-btn:active {
+    transform: translateY(2px);
+    box-shadow: none;
+  }
+
+  /* Contador de Marcha Atrás en Tiempo Real */
+  .countdown-banner {
+    background: linear-gradient(145deg, var(--pine), var(--pine-dark));
+    color: #fff;
+    border-radius: 20px;
+    padding: 18px 14px;
+    text-align: center;
+    border: 2.5px solid var(--gold);
+    margin-bottom: 16px;
+    box-shadow: 0 8px 20px rgba(12,43,28,0.25);
+  }
+  .countdown-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .cd-unit {
+    background: rgba(255,255,255,0.12);
+    padding: 10px 4px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.22);
+  }
+  .cd-num {
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: #FDE68A;
+    display: block;
+    line-height: 1.1;
+  }
+  .cd-lbl {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    opacity: 0.9;
+    font-weight: 700;
+  }
+
+  /* Sobre Lacrado para Desvelar */
+  .envelope-box {
+    background: linear-gradient(160deg, #A3181E, #6E0E12);
+    border: 3px solid var(--gold);
+    border-radius: 22px;
+    padding: 24px 16px;
+    color: #fff;
+    text-align: center;
+    box-shadow: 0 10px 24px rgba(184,29,36,0.3);
+    margin-bottom: 18px;
+  }
+
+  .wax-seal {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #FBBF24, #B45309);
+    border: 3px dashed #FEF3C7;
+    display: flex;
+    align-items: center;
+  /* Menú Principal del Usuario: 4 Botones en UNA SOLA LÍNEA con estilo 3D */
+  .user-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+    margin-bottom: 18px;
+  }
+  .tab-btn {
+    padding: 10px 4px;
+    border-radius: 16px;
+    border: 2.5px solid var(--pine);
+    background: #fff;
+    color: var(--ink);
+    font-weight: 800;
+    font-size: 0.74rem;
+    line-height: 1.15;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 4px 0 var(--pine-dark);
+    font-family: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+    transition: transform 0.08s, box-shadow 0.08s;
+  }
+  .tab-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--pine-dark);
+  }
+  .tab-btn .tab-icon-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--paper-dark);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .tab-btn .tab-sub-pill {
+    font-size: 0.64rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 99px;
+    background: var(--paper-dark);
+    color: var(--muted);
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tab-btn.active {
+    background: var(--crimson);
+    border-color: var(--crimson-dark);
+    color: #fff;
+    box-shadow: 0 4px 0 var(--crimson-dark);
+  }
+  .tab-btn.active .tab-icon-badge {
+    background: #fff;
+    border-color: var(--gold);
+  }
+  .tab-btn.active .tab-sub-pill {
+    background: #FDE68A;
+    color: #781014;
+  }
+
+  /* Barra Superior de Sesión del Participante */
+  .user-session-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    background: #FFFDF9;
+    padding: 10px 14px;
+    border-radius: 18px;
+    border: 2.5px solid var(--gold);
+    box-shadow: 0 4px 0 #DFC89C;
+    gap: 10px;
+  }
+
+  /* Artículos de Lista de Deseos */
+  .wish-item {
+    background: #fff;
+    border: 2.5px solid var(--border);
+    border-radius: 16px;
+    padding: 13px 14px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 3px 0 #E5DAC6;
+  }
+  .input-christmas {
+    width: 100%;
+    padding: 13px 14px;
+    border-radius: 14px;
+    border: 2.5px solid var(--border);
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-family: inherit;
+    background: #fff;
+    color: var(--ink);
+  }
+  .input-christmas:focus {
+    outline: none;
+    border-color: var(--pine);
+  }
+
+  /* Banner de Bienvenida al Unirse */
+  .welcome-banner {
+    background: #ECFDF5;
+    border: 2.5px solid var(--pine);
+    color: var(--pine-dark);
+    padding: 13px 14px;
+    border-radius: 16px;
+    margin-bottom: 14px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.35;
+    box-shadow: 0 4px 0 #A7F3D0;
+  }
+
+  /* Tarjetas y Botones 3D del Panel Admin (Cero botones cuadrados feos) */
+  .admin-section {
+    background: #fff;
+    border: 2.5px solid var(--border);
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 5px 0 #E5DAC6;
+  }
+  .admin-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: var(--paper);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .admin-row:last-child {
+    margin-bottom: 0;
+  }
+  .admin-card-item {
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 18px;
+    border: 2.5px solid var(--pine);
+  }
+  .admin-actions-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .btn-mini {
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 0.84rem;
+    font-weight: 800;
+    cursor: pointer;
+    border: 2px solid var(--ink);
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: transform 0.08s, box-shadow 0.08s;
+    text-align: center;
+  }
+  .btn-mini:active {
+    transform: translateY(3px);
+  }
+  .btn-mini-danger {
+    background: var(--crimson);
+    color: #fff;
+    border-color: var(--crimson-dark);
+    box-shadow: 0 4px 0 var(--crimson-dark);
+  }
+  .btn-mini-warn {
+    background: #FDE68A;
+    color: #781014;
+    border-color: #B45309;
+    box-shadow: 0 4px 0 #B45309;
+  }
+  .btn-mini-ok {
+    background: var(--pine);
+    color: #fff;
+    border-color: var(--pine-dark);
+    box-shadow: 0 4px 0 var(--pine-dark);
+  }
+
+  /* Toast de aviso flotante (sin usar alert()) */
+  .toast-msg {
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: #fff;
+    padding: 11px 18px;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    border: 2px solid var(--gold);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    text-align: center;
+    max-width: 92vw;
+  }
+  .toast-msg.show {
+    opacity: 1;
+  }
+
+  /* Lienzo de Confeti */
+  #confetti {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+<div id="toast" class="toast-msg"></div>
+
+<div class="postcard">
+  <div class="airmail-stripe"></div>
+
+  <!-- Cabecera Limpia del Sorteo (Entrada directa desde el link de WhatsApp) -->
+  <div class="hero-header">
+    <h1 class="christmas-title" id="headerTitle">Cargando sorteo...</h1>
+    <div class="meta-pills">
+      <span class="meta-pill" id="headerDate">📅 24 Dic 2026</span>
+      <span class="meta-pill gold" id="headerBudget">🎁 Máx. 35€</span>
+      <span class="meta-pill" id="headerStatus">⏳ En espera</span>
+    </div>
+  </div>
+
+  <!-- Contenedor Dinámico de Pantallas -->
+  <div class="content" id="mainView"></div>
+
+  <!-- Pie discreto con botón de Admin camuflado y protegido con clave -->
+  <div class="postal-footer">
+    <button class="btn-stealth-admin" onclick="window.app.requestAdminAccess()">🔒 Organización</button>
+  </div>
+
+  <div class="airmail-stripe bottom"></div>
+</div>
+
+<!-- Lógica + Base de Datos en la Nube en Tiempo Real -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+/* =========================================================
+   1. GALERÍA DE AVATARES POR CARPETAS (FOTO CARNET FONDO BLANCO)
+========================================================= */
+const LOCAL_BACKUP_KEY = 'amigo_invisible_postal_cloud_v3';
+const MY_BAG_KEY = 'amigo_invisible_mi_mochila_v3';
+const ADMIN_PASS_KEY = 'amigo_invisible_admin_pin_v3';
+
+const AVATAR_FOLDERS = [
+  { id: 'escudos', label: '⚽ Escudos fútbol' },
+  { id: 'banderas', label: '🏳️ Banderas' },
+  { id: 'futbolistas', label: '🏃 Futbolistas' },
+  { id: 'famoseo', label: '📺 Famoseo' },
+  { id: 'cantantes', label: '🎤 Cantantes' },
+  { id: 'actores', label: '🎬 Actores' }
+];
+
+// Catálogo organizado por carpetas con fotos de frente y primer plano sobre fondo blanco
+const SPANISH_CELEBS = [
+  // CARPETA 1: ESCUDOS FÚTBOL
+  { id: 'escudo_rm', folder: 'escudos', kind: 'crest', name: 'Real Madrid', accent: '#00529F', wiki: 'Real_Madrid_CF.svg' },
+  { id: 'escudo_fcb', folder: 'escudos', kind: 'crest', name: 'FC Barcelona', accent: '#A50044', wiki: 'FC_Barcelona_(crest).svg' },
+  { id: 'escudo_atm', folder: 'escudos', kind: 'crest', name: 'At. de Madrid', accent: '#CB3524', wiki: 'Atletico_Madrid_2017_logo.svg' },
+  { id: 'escudo_val', folder: 'escudos', kind: 'crest', name: 'Valencia CF', accent: '#FF7F00', wiki: 'Valencia_CF_shield.svg' },
+  { id: 'escudo_dep', folder: 'escudos', kind: 'crest', name: 'Dep. Coruña', accent: '#00539F', wiki: 'Deportivo_La_Coruna_logo.svg' },
+  { id: 'escudo_ath', folder: 'escudos', kind: 'crest', name: 'Athletic Bilbao', accent: '#EE2737', wiki: 'Athletic_Club_de_Bilbao.svg' },
+  { id: 'escudo_get', folder: 'escudos', kind: 'crest', name: 'Getafe CF', accent: '#005DA4', wiki: 'Getafe_CF.svg' },
+  { id: 'escudo_ray', folder: 'escudos', kind: 'crest', name: 'Rayo Vallecano', accent: '#E21A23', wiki: 'Rayo_Vallecano_logo.svg' },
+  { id: 'escudo_vld', folder: 'escudos', kind: 'crest', name: 'Real Valladolid', accent: '#751B32', wiki: 'Real_Valladolid_CF_logo.svg' },
+  { id: 'escudo_mal', folder: 'escudos', kind: 'crest', name: 'Málaga CF', accent: '#0066B3', wiki: 'Malaga_CF_logo.svg' },
+  { id: 'escudo_alm', folder: 'escudos', kind: 'crest', name: 'UD Almería', accent: '#DA291C', wiki: 'UD_Almeria_logo.svg' },
+
+  // CARPETA 2: BANDERAS
+  { id: 'flag_esp', folder: 'banderas', kind: 'flag', name: 'España', accent: '#AA151B', wiki: 'Bandera_de_Espa%C3%B1a.svg' },
+  { id: 'flag_and', folder: 'banderas', kind: 'flag', name: 'Andalucía', accent: '#006633', wiki: 'Bandera_de_Andaluc%C3%ADa.svg' },
+  { id: 'flag_cat', folder: 'banderas', kind: 'flag', name: 'Cataluña', accent: '#DA121A', wiki: 'Flag_of_Catalonia.svg' },
+  { id: 'flag_mad', folder: 'banderas', kind: 'flag', name: 'Madrid', accent: '#CE1126', wiki: 'Flag_of_the_Community_of_Madrid.svg' },
+  { id: 'flag_gal', folder: 'banderas', kind: 'flag', name: 'Galicia', accent: '#0099CC', wiki: 'Flag_of_Galicia.svg' },
+  { id: 'flag_eus', folder: 'banderas', kind: 'flag', name: 'País Vasco', accent: '#D52B1E', wiki: 'Flag_of_the_Basque_Country.svg' },
+  { id: 'flag_val', folder: 'banderas', kind: 'flag', name: 'C. Valenciana', accent: '#DA121A', wiki: 'Flag_of_the_Valencian_Community_(2x3).svg' },
+  { id: 'flag_ast', folder: 'banderas', kind: 'flag', name: 'Asturias', accent: '#0066CC', wiki: 'Flag_of_Asturias.svg' },
+  { id: 'flag_can', folder: 'banderas', kind: 'flag', name: 'Canarias', accent: '#003399', wiki: 'Flag_of_the_Canary_Islands.svg' },
+  { id: 'flag_arg', folder: 'banderas', kind: 'flag', name: 'Argentina', accent: '#74ACDF', wiki: 'Flag_of_Argentina.svg' },
+  { id: 'flag_bra', folder: 'banderas', kind: 'flag', name: 'Brasil', accent: '#009B3A', wiki: 'Flag_of_Brazil.svg' },
+  { id: 'flag_por', folder: 'banderas', kind: 'flag', name: 'Portugal', accent: '#006600', wiki: 'Flag_of_Portugal.svg' },
+
+  // CARPETA 3: FUTBOLISTAS (y leyendas del deporte)
+  { id: 'ronaldinho', folder: 'futbolistas', kind: 'face', name: 'Ronaldinho', accent: '#420088', wiki: 'Ronaldinho_2019.jpg' },
+  { id: 'puyol', folder: 'futbolistas', kind: 'face', name: 'Carles Puyol', accent: '#990000', wiki: 'Carles_Puyol_2018.jpg' },
+  { id: 'casillas', folder: 'futbolistas', kind: 'face', name: 'Iker Casillas', accent: '#002F6C', wiki: 'Iker_Casillas_2019.jpg' },
+  { id: 'pique', folder: 'futbolistas', kind: 'face', name: 'Gerard Piqué', accent: '#004D98', wiki: 'Gerard_Piqu%C3%A9_2018.jpg' },
+  { id: 'ramos', folder: 'futbolistas', kind: 'face', name: 'Sergio Ramos', accent: '#A17800', wiki: 'Sergio_Ramos_2018.jpg' },
+  { id: 'zidane', folder: 'futbolistas', kind: 'face', name: 'Zinedine Zidane', accent: '#1E293B', wiki: 'Zinedine_Zidane_2018.jpg' },
+  { id: 'torres', folder: 'futbolistas', kind: 'face', name: 'Fernando Torres', accent: '#D00000', wiki: 'Fernando_Torres_2018.jpg' },
+  { id: 'joaquin', folder: 'futbolistas', kind: 'face', name: 'Joaquín Betis', accent: '#16A34A', wiki: 'Joaqu%C3%ADn_S%C3%A1nchez_2019.jpg' },
+  { id: 'iniesta', folder: 'futbolistas', kind: 'face', name: 'Andrés Iniesta', accent: '#991B1B', wiki: 'Andr%C3%A9s_Iniesta_2018.jpg' },
+  { id: 'alonso', folder: 'futbolistas', kind: 'face', name: 'Fernando Alonso', accent: '#0055A4', wiki: 'Fernando_Alonso_2023.jpg' },
+  { id: 'nadal', folder: 'futbolistas', kind: 'face', name: 'Rafa Nadal', accent: '#C84B31', wiki: 'Rafael_Nadal_2022_Roland_Garros.jpg' },
+  { id: 'alcaraz', folder: 'futbolistas', kind: 'face', name: 'Carlos Alcaraz', accent: '#166534', wiki: 'Carlos_Alcaraz_2023.jpg' },
+  { id: 'gasol', folder: 'futbolistas', kind: 'face', name: 'Pau Gasol', accent: '#581C87', wiki: 'Pau_Gasol_2017.jpg' },
+
+  // CARPETA 4: FAMOSEO Y TV
+  { id: 'belen', folder: 'famoseo', kind: 'face', name: 'Belén Esteban', accent: '#DB2777', wiki: 'Bel%C3%A9n_Esteban_2016.jpg' },
+  { id: 'ibai', folder: 'famoseo', kind: 'face', name: 'Ibai Llanos', accent: '#6D28D9', wiki: 'Ibai_Llanos_2022.jpg' },
+  { id: 'broncano', folder: 'famoseo', kind: 'face', name: 'David Broncano', accent: '#1E293B', wiki: 'David_Broncano_2020.jpg' },
+  { id: 'chiquito', folder: 'famoseo', kind: 'face', name: 'Chiquito', accent: '#D97706', wiki: 'Chiquito_de_la_Calzada_2012.jpg' },
+  { id: 'arguinano', folder: 'famoseo', kind: 'face', name: 'K. Arguiñano', accent: '#15803D', wiki: 'Karlos_Argui%C3%B1ano_2014.jpg' },
+  { id: 'chicote', folder: 'famoseo', kind: 'face', name: 'Alberto Chicote', accent: '#B91C1C', wiki: 'Alberto_Chicote_2016.jpg' },
+  { id: 'dabiz', folder: 'famoseo', kind: 'face', name: 'Dabiz Muñoz', accent: '#BE185D', wiki: 'David_Mu%C3%B1oz_Rosillo.jpg' },
+  { id: 'matias', folder: 'famoseo', kind: 'face', name: 'Matías Prats', accent: '#1D4ED8', wiki: 'Mat%C3%ADas_Prats_Luque.jpg' },
+  { id: 'hurtado', folder: 'famoseo', kind: 'face', name: 'Jordi Hurtado', accent: '#0F766E', wiki: 'Jordi_Hurtado_2017.jpg' },
+  { id: 'rubius', folder: 'famoseo', kind: 'face', name: 'El Rubius', accent: '#7C3AED', wiki: 'El_Rubius_2016.jpg' },
+  { id: 'auron', folder: 'famoseo', kind: 'face', name: 'AuronPlay', accent: '#EA580C', wiki: 'AuronPlay_2015.jpg' },
+  { id: 'tamara', folder: 'famoseo', kind: 'face', name: 'Tamara Falcó', accent: '#C026D3', wiki: 'Tamara_Falc%C3%B3_2020.jpg' },
+  { id: 'ayuso', folder: 'famoseo', kind: 'face', name: 'I. Díaz Ayuso', accent: '#DC2626', wiki: 'Isabel_D%C3%ADaz_Ayuso_2023.jpg' },
+  { id: 'revilla', folder: 'famoseo', kind: 'face', name: 'M.Á. Revilla', accent: '#059669', wiki: 'Miguel_%C3%81ngel_Revilla_2019.jpg' },
+  { id: 'motos', folder: 'famoseo', kind: 'face', name: 'Pablo Motos', accent: '#D97706', wiki: 'Pablo_Motos_2016.jpg' },
+
+  // CARPETA 5: CANTANTES
+  { id: 'rosalia', folder: 'cantantes', kind: 'face', name: 'Rosalía', accent: '#B81D24', wiki: 'Rosal%C3%ADa_in_2023.jpg' },
+  { id: 'julio', folder: 'cantantes', kind: 'face', name: 'Julio Iglesias', accent: '#0369A1', wiki: 'Julio_Iglesias_2005.jpg' },
+  { id: 'lola', folder: 'cantantes', kind: 'face', name: 'Lola Flores', accent: '#991B1B', wiki: 'Lola_Flores_1964.jpg' },
+  { id: 'bisbal', folder: 'cantantes', kind: 'face', name: 'David Bisbal', accent: '#EA580C', wiki: 'David_Bisbal_2017.jpg' },
+  { id: 'raphael', folder: 'cantantes', kind: 'face', name: 'Raphael', accent: '#312E81', wiki: 'Raphael_2018.jpg' },
+  { id: 'pantoja', folder: 'cantantes', kind: 'face', name: 'Isabel Pantoja', accent: '#86198F', wiki: 'Isabel_Pantoja_2012.jpg' },
+  { id: 'estopa', folder: 'cantantes', kind: 'face', name: 'Estopa', accent: '#B45309', wiki: 'Estopa_2019.jpg' },
+  { id: 'omar', folder: 'cantantes', kind: 'face', name: 'Omar Montes', accent: '#A16207', wiki: 'Omar_Montes_2022.jpg' },
+  { id: 'quevedo', folder: 'cantantes', kind: 'face', name: 'Quevedo', accent: '#0284C7', wiki: 'Quevedo_in_2023.jpg' },
+  { id: 'aitana', folder: 'cantantes', kind: 'face', name: 'Aitana', accent: '#EC4899', wiki: 'Aitana_2023.jpg' },
+
+  // CARPETA 6: ACTORES Y CINE
+  { id: 'banderas', folder: 'actores', kind: 'face', name: 'Antonio Banderas', accent: '#374151', wiki: 'Antonio_Banderas_2019.jpg' },
+  { id: 'penelope', folder: 'actores', kind: 'face', name: 'Penélope Cruz', accent: '#9D174D', wiki: 'Pen%C3%A9lope_Cruz_2021.jpg' },
+  { id: 'almodovar', folder: 'actores', kind: 'face', name: 'P. Almodóvar', accent: '#DC2626', wiki: 'Pedro_Almod%C3%B3var_2021.jpg' },
+  { id: 'segura', folder: 'actores', kind: 'face', name: 'Santiago Segura', accent: '#4D7C0F', wiki: 'Santiago_Segura_2020.jpg' },
+  { id: 'arturo', folder: 'actores', kind: 'face', name: 'Arturo Valls', accent: '#2563EB', wiki: 'Arturo_Valls_2019.jpg' }
+];
+
+// Genera una foto tipo carnet con FONDO BLANCO PURO y cara en grande de frente si la foto externa no carga
+function buildCelebFallbackDataUri(celeb) {
+  const parts = celeb.name.split(' ');
+  const ini = (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+  const color = celeb.accent || '#B81D24';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+    <rect width="120" height="120" fill="#FFFFFF"/>
+    <circle cx="60" cy="44" r="28" fill="#F6D5B0" stroke="${color}" stroke-width="3"/>
+    <circle cx="50" cy="40" r="3" fill="#231F20"/>
+    <circle cx="70" cy="40" r="3" fill="#231F20"/>
+    <path d="M52 52 Q60 58 68 52" fill="none" stroke="#821015" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M18 120 C18 82 102 82 102 120 Z" fill="${color}"/>
+    <text x="60" y="109" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="18" fill="#FFFFFF">${ini}</text>
+  </svg>`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+
+const defaultDraws = [
+  {
+    id: 'familia-2026',
+    familyCode: 'FAM-RODRIGO',
+    title: 'Navidad Familia · 2026',
+    dateText: '24 Dic 2026 · Nochebuena',
+    countdownIso: '2026-12-20T20:00:00',
+    budget: '35€',
+    status: 'countdown', // 'countdown' | 'drawn' | 'archived'
+    participants: [
+      { id: 'u1', name: 'Tío Pepe', avatar: null, pin: null, targetId: 'u4', revealed: false, wishes: [] },
+      { id: 'u2', name: 'Abuela Carmen', avatar: 'lola', pin: null, targetId: 'u5', revealed: false, wishes: [{ title: 'Bufanda suave de lana o cachemir', note: 'Color beige o rojo navideño' }] },
+      { id: 'u3', name: 'Prima Lucía', avatar: null, pin: null, targetId: 'u1', revealed: false, wishes: [] },
+      { id: 'u4', name: 'Marcos', avatar: 'alonso', pin: '1234', targetId: 'u6', revealed: false, wishes: [{ title: 'Guantes de entrenamiento gimnasio', note: 'Talla M/L' }, { title: 'Libro biografía deportiva', note: 'Cualquier edición' }] },
+      { id: 'u5', name: 'Laura', avatar: 'rosalia', pin: '1234', targetId: 'u2', revealed: false, wishes: [{ title: 'Bolso bandolera tono tierra', note: 'Tamaño mediano' }] },
+      { id: 'u6', name: 'Tía Loly', avatar: 'belen', pin: '1234', targetId: 'u3', revealed: false, wishes: [{ title: 'Caja de tés e infusiones especiales', note: 'Sin teína a ser posible' }] }
+    ]
+  },
+  {
+    id: 'amigos-2026',
+    familyCode: 'PANDILLA-AMIGOS',
+    title: 'Cena Amigos · 2026',
+    dateText: '19 Dic 2026 · 21:30h',
+    countdownIso: '2026-12-10T21:00:00',
+    budget: '25€',
+    status: 'drawn',
+    participants: [
+      { id: 'a1', name: 'Mario', avatar: 'ibai', pin: null, targetId: 'a3', revealed: false, wishes: [] },
+      { id: 'a2', name: 'Carlos', avatar: null, pin: null, targetId: 'a4', revealed: false, wishes: [{ title: 'Camiseta básica negra algodón', note: 'Talla L' }] },
+      { id: 'a3', name: 'Marcos', avatar: 'alonso', pin: '1234', targetId: 'a2', revealed: false, wishes: [{ title: 'Juego de mesa rápido para fiestas', note: 'Tipo Virus o Exploding Kittens' }] },
+      { id: 'a4', name: 'Elena', avatar: 'aitana', pin: '1234', targetId: 'a1', revealed: true, wishes: [{ title: 'Vela aromática olor canela/pino', note: '' }] }
+    ]
+  },
+  {
+    id: 'familia-2025',
+    familyCode: 'FAM-RODRIGO',
+    title: 'Navidad Familia · 2025 (Histórico)',
+    dateText: '24 Dic 2025',
+    countdownIso: '2025-12-24T20:00:00',
+    budget: '30€',
+    status: 'archived',
+    participants: [
+      { id: 'h1', name: 'Marcos', avatar: 'alonso', pin: '1234', targetId: 'h2', revealed: true, wishes: [{ title: 'Auriculares inalámbricos', note: '' }] },
+      { id: 'h2', name: 'Laura', avatar: 'rosalia', pin: '1234', targetId: 'h3', revealed: true, wishes: [{ title: 'Perfume suave', note: '' }] },
+      { id: 'h3', name: 'Tía Loly', avatar: 'belen', pin: '1234', targetId: 'h1', revealed: true, wishes: [{ title: 'Planta de interior', note: '' }] }
+    ]
+  }
+];
+
+/* =========================================================
+   2. ESTADO GLOBAL, MOCHILA MULTISORTEO Y NUBE
+========================================================= */
+let draws = JSON.parse(localStorage.getItem(LOCAL_BACKUP_KEY)) || defaultDraws;
+let adminPinCode = localStorage.getItem(ADMIN_PASS_KEY) || '2512';
+
+// Mochila local del móvil: recuerda en qué sorteos ha entrado esta persona [{ drawId, userName, familyCode }]
+let myBag = JSON.parse(localStorage.getItem(MY_BAG_KEY)) || [
+  { drawId: 'familia-2026', userName: 'Marcos', familyCode: 'FAM-RODRIGO' },
+  { drawId: 'amigos-2026', userName: 'Marcos', familyCode: 'PANDILLA-AMIGOS' }
+];
+
+// Detectar parámetro ?sorteo=ID o ?draw=ID del link de WhatsApp
+const urlParams = new URLSearchParams(window.location.search);
+const urlDrawId = urlParams.get('sorteo') || urlParams.get('draw');
+
+let currentDrawId = (urlDrawId && draws.some(d => d.id === urlDrawId))
+  ? urlDrawId
+  : (draws[0]?.id || null);
+
+let currentScreen = 'grid'; // 'grid' | 'pin' | 'dashboard' | 'admin_login' | 'admin'
+let selectedUserId = null;
+let enteredPin = '';
+let enteredAdminPin = '';
+let userTab = 'status'; // 'status' | 'mywishes' | 'avatar' | 'multisorteo'
+let activeAvatarFolder = 'escudos'; // Carpeta activa en el selector de avatares
+let justJoinedWelcome = false;
+let confirmDeleteDrawId = null;
+let adminEditingAvatarUserId = null; // Permite al admin elegir avatar de un participante
+let newParticipantAvatar = null;     // Avatar opcional al crear participante desde Admin
+
+let auth = null;
+let db = null;
+let currentUser = null;
+let stateDocRef = null;
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'amigo-invisible-navidad-app';
+
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+function getCountdownParts(isoDate) {
+  const target = new Date(isoDate).getTime();
+  const now = Date.now();
+  const diff = Math.max(0, target - now);
+  const days = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
+  const hours = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+  const mins = String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, '0');
+  const secs = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+  return { days, hours, mins, secs };
+}
+
+setInterval(() => {
+  const draw = getCurrentDraw();
+  if (!draw || draw.status !== 'countdown') return;
+  const cd = getCountdownParts(draw.countdownIso || '2026-12-20T20:00:00');
+  const dEl = document.getElementById('cd-days');
+  if (dEl) {
+    dEl.textContent = cd.days;
+    document.getElementById('cd-hours').textContent = cd.hours;
+    document.getElementById('cd-mins').textContent = cd.mins;
+    document.getElementById('cd-secs').textContent = cd.secs;
+  }
+}, 1000);
+
+// Devuelve la foto tipo carnet (fondo blanco, cara en grande) o la INICIAL si no hay avatar
+function getAvatarDisplay(person) {
+  const av = person && person.avatar ? String(person.avatar).trim() : '';
+  if (av) {
+    const celeb = SPANISH_CELEBS.find(c => c.id === av);
+    if (celeb) {
+      const wikiUrl = `https://commons.wikimedia.org/wiki/Special:FilePath/${celeb.wiki}?width=280`;
+      const fallbackUri = buildCelebFallbackDataUri(celeb);
+      const extraClass = celeb.kind === 'crest' ? 'is-crest' : (celeb.kind === 'flag' ? 'is-flag' : 'is-face');
+      return `<img class="celeb-img ${extraClass}" src="${wikiUrl}" alt="${celeb.name}" onerror="this.onerror=null;this.src='${fallbackUri}';" />`;
+    }
+    if (av.startsWith('http://') || av.startsWith('https://') || av.startsWith('data:image')) {
+      return `<img class="celeb-img" src="${av}" alt="Avatar" />`;
+    }
+    return av;
+  }
+  const cleanName = (person?.name || '?').trim();
+  return cleanName.charAt(0).toUpperCase();
+}
+
+// Renderiza el bloque reutilizable de carpetas + cuadrícula de avatares
+function buildCategorizedAvatarPickerHtml(selectedAvatarId, clickHandlerName, userIdArg = null) {
+  const folderButtons = AVATAR_FOLDERS.map(f => `
+    <button type="button" class="folder-tab-btn ${activeAvatarFolder === f.id ? 'active' : ''}" onclick="window.app.setAvatarFolder('${f.id}')">
+      <span>${f.label}</span>
+    </button>
+  `).join('');
+
+  const itemsInFolder = SPANISH_CELEBS.filter(c => c.folder === activeAvatarFolder);
+
+  const cardsHtml = itemsInFolder.map(celeb => {
+    const wikiUrl = `https://commons.wikimedia.org/wiki/Special:FilePath/${celeb.wiki}?width=280`;
+    const fallbackUri = buildCelebFallbackDataUri(celeb);
+    const extraClass = celeb.kind === 'crest' ? 'is-crest' : (celeb.kind === 'flag' ? 'is-flag' : 'is-face');
+    const onClickCall = userIdArg
+      ? `window.app.${clickHandlerName}('${userIdArg}', '${celeb.id}')`
+      : `window.app.${clickHandlerName}('${celeb.id}')`;
+
+    return `
+      <button type="button" class="celeb-card-btn ${selectedAvatarId === celeb.id ? 'selected' : ''}" onclick="${onClickCall}">
+        <div class="avatar-circle has-photo">
+          <img class="celeb-img ${extraClass}" src="${wikiUrl}" alt="${celeb.name}" onerror="this.onerror=null;this.src='${fallbackUri}';" />
+        </div>
+        <span class="celeb-card-name">${celeb.name}</span>
+      </button>
+    `;
+  }).join('');
+
+  return `
+    <div class="folder-tabs">${folderButtons}</div>
+    <div class="celeb-picker-grid">${cardsHtml}</div>
+  `;
+}
+
+function getCelebNameLabel(avatarId, personName) {
+  if (!avatarId) return `Inicial (${(personName || '?').trim().charAt(0).toUpperCase()})`;
+  const celeb = SPANISH_CELEBS.find(c => c.id === avatarId);
+  return celeb ? celeb.name : 'Foto personalizada';
+}
+
+// Registra un sorteo en la "Mochila" del usuario para vincular sus sorteos sin registro
+function rememberInMyBag(draw, user) {
+  if (!draw || !user) return;
+  const exists = myBag.some(item => item.drawId === draw.id && item.userName.toLowerCase() === user.name.toLowerCase());
+  if (!exists) {
+    myBag.push({
+      drawId: draw.id,
+      userName: user.name,
+      familyCode: draw.familyCode || draw.id
+    });
+    localStorage.setItem(MY_BAG_KEY, JSON.stringify(myBag));
+  }
+}
+
+// Encuentra todos los sorteos vinculados a este usuario (por Mochila, por Código de Familia o por coincidencia de Nombre + mismo PIN)
+function getLinkedDrawsForUser(currentUserObj, currentDrawObj) {
+  if (!currentUserObj) return [];
+  const uName = currentUserObj.name.trim().toLowerCase();
+  const uPin = currentUserObj.pin;
+  const currentFam = (currentDrawObj?.familyCode || '').trim().toUpperCase();
+
+  return draws.filter(d => {
+    // 1. Mismo código de familia (ej. Histórico de otros años de FAM-RODRIGO)
+    if (currentFam && (d.familyCode || '').trim().toUpperCase() === currentFam) return true;
+    // 2. Está guardado en su Mochila del navegador
+    if (myBag.some(b => b.drawId === d.id || (b.familyCode && b.familyCode === d.familyCode))) return true;
+    // 3. Tiene el mismo nombre y el mismo PIN de 4 dígitos en otro grupo (ej. Marcos con PIN 1234 en Familia y en Amigos)
+    if (uPin && d.participants.some(p => p.name.trim().toLowerCase() === uName && p.pin === uPin)) return true;
+    return false;
+  });
+}
+
+async function initCloudStorage() {
+  try {
+    if (typeof __firebase_config === 'undefined' || !__firebase_config) return;
+    const firebaseConfig = JSON.parse(__firebase_config);
+    const app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+
+    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+      await signInWithCustomToken(auth, __initial_auth_token);
+    } else {
+      await signInAnonymously(auth);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      if (!user) return;
+
+      stateDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'amigo_invisible_draws', 'main_state');
+
+      onSnapshot(
+        stateDocRef,
+        (snapshot) => {
+          if (snapshot.exists()) {
+            const cloudData = snapshot.data();
+            if (cloudData && Array.isArray(cloudData.draws)) {
+              draws = cloudData.draws;
+              localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(draws));
+
+              if (cloudData.adminPinCode) {
+                adminPinCode = cloudData.adminPinCode;
+                localStorage.setItem(ADMIN_PASS_KEY, adminPinCode);
+              }
+
+              if (urlDrawId && draws.some(d => d.id === urlDrawId) && !window._urlDrawApplied) {
+                currentDrawId = urlDrawId;
+                window._urlDrawApplied = true;
+              } else if (!draws.some(d => d.id === currentDrawId)) {
+                currentDrawId = draws[0]?.id || null;
+              }
+
+              const activeTag = document.activeElement?.tagName;
+              if (activeTag !== 'INPUT' && activeTag !== 'SELECT') {
+                renderAll();
+              } else {
+                renderHeader();
+              }
+            }
+          } else {
+            saveStateToCloud();
+          }
+        },
+        (err) => {
+          console.error('Error en suscripción Firestore:', err);
+        }
+      );
+    });
+  } catch (err) {
+    console.error('Fallo iniciando Firebase:', err);
+  }
+}
+
+async function saveStateToCloud() {
+  localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(draws));
+  localStorage.setItem(ADMIN_PASS_KEY, adminPinCode);
+  if (!currentUser || !stateDocRef) return;
+  try {
+    await setDoc(stateDocRef, {
+      draws: draws,
+      adminPinCode: adminPinCode,
+      updatedAt: Date.now(),
+      updatedBy: currentUser.uid
+    });
+  } catch (err) {
+    console.error('Error guardando en la nube:', err);
+  }
+}
+
+function getCurrentDraw() {
+  return draws.find(d => d.id === currentDrawId) || draws[0] || null;
+}
+
+/* =========================================================
+   4. CABECERA Y PANTALLA 1: CUADRÍCULA DE PARTICIPANTES
+========================================================= */
+function renderHeader() {
+  const draw = getCurrentDraw();
+  const titleEl = document.getElementById('headerTitle');
+  const dateEl = document.getElementById('headerDate');
+  const budgetEl = document.getElementById('headerBudget');
+  const statusEl = document.getElementById('headerStatus');
+
+  if (!draw) {
+    if (titleEl) titleEl.textContent = 'Sin sorteos activos';
+    return;
+  }
+
+  if (titleEl) titleEl.textContent = draw.title;
+  if (dateEl) dateEl.textContent = '📅 ' + draw.dateText;
+  if (budgetEl) budgetEl.textContent = '🎁 Máx. ' + draw.budget;
+
+  const statusMap = {
+    countdown: '⏳ Cuenta atrás',
+    drawn: '✨ ¡Sorteo Realizado!',
+    archived: '📜 Histórico'
+  };
+  if (statusEl) statusEl.textContent = statusMap[draw.status] || '';
+}
+
+function renderGridScreen() {
+  const draw = getCurrentDraw();
+  if (!draw) {
+    document.getElementById('mainView').innerHTML = `
+      <div class="pin-box">
+        <p style="font-weight:800;margin-bottom:12px;">No hay ningún sorteo activo.</p>
+        <button class="btn-big btn-green" onclick="window.app.requestAdminAccess()">🔒 Abrir Organización</button>
+      </div>
+    `;
+    return;
+  }
+
+  if (draw.status === 'archived') {
+    const rows = draw.participants.map(p => {
+      const target = draw.participants.find(t => t.id === p.targetId);
+      return `
+        <div class="wish-item">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <span class="avatar-circle ${p.avatar ? 'has-photo' : ''}" style="width:42px;height:42px;font-size:1.1rem;background:var(--pine);">${getAvatarDisplay(p)}</span>
+            <strong style="color:var(--pine);font-size:0.98rem;">${p.name}</strong>
+            <span style="color:var(--muted);font-weight:800;">➔ regaló a ➔</span>
+            <strong style="color:var(--crimson);font-size:0.98rem;">🎁 ${target ? target.name : '—'}</strong>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    document.getElementById('mainView').innerHTML = `
+      <button class="btn-big btn-back" onclick="window.app.switchToLatestActiveDraw()">
+        ⬅️ Volver al sorteo actual
+      </button>
+      <div class="section-label">📜 Resultados de ${draw.title}</div>
+      ${rows}
+    `;
+    return;
+  }
+
+  const unclaimed = draw.participants.filter(p => !p.pin);
+  const claimed = draw.participants.filter(p => Boolean(p.pin));
+
+  let html = '';
+
+  if (unclaimed.length > 0) {
+    html += `
+      <div class="section-label">
+        <span>👆 ¿Quién eres? Toca tu nombre</span>
+        <span style="font-size:0.8rem;color:var(--crimson);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;">Faltan ${unclaimed.length}</span>
+      </div>
+      <div class="grid-users">
+        ${unclaimed.map(u => `
+          <button class="user-card unclaimed" onclick="window.app.selectParticipant('${u.id}')">
+            <div class="avatar-circle ${u.avatar ? 'has-photo' : ''}">${getAvatarDisplay(u)}</div>
+            <div class="user-name">${u.name}</div>
+            <span class="status-tag tag-new">✨ Elegir soy yo</span>
+          </button>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  if (claimed.length > 0) {
+    html += `
+      <div class="divider-ready">🔒 Ya unidos con su PIN (Toca para entrar)</div>
+      <div class="grid-users">
+        ${claimed.map(u => `
+          <button class="user-card claimed" onclick="window.app.selectParticipant('${u.id}')">
+            <div class="avatar-circle ${u.avatar ? 'has-photo' : ''}">${getAvatarDisplay(u)}</div>
+            <div class="user-name">${u.name}</div>
+            <span class="status-tag tag-locked">🔑 Entrar con PIN</span>
+          </button>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  document.getElementById('mainView').innerHTML = html;
+}
+
+/* =========================================================
+   6. VISTA 2: TECLADO DE PIN DE USUARIO (SIN RECARGAR EL AVATAR AL PULSAR)
+========================================================= */
+function updatePinDotsOnly() {
+  const container = document.getElementById('userPinDotsContainer');
+  if (!container) return false;
+  container.innerHTML = [0, 1, 2, 3].map(i => {
+    const filled = enteredPin.length > i;
+    return `<div class="pin-dot ${filled ? 'filled' : ''}">${filled ? '•' : ''}</div>`;
+  }).join('');
+  return true;
+}
+
+function renderPinScreen() {
+  const draw = getCurrentDraw();
+  const user = draw?.participants.find(p => p.id === selectedUserId);
+  if (!user) {
+    currentScreen = 'grid';
+    renderAll();
+    return;
+  }
+
+  const isFirstTime = !user.pin;
+
+  const dotsHtml = [0, 1, 2, 3].map(i => {
+    const filled = enteredPin.length > i;
+    return `<div class="pin-dot ${filled ? 'filled' : ''}">${filled ? '•' : ''}</div>`;
+  }).join('');
+
+  document.getElementById('mainView').innerHTML = `
+    <button class="btn-big btn-back" onclick="window.app.backToGrid()">
+      ⬅️ No soy ${user.name}, volver atrás
+    </button>
+
+    <div class="pin-box">
+      <div class="avatar-circle ${user.avatar ? 'has-photo' : ''}" style="margin:0 auto 10px;width:68px;height:68px;font-size:1.75rem;background:${isFirstTime ? 'var(--crimson)' : 'var(--pine)'};">
+        ${getAvatarDisplay(user)}
+      </div>
+      <h2 class="christmas-title" style="font-size:1.75rem;">¡Hola, ${user.name}!</h2>
+      <p style="font-size:0.9rem;color:var(--muted);margin-top:4px;line-height:1.35;">
+        ${isFirstTime
+          ? 'Elige un <strong>PIN secreto de 4 números</strong>. Así tu nombre pasará abajo y nadie podrá ver quién te toca.'
+          : 'Introduce tu <strong>PIN de 4 números</strong> para entrar a tu amigo invisible y tus deseos.'}
+      </p>
+
+      <div id="userPinDotsContainer" class="pin-dots">${dotsHtml}</div>
+      <div id="pinFeedback" style="min-height:22px;font-size:0.84rem;font-weight:800;color:var(--crimson);margin-bottom:8px;"></div>
+
+      <div class="keypad">
+        ${[1,2,3,4,5,6,7,8,9].map(n =>
+          `<button type="button" class="key-btn" onclick="window.app.pressPinKey('${n}')">${n}</button>`
+        ).join('')}
+        <button type="button" class="key-btn" style="font-size:0.88rem;color:var(--muted);" onclick="window.app.clearPin()">Borrar</button>
+        <button type="button" class="key-btn" onclick="window.app.pressPinKey('0')">0</button>
+        <button type="button" class="key-btn" style="color:var(--crimson);" onclick="window.app.backspacePin()">⌫</button>
+      </div>
+      ${!isFirstTime ? `<p style="font-size:0.74rem;color:var(--muted);margin-top:12px;">💡 Demo: los usuarios de prueba tienen el PIN <strong>1234</strong></p>` : ''}
+    </div>
+  `;
+}
+
+/* =========================================================
+   7. VISTA 3: PANEL DE USUARIO (MI AMIGO INVISIBLE, DESEOS, AVATAR, MIS SORTEOS)
+========================================================= */
+function renderDashboardScreen() {
+  const draw = getCurrentDraw();
+  const user = draw?.participants.find(p => p.id === selectedUserId);
+  if (!user) {
+    currentScreen = 'grid';
+    renderAll();
+    return;
+  }
+
+  const target = draw.participants.find(p => p.id === user.targetId);
+  const linkedDraws = getLinkedDrawsForUser(user, draw);
+
+  // Mensaje de agradecimiento recién unido
+  const welcomeHtml = justJoinedWelcome ? `
+    <div class="welcome-banner">
+      🎉 <strong>¡Gracias por unirte al sorteo, ${user.name}!</strong>
+      ${draw.status === 'countdown'
+        ? 'Mientras llega la cuenta atrás del sorteo, rellena tu Lista de Deseos y elige tu avatar o inicial.'
+        : '¡El sorteo ya se ha celebrado! Toca el sobre lacrado de abajo para desvelar a tu Amigo Invisible.'}
+    </div>
+  ` : '';
+
+  // Menú de usuario con los 4 botones en UNA SOLA LÍNEA y estilo 3D
+  const tabsHtml = `
+    <div class="user-tabs">
+      <button class="tab-btn ${userTab === 'status' ? 'active' : ''}" onclick="window.app.setUserTab('status')">
+        <div class="tab-icon-badge">🎅</div>
+        <div>Mi amigo invisible</div>
+        <span class="tab-sub-pill">${draw.status === 'countdown' ? 'Cuenta atrás' : 'Ver sobre'}</span>
+      </button>
+      <button class="tab-btn ${userTab === 'mywishes' ? 'active' : ''}" onclick="window.app.setUserTab('mywishes')">
+        <div class="tab-icon-badge">📝</div>
+        <div>Mis Deseos</div>
+        <span class="tab-sub-pill">${(user.wishes || []).length} idea(s)</span>
+      </button>
+      <button class="tab-btn ${userTab === 'avatar' ? 'active' : ''}" onclick="window.app.setUserTab('avatar')">
+        <div class="tab-icon-badge avatar-circle ${user.avatar ? 'has-photo' : ''}" style="width:36px;height:36px;font-size:0.95rem;">${getAvatarDisplay(user)}</div>
+        <div>Mi Avatar</div>
+        <span class="tab-sub-pill">${getCelebNameLabel(user.avatar, user.name)}</span>
+      </button>
+      <button class="tab-btn ${userTab === 'multisorteo' ? 'active' : ''}" onclick="window.app.setUserTab('multisorteo')">
+        <div class="tab-icon-badge">📜</div>
+        <div>Mis Sorteos</div>
+        <span class="tab-sub-pill">${linkedDraws.length} grupo(s)</span>
+      </button>
+    </div>
+  `;
+
+  let bodyHtml = '';
+
+  /* --- PESTAÑA 1: MI SORTEO (CUENTA ATRÁS O SOBRE PARA DESVELAR) --- */
+  if (userTab === 'status') {
+    if (draw.status === 'countdown') {
+      const cd = getCountdownParts(draw.countdownIso || '2026-12-20T20:00:00');
+      const myWishCount = (user.wishes || []).length;
+
+      bodyHtml = `
+        <div class="countdown-banner">
+          <div style="font-weight:800;font-size:0.92rem;letter-spacing:0.5px;">⏳ CUENTA ATRÁS PARA EL SORTEO</div>
+          <div class="countdown-grid">
+            <div class="cd-unit"><span class="cd-num" id="cd-days">${cd.days}</span><span class="cd-lbl">Días</span></div>
+            <div class="cd-unit"><span class="cd-num" id="cd-hours">${cd.hours}</span><span class="cd-lbl">Horas</span></div>
+            <div class="cd-unit"><span class="cd-num" id="cd-mins">${cd.mins}</span><span class="cd-lbl">Min</span></div>
+            <div class="cd-unit"><span class="cd-num" id="cd-secs">${cd.secs}</span><span class="cd-lbl">Seg</span></div>
+          </div>
+          <p style="font-size:0.84rem;margin-top:12px;opacity:0.95;">
+            Faltan por entrar: <strong>${draw.participants.filter(p => !p.pin).length} personas</strong>
+          </p>
+        </div>
+
+        <div class="admin-section" style="border-color:var(--gold);background:#FFFDF9;">
+          <h3 class="christmas-title" style="font-size:1.45rem;margin-bottom:4px;">
+            ${myWishCount === 0 ? '📝 ¡Rellena tu Lista de Deseos!' : `✅ Tienes ${myWishCount} deseo(s) en tu lista`}
+          </h3>
+          <p style="font-size:0.86rem;color:var(--muted);margin-bottom:12px;">
+            Escribe ideas de regalos que te harían ilusión para que la persona a la que le toques pueda ver tu lista.
+          </p>
+          <button class="btn-big btn-red" onclick="window.app.setUserTab('mywishes')">
+            ✍️ ${myWishCount === 0 ? 'Rellenar mi Lista de Deseos ahora' : 'Ver o añadir más deseos'}
+          </button>
+        </div>
+      `;
+    } else {
+      if (!user.revealed) {
+        bodyHtml = `
+          <div class="envelope-box">
+            <div style="font-size:0.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#FDE68A;">
+              Sobre Secreto para ${user.name}
+            </div>
+            <div class="wax-seal">🦌</div>
+            <h3 class="christmas-title" style="color:#fff;font-size:1.85rem;text-shadow:none;">
+              ¡El sorteo ya se ha celebrado!
+            </h3>
+            <p style="font-size:0.88rem;opacity:0.92;margin:8px 0 18px;">
+              Asegúrate de que nadie esté mirando tu pantalla antes de abrir el sobre.
+            </p>
+            <button class="btn-big btn-gold" onclick="window.app.revealMyTarget()">
+              ✨ TOCA PARA DESVELAR TU AMIGO INVISIBLE
+            </button>
+          </div>
+        `;
+      } else {
+        const targetWishes = (target && target.wishes && target.wishes.length > 0)
+          ? target.wishes.map(w => `
+              <div class="wish-item">
+                <div>
+                  <div style="font-weight:800;color:var(--ink);font-size:0.98rem;">🎁 ${w.title}</div>
+                  ${w.note ? `<div style="font-size:0.83rem;color:var(--muted);margin-top:2px;">💡 ${w.note}</div>` : ''}
+                </div>
+              </div>
+            `).join('')
+          : `<div class="wish-item" style="color:var(--muted);font-size:0.9rem;">
+               Todavía no ha añadido cosas a su lista de deseos. ¡Cuando escriba algo te saldrá aquí!
+             </div>`;
+
+        bodyHtml = `
+          <div class="envelope-box">
+            <div style="font-size:0.8rem;font-weight:800;color:#FDE68A;text-transform:uppercase;">
+              Estas Navidades te toca regalar a:
+            </div>
+            <div class="avatar-circle" style="margin:10px auto 6px;width:64px;height:64px;font-size:1.9rem;background:var(--pine);">
+              ${target ? getAvatarDisplay(target) : '🎁'}
+            </div>
+            <div class="christmas-title" style="color:#fff;font-size:2.4rem;margin:4px 0 16px;text-shadow:none;">
+              ${target ? target.name : 'Pendiente'}
+            </div>
+            <button class="btn-big btn-gold" style="max-width:320px;margin:0 auto;" onclick="window.app.hideMyTargetAgain()">
+              🙈 Ocultar nombre (Modo Anti-Espías)
+            </button>
+          </div>
+
+          <div class="section-label">
+            <span>📜 Lista de Deseos de ${target ? target.name : ''}:</span>
+          </div>
+          ${targetWishes}
+
+          <div style="margin-top:16px;">
+            <button class="btn-big btn-green" onclick="window.app.setUserTab('mywishes')">
+              📝 Editar mi propia Lista de Deseos (${(user.wishes || []).length})
+            </button>
+          </div>
+        `;
+      }
+    }
+  }
+
+  /* --- PESTAÑA 2: MI LISTA DE DESEOS --- */
+  if (userTab === 'mywishes') {
+    const wishes = user.wishes || [];
+    const myWishesList = wishes.length > 0
+      ? wishes.map((w, idx) => `
+          <div class="wish-item">
+            <div style="flex:1;min-width:180px;">
+              <div style="font-weight:800;font-size:1rem;">⭐ ${w.title}</div>
+              ${w.note ? `<div style="font-size:0.84rem;color:var(--muted);margin-top:3px;">${w.note}</div>` : ''}
+            </div>
+            <button class="btn-3d-pill red" onclick="window.app.removeWish(${idx})">🗑️ Borrar</button>
+          </div>
+        `).join('')
+      : `<div class="wish-item" style="color:var(--muted);font-size:0.88rem;">
+           Tu lista está vacía. Añade 2 o 3 cosas que te haría ilusión recibir.
+         </div>`;
+
+    bodyHtml = `
+      <div class="section-label">
+        <span>✍️ Mi Carta de Deseos</span>
+        <span style="font-size:0.75rem;color:var(--pine);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;">La ve quien te regala</span>
+      </div>
+      <div class="admin-section" style="background:#FFFDF9;border-color:var(--gold);">
+        <input id="wishTitle" class="input-christmas" placeholder="¿Qué te gustaría recibir? (Ej. Libro, colonia, jersey...)" />
+        <input id="wishNote" class="input-christmas" placeholder="Talla, color, enlace web o pista opcional..." />
+        <button class="btn-big btn-red" onclick="window.app.addWish()">➕ Añadir a mi lista de deseos</button>
+      </div>
+      ${myWishesList}
+    `;
+  }
+
+  /* --- PESTAÑA 3: MI AVATAR (POR CARPETAS + OPCIÓN DE INICIAL) --- */
+  if (userTab === 'avatar') {
+    const initialChar = user.name.trim().charAt(0).toUpperCase();
+    bodyHtml = `
+      <div class="admin-section" style="border-color:var(--gold);background:#FFFDF9;">
+        <div class="section-label" style="margin-top:0;">🌟 Elige tu avatar o inicial</div>
+        <p style="font-size:0.84rem;color:var(--muted);margin-bottom:12px;">
+          Selecciona una carpeta abajo para elegir tu foto tipo carnet o usa la inicial de tu nombre (<strong>${initialChar}</strong>):
+        </p>
+
+        <button class="btn-big ${!user.avatar ? 'btn-green' : 'btn-gold'}" style="margin-bottom:12px;" onclick="window.app.setMyAvatar(null)">
+          🔤 Usar solo mi inicial por defecto (${initialChar})
+        </button>
+
+        ${buildCategorizedAvatarPickerHtml(user.avatar, 'setMyAvatar')}
+      </div>
+
+      <div class="section-label">👨‍👩‍👧‍👦 Estado de los Participantes (${draw.participants.length})</div>
+      ${draw.participants.map(p => `
+        <div class="wish-item">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="avatar-circle ${p.avatar ? 'has-photo' : ''}" style="width:46px;height:46px;font-size:1.15rem;background:${p.pin ? 'var(--pine)' : 'var(--crimson)'};">
+              ${getAvatarDisplay(p)}
+            </div>
+            <div>
+              <strong style="font-size:0.96rem;">${p.name}</strong>
+              <div style="font-size:0.78rem;color:var(--muted);">
+                ${getCelebNameLabel(p.avatar, p.name)} · ${(p.wishes || []).length} deseo(s)
+              </div>
+            </div>
+          </div>
+          <span class="status-tag ${p.pin ? 'tag-locked' : 'tag-new'}">
+            ${p.pin ? '✅ Unido' : '⏳ Falta entrar'}
+          </span>
+        </div>
+      `).join('')}
+    `;
+  }
+
+  /* --- PESTAÑA 4: MIS SORTEOS, OTRAS FAMILIAS E HISTÓRICO DE OTROS AÑOS --- */
+  if (userTab === 'multisorteo') {
+    const activeLinked = linkedDraws.filter(d => d.status !== 'archived');
+    const archivedLinked = linkedDraws.filter(d => d.status === 'archived');
+
+    bodyHtml = `
+      <div class="admin-section" style="background:#FFFDF9;border-color:var(--pine);">
+        <div class="section-label" style="margin-top:0;">🎄 Mis Sorteos Activos (Familias / Grupos)</div>
+        <p style="font-size:0.84rem;color:var(--muted);margin-bottom:14px;">
+          Aquí aparecen automáticamente todos los sorteos donde participas (vinculados por tu móvil, tu código de familia o por usar tu mismo nombre y PIN):
+        </p>
+        ${activeLinked.map(d => {
+          const isCurrent = d.id === draw.id;
+          const meInDraw = d.participants.find(p => p.name.trim().toLowerCase() === user.name.trim().toLowerCase());
+          return `
+            <div class="wish-item" style="border-color:${isCurrent ? 'var(--crimson)' : 'var(--pine)'};background:${isCurrent ? '#FFF5F5' : '#FFFDF9'};">
+              <div style="flex:1;min-width:170px;">
+                <div style="font-weight:800;font-size:1rem;color:var(--ink);">${d.title}</div>
+                <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">
+                  Código: <strong>${d.familyCode || d.id}</strong> · ${d.budget} · ${d.status === 'drawn' ? '✨ Ya sorteado' : '⏳ Cuenta atrás'}
+                </div>
+              </div>
+              ${isCurrent
+                ? `<span class="status-tag tag-new" style="padding:7px 12px;border-radius:12px;">📍 Viendo ahora</span>`
+                : `<button class="btn-3d-pill green-solid" onclick="window.app.jumpToLinkedDraw('${d.id}', '${meInDraw ? meInDraw.id : ''}')">Entrar al sorteo ➔</button>`
+              }
+            </div>
+          `;
+        }).join('')}
+        <hr style="border:none;border-top:1.5px dashed var(--border);margin:14px 0 10px;">
+        <div style="font-size:0.8rem;font-weight:800;color:var(--pine);margin-bottom:6px;">
+          🔗 ¿Tienes el código de otra familia o grupo de amigos?
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input id="joinFamilyCodeInput" class="input-christmas" style="margin:0;flex:1;min-width:180px;" placeholder="Ej. PANDILLA-AMIGOS o FAM-RODRIGO" />
+          <button class="btn-mini btn-mini-ok" onclick="window.app.linkFamilyByCode()">🔗 Vincular Grupo</button>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <div class="section-label" style="margin-top:0;">📜 Histórico de Otros Años Guardados</div>
+        ${archivedLinked.length > 0 ? archivedLinked.map(d => {
+          const meOld = d.participants.find(p => p.name.trim().toLowerCase() === user.name.trim().toLowerCase());
+          const myOldTarget = meOld ? d.participants.find(t => t.id === meOld.targetId) : null;
+          return `
+            <div class="wish-item">
+              <div style="flex:1;min-width:170px;">
+                <div style="font-weight:800;font-size:1rem;color:var(--pine);">${d.title}</div>
+                <div style="font-size:0.82rem;color:var(--muted);margin-top:2px;">
+                  ${myOldTarget ? `Regalaste a: <strong style="color:var(--crimson);">${myOldTarget.name}</strong>` : `${d.participants.length} participantes`}
+                </div>
+              </div>
+              <button class="btn-3d-pill gold" onclick="window.app.switchDraw('${d.id}')">📜 Ver año completo</button>
+            </div>
+          `;
+        }).join('') : `
+          <p style="font-size:0.86rem;color:var(--muted);">
+            Todavía no hay sorteos de años pasados archivados en esta familia.
+          </p>
+        `}
+      </div>
+    `;
+  }
+
+  document.getElementById('mainView').innerHTML = `
+    <div class="user-session-bar">
+      <div style="display:flex;align-items:center;gap:10px;font-weight:800;color:var(--pine);font-size:0.98rem;">
+        <span class="avatar-circle" style="width:44px;height:44px;font-size:1.1rem;background:var(--pine);">${getAvatarDisplay(user)}</span>
+        <div>
+          <div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">Participante activo</div>
+          <strong>${user.name}</strong>
+        </div>
+      </div>
+      <button class="btn-mini btn-mini-warn" onclick="window.app.backToGrid()">🚪 Salir / Cambiar</button>
+    </div>
+    ${welcomeHtml}
+    ${tabsHtml}
+    ${bodyHtml}
+  `;
+}
+
+/* =========================================================
+   8. VISTA DE ACCESO CON CLAVE AL PANEL DE ADMIN
+========================================================= */
+function updateAdminPinDotsOnly() {
+  const container = document.getElementById('adminPinDotsContainer');
+  if (!container) return false;
+  container.innerHTML = [0, 1, 2, 3].map(i => {
+    const filled = enteredAdminPin.length > i;
+    return `<div class="pin-dot ${filled ? 'filled' : ''}">${filled ? '•' : ''}</div>`;
+  }).join('');
+  return true;
+}
+
+function renderAdminLoginScreen() {
+  const dotsHtml = [0, 1, 2, 3].map(i => {
+    const filled = enteredAdminPin.length > i;
+    return `<div class="pin-dot ${filled ? 'filled' : ''}">${filled ? '•' : ''}</div>`;
+  }).join('');
+
+  document.getElementById('mainView').innerHTML = `
+    <button class="btn-big btn-back" onclick="window.app.backToGrid()">
+      ⬅️ Volver al Sorteo
+    </button>
+
+    <div class="pin-box">
+      <div style="font-size:2.2rem;margin-bottom:6px;">🔐</div>
+      <h2 class="christmas-title" style="font-size:1.7rem;">Acceso de Organización</h2>
+      <p style="font-size:0.88rem;color:var(--muted);margin-top:4px;">
+        Introduce la clave de 4 dígitos del organizador para gestionar sorteos, avatares y enlaces de WhatsApp.
+      </p>
+
+      <div id="adminPinDotsContainer" class="pin-dots">${dotsHtml}</div>
+      <div id="adminPinFeedback" style="min-height:22px;font-size:0.84rem;font-weight:800;color:var(--crimson);margin-bottom:8px;"></div>
+
+      <div class="keypad">
+        ${[1,2,3,4,5,6,7,8,9].map(n =>
+          `<button class="key-btn" onclick="window.app.pressAdminPinKey('${n}')">${n}</button>`
+        ).join('')}
+        <button class="key-btn" style="font-size:0.88rem;color:var(--muted);" onclick="window.app.clearAdminPin()">Borrar</button>
+        <button class="key-btn" onclick="window.app.pressAdminPinKey('0')">0</button>
+        <button class="key-btn" style="color:var(--crimson);" onclick="window.app.backspaceAdminPin()">⌫</button>
+      </div>
+      <p style="font-size:0.74rem;color:var(--muted);margin-top:12px;">
+        💡 Clave de organizador por defecto: <strong>${adminPinCode}</strong>
+      </p>
+    </div>
+  `;
+}
+
+/* =========================================================
+   9. VISTA DE ADMINISTRACIÓN COMPLETA (WHATSAPP LINK, AVATARES, SORTEOS)
+========================================================= */
+function renderAdminScreen() {
+  const draw = getCurrentDraw();
+
+  const drawsListHtml = draws.map(d => {
+    const isConfirming = confirmDeleteDrawId === d.id;
+    const isCurrent = d.id === draw?.id;
+    return `
+      <div class="admin-card-item" style="border-color:${isCurrent ? 'var(--crimson)' : 'var(--pine)'};background:${isCurrent ? '#FFF5F5' : '#FFFDF9'};box-shadow:0 4px 0 ${isCurrent ? 'var(--crimson-dark)' : 'var(--pine-dark)'};">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;">
+          <div>
+            <strong style="font-size:1.05rem;color:${isCurrent ? 'var(--crimson)' : 'var(--ink)'};">${d.title}</strong>
+            <div style="font-size:0.8rem;color:var(--muted);margin-top:2px;">
+              Código Familia: <strong>${d.familyCode || d.id}</strong> · ${d.participants.length} personas · ${d.status === 'countdown' ? '⏳ Cuenta atrás' : (d.status === 'drawn' ? '✨ Sorteado' : '📜 Histórico')}
+            </div>
+          </div>
+          ${isCurrent ? `<span class="status-tag tag-new" style="padding:5px 10px;border-radius:10px;">📍 Editando</span>` : ''}
+        </div>
+        <div class="admin-actions-grid">
+          <button class="btn-3d-pill green-solid" onclick="window.app.copyWhatsAppLinkForDraw('${d.id}')">📲 Copiar Link WhatsApp</button>
+          ${!isCurrent ? `<button class="btn-3d-pill gold" onclick="window.app.adminSelectDraw('${d.id}')">✏️ Gestionar este</button>` : ''}
+          ${d.status !== 'archived' ? `<button class="btn-3d-pill" onclick="window.app.archiveDraw('${d.id}')">📜 Archivar Año</button>` : ''}
+          ${!isConfirming
+            ? `<button class="btn-3d-pill red" onclick="window.app.askDeleteDraw('${d.id}')">🗑️ Eliminar Sorteo</button>`
+            : `<button class="btn-3d-pill red-solid" onclick="window.app.confirmDeleteDraw('${d.id}')">⚠️ ¡Toca para confirmar borrado!</button>`
+          }
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const currentUsersAdminHtml = draw ? draw.participants.map(p => {
+    const isEditingAvatar = adminEditingAvatarUserId === p.id;
+    return `
+      <div class="admin-row" style="flex-direction:column;align-items:stretch;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button onclick="window.app.toggleAdminAvatarEditor('${p.id}')" class="avatar-circle ${p.avatar ? 'has-photo' : ''}" style="width:48px;height:48px;font-size:1.2rem;cursor:pointer;background:${p.pin ? 'var(--pine)' : 'var(--crimson)'};" title="Cambiar avatar">
+              ${getAvatarDisplay(p)}
+            </button>
+            <div>
+              <strong style="font-size:1rem;">${p.name}</strong>
+              <div style="font-size:0.76rem;color:var(--muted);">
+                ${p.pin ? '🔒 Con PIN' : '⚪ Sin PIN (Arriba)'} · ${getCelebNameLabel(p.avatar, p.name)}
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-mini btn-mini-ok" onclick="window.app.toggleAdminAvatarEditor('${p.id}')">🎭 Avatar</button>
+            ${p.pin ? `<button class="btn-mini btn-mini-warn" onclick="window.app.resetUserPin('${p.id}')">🔄 Reset PIN</button>` : ''}
+            <button class="btn-mini btn-mini-danger" onclick="window.app.removeParticipant('${p.id}')">🗑️ Quitar</button>
+          </div>
+        </div>
+
+        ${isEditingAvatar ? `
+          <div style="background:#FFFDF9;border:2.5px solid var(--gold);border-radius:16px;padding:12px;margin-top:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+              <span style="font-size:0.82rem;font-weight:800;color:var(--pine);">Elige tu avatar o inicial para ${p.name}:</span>
+              <button class="btn-mini btn-mini-warn" onclick="window.app.setParticipantAvatarFromAdmin('${p.id}', null)">🔤 Dejar Inicial (${p.name.charAt(0).toUpperCase()})</button>
+            </div>
+            ${buildCategorizedAvatarPickerHtml(p.avatar, 'setParticipantAvatarFromAdmin', p.id)}
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('') : '';
+
+  document.getElementById('mainView').innerHTML = `
+    <button class="btn-big btn-back" onclick="window.app.backToGrid()">
+      ⬅️ Salir del Panel de Organización (Volver al Sorteo)
+    </button>
+
+    ${draw ? `
+      <div class="admin-section" style="border-color:var(--crimson);background:#FFFDF9;box-shadow:0 5px 0 var(--crimson-dark);">
+        <div class="section-label" style="color:var(--crimson);margin-top:0;">📲 Enlace de WhatsApp y Sorteo en Directo</div>
+        <p style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;">
+          Sorteo activo en edición: <strong>${draw.title}</strong> (Código de familia: <strong>${draw.familyCode || draw.id}</strong>)
+        </p>
+        <div style="display:grid;gap:12px;">
+          <button class="btn-big btn-green" onclick="window.app.copyWhatsAppLinkForDraw('${draw.id}')">
+            📲 Copiar Link de WhatsApp para "${draw.title}"
+          </button>
+          <button class="btn-big btn-red" onclick="window.app.executeLiveDraw()">
+            🎰 ¡Lanzar Sorteo en Directo Ahora!
+          </button>
+          <button class="btn-big btn-gold" onclick="window.app.toggleCountdownMode()">
+            ⏳ Cambiar Estado: ahora en "${draw.status === 'countdown' ? 'Cuenta Atrás' : 'Ya Sorteado'}"
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <div class="section-label" style="margin-top:0;">👥 Participantes, Avatares y Reseteo de PIN</div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;">
+          Añade familiares eligiendo un avatar por carpetas o déjalo sin avatar para mostrar la inicial de su nombre.
+        </p>
+        <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+          <input id="newMemberName" class="input-christmas" style="margin:0;flex:1;min-width:180px;" placeholder="Nombre del participante..." />
+          <button class="btn-mini btn-mini-ok" onclick="window.app.addParticipant()">➕ Añadir Participante</button>
+        </div>
+
+        <details style="margin-bottom:14px;background:var(--paper);padding:10px 12px;border-radius:14px;border:2px solid var(--border);">
+          <summary style="font-size:0.82rem;font-weight:800;cursor:pointer;color:var(--pine);">
+            🎭 Elige tu avatar o inicial para el nuevo participante: <strong id="newMemberAvatarPreview">${getCelebNameLabel(newParticipantAvatar, 'A')}</strong>
+          </summary>
+          <div style="margin-top:10px;">
+            <button class="btn-mini btn-mini-warn" style="margin-bottom:8px;width:100%;" onclick="window.app.selectNewMemberAvatar(null)">🔤 Dejar Inicial por defecto</button>
+            ${buildCategorizedAvatarPickerHtml(newParticipantAvatar, 'selectNewMemberAvatar')}
+          </div>
+        </details>
+
+        ${currentUsersAdminHtml}
+      </div>
+
+      <div class="admin-section">
+        <div class="section-label" style="margin-top:0;">✏️ Configurar Cabecera, Código de Familia y Cuenta Atrás</div>
+        <div style="display:grid;grid-template-columns:1fr;gap:4px;">
+          <label style="font-size:0.78rem;font-weight:800;color:var(--pine);">Título del Sorteo:</label>
+          <input id="editDrawTitle" class="input-christmas" value="${draw.title}" />
+
+          <label style="font-size:0.78rem;font-weight:800;color:var(--pine);">Código de Familia (vincula los sorteos de varios años):</label>
+          <input id="editDrawFamilyCode" class="input-christmas" value="${draw.familyCode || 'FAM-RODRIGO'}" />
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <label style="font-size:0.78rem;font-weight:800;color:var(--pine);">Fecha visible:</label>
+            <input id="editDrawDateText" class="input-christmas" value="${draw.dateText}" />
+          </div>
+          <div>
+            <label style="font-size:0.78rem;font-weight:800;color:var(--pine);">Presupuesto:</label>
+            <input id="editDrawBudget" class="input-christmas" value="${draw.budget}" />
+          </div>
+        </div>
+        <label style="font-size:0.78rem;font-weight:800;color:var(--pine);">Fecha y Hora del Reloj de Cuenta Atrás:</label>
+        <input id="editDrawIso" type="datetime-local" class="input-christmas" value="${(draw.countdownIso || '2026-12-20T20:00:00').slice(0,16)}" />
+        <button class="btn-big btn-green" onclick="window.app.saveDrawDetails()">💾 Guardar Cambios del Sorteo</button>
+      </div>
+    ` : ''}
+
+    <div class="admin-section">
+      <div class="section-label" style="margin-top:0;">🗂️ Todos los Sorteos / Familias (Crear o Eliminar)</div>
+      ${drawsListHtml}
+      <hr style="border:none;border-top:2px dashed var(--border);margin:18px 0;">
+      <div class="section-label" style="font-size:1.25rem;margin-top:0;">➕ Crear Nuevo Sorteo (Otra Familia o Nuevo Año)</div>
+      <input id="newDrawTitle" class="input-christmas" placeholder="Título (Ej. Navidad Familia Política 2026)" />
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <input id="newDrawFamilyCode" class="input-christmas" placeholder="Código (Ej. FAM-POLITICA)" />
+        <input id="newDrawBudget" class="input-christmas" placeholder="Presupuesto (Ej. 40€)" />
+      </div>
+      <input id="newDrawDate" class="input-christmas" placeholder="Fecha de entrega (Ej. 6 Ene · Día de Reyes)" />
+      <input id="newDrawMembers" class="input-christmas" placeholder="Participantes separados por coma (Ej. Ana, Luis, Marta, Pablo)" />
+      <button class="btn-big btn-red" onclick="window.app.createNewDraw()">✨ Crear Nuevo Sorteo Familiar</button>
+    </div>
+
+    <div class="admin-section">
+      <div class="section-label" style="margin-top:0;">🔐 Clave de Acceso Admin</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <input id="newAdminPinInput" class="input-christmas" style="margin:0;flex:1;min-width:140px;" maxlength="4" value="${adminPinCode}" placeholder="4 dígitos" />
+        <button class="btn-mini btn-mini-ok" onclick="window.app.changeAdminPin()">💾 Guardar Clave</button>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   10. CONFETI LIGERO EN CANVAS NATIVO
+========================================================= */
+function launchConfetti() {
+  const canvas = document.getElementById('confetti');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const pieces = Array.from({ length: 65 }, () => ({
+    x: Math.random() * canvas.width,
+    y: -20 - Math.random() * 100,
+    size: 6 + Math.random() * 6,
+    vy: 3 + Math.random() * 4.5,
+    vx: -2.2 + Math.random() * 4.4,
+    color: ['#B81D24', '#164A31', '#F59E0B', '#FBF7F0'][Math.floor(Math.random() * 4)]
+  }));
+
+  let frame = 0;
+  function step() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x, p.y, p.size, p.size);
+    });
+    frame++;
+    if (frame < 80) requestAnimationFrame(step);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  requestAnimationFrame(step);
+}
+
+/* =========================================================
+   11. CONTROLADOR PRINCIPAL DE ACCIONES
+========================================================= */
+function renderAll() {
+  renderHeader();
+  if (!getCurrentDraw() && currentScreen !== 'admin' && currentScreen !== 'admin_login') return;
+  if (currentScreen === 'grid') renderGridScreen();
+  else if (currentScreen === 'pin') renderPinScreen();
+  else if (currentScreen === 'dashboard') renderDashboardScreen();
+  else if (currentScreen === 'admin_login') renderAdminLoginScreen();
+  else if (currentScreen === 'admin') renderAdminScreen();
+}
+
+window.app = {
+  switchDraw(drawId) {
+    currentDrawId = drawId;
+    currentScreen = 'grid';
+    selectedUserId = null;
+    enteredPin = '';
+    confirmDeleteDrawId = null;
+    renderAll();
+  },
+
+  switchToLatestActiveDraw() {
+    const active = draws.find(d => d.status !== 'archived') || draws[0];
+    if (active) {
+      currentDrawId = active.id;
+      currentScreen = 'grid';
+      renderAll();
+    }
+  },
+
+  jumpToLinkedDraw(drawId, targetUserId) {
+    const targetDraw = draws.find(d => d.id === drawId);
+    if (!targetDraw) return;
+    currentDrawId = drawId;
+    if (targetUserId && targetDraw.participants.some(p => p.id === targetUserId && p.pin)) {
+      selectedUserId = targetUserId;
+      userTab = 'status';
+      currentScreen = 'dashboard';
+    } else {
+      selectedUserId = null;
+      currentScreen = 'grid';
+    }
+    renderAll();
+    showToast(`🎄 Cambiado a "${targetDraw.title}"`);
+  },
+
+  linkFamilyByCode() {
+    const codeInput = document.getElementById('joinFamilyCodeInput');
+    const code = (codeInput?.value || '').trim().toUpperCase();
+    if (!code) {
+      showToast('Escribe el código de familia o sorteo');
+      return;
+    }
+    const found = draws.find(d =>
+      (d.familyCode && d.familyCode.toUpperCase() === code) ||
+      d.id.toUpperCase() === code
+    );
+    if (!found) {
+      showToast('❌ No se encontró ningún sorteo con ese código');
+      return;
+    }
+    const draw = getCurrentDraw();
+    const user = draw?.participants.find(p => p.id === selectedUserId);
+    myBag.push({
+      drawId: found.id,
+      userName: user ? user.name : '',
+      familyCode: found.familyCode || found.id
+    });
+    localStorage.setItem(MY_BAG_KEY, JSON.stringify(myBag));
+    showToast(`✅ Grupo "${found.title}" vinculado a tus sorteos`);
+    renderDashboardScreen();
+  },
+
+  requestAdminAccess() {
+    if (currentScreen === 'admin') {
+      currentScreen = 'grid';
+      renderAll();
+      return;
+    }
+    enteredAdminPin = '';
+    currentScreen = 'admin_login';
+    renderAll();
+  },
+
+  pressAdminPinKey(digit) {
+    if (enteredAdminPin.length >= 4) return;
+    enteredAdminPin += digit;
+    if (!updateAdminPinDotsOnly()) renderAdminLoginScreen();
+    if (enteredAdminPin.length === 4) {
+      setTimeout(() => {
+        if (enteredAdminPin === adminPinCode) {
+          currentScreen = 'admin';
+          renderAll();
+        } else {
+          enteredAdminPin = '';
+          updateAdminPinDotsOnly();
+          const fb = document.getElementById('adminPinFeedback');
+          if (fb) fb.textContent = '❌ Clave de organizador incorrecta';
+        }
+      }, 120);
+    }
+  },
+
+  backspaceAdminPin() {
+    enteredAdminPin = enteredAdminPin.slice(0, -1);
+    if (!updateAdminPinDotsOnly()) renderAdminLoginScreen();
+  },
+
+  clearAdminPin() {
+    enteredAdminPin = '';
+    if (!updateAdminPinDotsOnly()) renderAdminLoginScreen();
+  },
+
+  backspaceAdminPin() {
+    enteredAdminPin = enteredAdminPin.slice(0, -1);
+    renderAdminLoginScreen();
+  },
+
+  clearAdminPin() {
+    enteredAdminPin = '';
+    renderAdminLoginScreen();
+  },
+
+  changeAdminPin() {
+    const val = (document.getElementById('newAdminPinInput')?.value || '').trim();
+    if (!/^\d{4}$/.test(val)) {
+      showToast('La clave debe tener 4 números');
+      return;
+    }
+    adminPinCode = val;
+    saveStateToCloud();
+    showToast('🔐 Nueva clave de organizador guardada');
+  },
+
+  adminSelectDraw(drawId) {
+    currentDrawId = drawId;
+    adminEditingAvatarUserId = null;
+    renderAll();
+    showToast('Editando sorteo seleccionado');
+  },
+
+  selectParticipant(userId) {
+    selectedUserId = userId;
+    enteredPin = '';
+    justJoinedWelcome = false;
+    currentScreen = 'pin';
+    renderAll();
+  },
+
+  backToGrid() {
+    selectedUserId = null;
+    enteredPin = '';
+    confirmDeleteDrawId = null;
+    adminEditingAvatarUserId = null;
+    currentScreen = 'grid';
+    renderAll();
+  },
+
+  pressPinKey(digit) {
+    if (enteredPin.length >= 4) return;
+    enteredPin += digit;
+    const fb = document.getElementById('pinFeedback');
+    if (fb) fb.textContent = '';
+    if (!updatePinDotsOnly()) renderPinScreen();
+    if (enteredPin.length === 4) {
+      setTimeout(() => window.app.validatePin(), 130);
+    }
+  },
+
+  backspacePin() {
+    enteredPin = enteredPin.slice(0, -1);
+    if (!updatePinDotsOnly()) renderPinScreen();
+  },
+
+  clearPin() {
+    enteredPin = '';
+    if (!updatePinDotsOnly()) renderPinScreen();
+  },
+
+  validatePin() {
+    const draw = getCurrentDraw();
+    const user = draw?.participants.find(p => p.id === selectedUserId);
+    if (!user) return;
+
+    if (!user.pin) {
+      user.pin = enteredPin;
+      justJoinedWelcome = true;
+      userTab = 'status';
+      rememberInMyBag(draw, user);
+      saveStateToCloud();
+      launchConfetti();
+      showToast(`🎄 ¡Bienvenido/a, ${user.name}! PIN guardado.`);
+      currentScreen = 'dashboard';
+      renderAll();
+    } else if (user.pin === enteredPin) {
+      justJoinedWelcome = false;
+      userTab = 'status';
+      rememberInMyBag(draw, user);
+      currentScreen = 'dashboard';
+      renderAll();
+    } else {
+      enteredPin = '';
+      updatePinDotsOnly();
+      const fb = document.getElementById('pinFeedback');
+      if (fb) fb.textContent = '❌ PIN incorrecto. Si lo olvidaste, pide al organizador que lo resetee.';
+    }
+  },
+
+  setUserTab(tab) {
+    userTab = tab;
+    justJoinedWelcome = false;
+    renderDashboardScreen();
+  },
+
+  setAvatarFolder(folderId) {
+    activeAvatarFolder = folderId;
+    if (currentScreen === 'admin') renderAdminScreen();
+    else renderDashboardScreen();
+  },
+
+  setMyAvatar(iconOrNull) {
+    const draw = getCurrentDraw();
+    const user = draw?.participants.find(p => p.id === selectedUserId);
+    if (!user) return;
+    user.avatar = iconOrNull;
+    saveStateToCloud();
+    const label = getCelebNameLabel(iconOrNull, user.name);
+    showToast(iconOrNull ? `🎭 Ahora tu avatar es ${label}` : '🔤 Mostrando tu inicial');
+    renderAll();
+  },
+
+  toggleAdminAvatarEditor(userId) {
+    adminEditingAvatarUserId = (adminEditingAvatarUserId === userId) ? null : userId;
+    renderAdminScreen();
+  },
+
+  setParticipantAvatarFromAdmin(userId, iconOrNull) {
+    const draw = getCurrentDraw();
+    const user = draw?.participants.find(p => p.id === userId);
+    if (!user) return;
+    user.avatar = iconOrNull;
+    adminEditingAvatarUserId = null;
+    saveStateToCloud();
+    showToast(`🎨 Avatar de ${user.name} actualizado`);
+    renderAdminScreen();
+  },
+
+  selectNewMemberAvatar(iconOrNull) {
+    newParticipantAvatar = iconOrNull;
+    renderAdminScreen();
+  },
+
+  revealMyTarget() {
+    const draw = getCurrentDraw();
+    const user = draw?.participants.find(p => p.id === selectedUserId);
+    if (!user) return;
+    user.revealed = true;
+    saveStateToCloud();
+    launchConfetti();
+    renderDashboardScreen();
+  },
+
+  hideMyTargetAgain() {
+    const draw = getCurrentDraw();
+    const user = draw?.participants.find(p => p.id === selectedUserId);
+    if (!user) return;
+    user.revealed = false;
+    saveStateToCloud();
+    renderDashboardScreen();
+  },
+
+  addWish() {
+    const titleEl = document.getElementById('wishTitle');
+    const noteEl = document.getElementById('wishNote');
+    const title = titleEl?.value.trim();
+    const note = noteEl?.value.trim() || '';
+    if (!title) {
+      showToast('Escribe primero qué regalo te gustaría');
+      return;
+    }
+
+    const draw = getCurrentDraw();
+    const user = draw?.participants.find(p => p.id === selectedUserId);
+    if (!user) return;
+    if (!Array.isArray(user.wishes)) user.wishes = [];
+    user.wishes.push({ title, note });
+    saveStateToCloud();
+    showToast('✨ Deseo añadido a tu lista');
+    renderDashboardScreen();
+  },
+
+  removeWish(index) {
+    const draw = getCurrentDraw();
+    const user = draw?.participants.find(p => p.id === selectedUserId);
+    if (!user || !Array.isArray(user.wishes)) return;
+    user.wishes.splice(index, 1);
+    saveStateToCloud();
+    showToast('Deseo eliminado');
+    renderDashboardScreen();
+  },
+
+  executeLiveDraw() {
+    const draw = getCurrentDraw();
+    if (!draw || draw.participants.length < 2) {
+      showToast('Necesitas al menos 2 participantes para sortear');
+      return;
+    }
+
+    const shuffled = [...draw.participants].sort(() => Math.random() - 0.5);
+    for (let i = 0; i < shuffled.length; i++) {
+      const giver = shuffled[i];
+      const receiver = shuffled[(i + 1) % shuffled.length];
+      const realUser = draw.participants.find(p => p.id === giver.id);
+      realUser.targetId = receiver.id;
+      realUser.revealed = false;
+    }
+
+    draw.status = 'drawn';
+    saveStateToCloud();
+    launchConfetti();
+    showToast('🎰 ¡Sorteo en directo completado!');
+    renderAll();
+  },
+
+  toggleCountdownMode() {
+    const draw = getCurrentDraw();
+    if (!draw) return;
+    if (draw.status === 'countdown') {
+      if (!draw.participants[0]?.targetId) {
+        window.app.executeLiveDraw();
+        return;
+      }
+      draw.status = 'drawn';
+      showToast('✨ Modo "Ya Sorteado" activado');
+    } else {
+      draw.status = 'countdown';
+      showToast('⏳ Modo "Cuenta Atrás" activado');
+    }
+    saveStateToCloud();
+    renderAll();
+  },
+
+  saveDrawDetails() {
+    const draw = getCurrentDraw();
+    if (!draw) return;
+    const t = document.getElementById('editDrawTitle')?.value.trim();
+    const fc = document.getElementById('editDrawFamilyCode')?.value.trim().toUpperCase();
+    const dt = document.getElementById('editDrawDateText')?.value.trim();
+    const b = document.getElementById('editDrawBudget')?.value.trim();
+    const iso = document.getElementById('editDrawIso')?.value;
+
+    if (t) draw.title = t;
+    if (fc) draw.familyCode = fc;
+    if (dt) draw.dateText = dt;
+    if (b) draw.budget = b;
+    if (iso) draw.countdownIso = iso;
+
+    saveStateToCloud();
+    showToast('💾 Datos del sorteo guardados');
+    renderAll();
+  },
+
+  resetUserPin(userId) {
+    const draw = getCurrentDraw();
+    const user = draw?.participants.find(p => p.id === userId);
+    if (!user) return;
+    user.pin = null;
+    saveStateToCloud();
+    showToast(`🔄 PIN de ${user.name} reseteado (vuelve arriba de la lista)`);
+    renderAdminScreen();
+  },
+
+  addParticipant() {
+    const input = document.getElementById('newMemberName');
+    const name = input?.value.trim();
+    if (!name) return;
+    const draw = getCurrentDraw();
+    draw.participants.push({
+      id: 'u_' + Date.now(),
+      name,
+      avatar: newParticipantAvatar || null,
+      pin: null,
+      targetId: null,
+      revealed: false,
+      wishes: []
+    });
+    newParticipantAvatar = null;
+    saveStateToCloud();
+    showToast(`➕ ${name} añadido al sorteo`);
+    renderAdminScreen();
+  },
+
+  removeParticipant(userId) {
+    const draw = getCurrentDraw();
+    if (!draw) return;
+    draw.participants = draw.participants.filter(p => p.id !== userId);
+    saveStateToCloud();
+    showToast('Participante eliminado');
+    renderAdminScreen();
+  },
+
+  archiveDraw(drawId) {
+    const d = draws.find(x => x.id === drawId);
+    if (!d) return;
+    d.status = 'archived';
+    saveStateToCloud();
+    showToast(`📜 "${d.title}" guardado en el histórico`);
+    renderAll();
+  },
+
+  askDeleteDraw(drawId) {
+    confirmDeleteDrawId = drawId;
+    renderAdminScreen();
+  },
+
+  confirmDeleteDraw(drawId) {
+    draws = draws.filter(d => d.id !== drawId);
+    confirmDeleteDrawId = null;
+    if (currentDrawId === drawId) {
+      currentDrawId = draws[0]?.id || null;
+    }
+    saveStateToCloud();
+    showToast('🗑️ Sorteo eliminado permanentemente');
+    renderAll();
+  },
+
+  createNewDraw() {
+    const title = document.getElementById('newDrawTitle')?.value.trim();
+    const familyCode = (document.getElementById('newDrawFamilyCode')?.value.trim() || 'MI-FAMILIA').toUpperCase();
+    const budget = document.getElementById('newDrawBudget')?.value.trim() || '35€';
+    const dateText = document.getElementById('newDrawDate')?.value.trim() || '24 Dic 2026';
+    const membersRaw = document.getElementById('newDrawMembers')?.value.trim();
+
+    if (!title) {
+      showToast('Ponle un título al nuevo sorteo');
+      return;
+    }
+
+    const names = membersRaw
+      ? membersRaw.split(',').map(s => s.trim()).filter(Boolean)
+      : ['Participante 1', 'Participante 2', 'Participante 3'];
+
+    const participants = names.map((n, idx) => ({
+      id: 'p_' + Date.now() + '_' + idx,
+      name: n,
+      avatar: null,
+      pin: null,
+      targetId: null,
+      revealed: false,
+      wishes: []
+    }));
+
+    if (participants.length >= 2) {
+      for (let i = 0; i < participants.length; i++) {
+        participants[i].targetId = participants[(i + 1) % participants.length].id;
+      }
+    }
+
+    const newDraw = {
+      id: 'sorteo-' + Date.now(),
+      familyCode,
+      title,
+      dateText,
+      countdownIso: '2026-12-20T20:00:00',
+      budget,
+      status: 'countdown',
+      participants
+    };
+
+    draws.unshift(newDraw);
+    currentDrawId = newDraw.id;
+    saveStateToCloud();
+    launchConfetti();
+    showToast(`🎄 Creado "${title}"`);
+    renderAdminScreen();
+  },
+
+  copyWhatsAppLinkForDraw(drawId) {
+    const targetDraw = draws.find(d => d.id === drawId) || getCurrentDraw();
+    if (!targetDraw) return;
+    currentDrawId = targetDraw.id;
+    const baseUrl = window.location.href.split('?')[0];
+    const shareUrl = `${baseUrl}?sorteo=${encodeURIComponent(targetDraw.id)}`;
+    const textToCopy = `🎄 *${targetDraw.title}* (${targetDraw.budget})\nEntra aquí, toca tu nombre, pon tu PIN de 4 números y rellena tu lista de deseos:\n${shareUrl}`;
+
+    const tempInput = document.createElement('textarea');
+    tempInput.value = textToCopy;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+
+    showToast(`📲 Link de WhatsApp copiado para "${targetDraw.title}"`);
+    renderHeader();
+  }
+};
+
+renderAll();
+initCloudStorage();
+</script>
+</body>
+</html>
