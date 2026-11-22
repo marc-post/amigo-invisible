@@ -1473,6 +1473,12 @@ function sortAvatarFolders() {
   );
 }
 
+function sortAvatarCatalog() {
+  avatarCatalog.sort((a, b) =>
+    String(a?.name || '').trim().localeCompare(String(b?.name || '').trim(), 'es', { sensitivity: 'base' })
+  );
+}
+
 let avatarFolders = safeReadJson(AVATAR_FOLDERS_BACKUP_KEY, DEFAULT_AVATAR_FOLDERS.map(f => ({ ...f })));
 if (!Array.isArray(avatarFolders) || avatarFolders.length === 0) {
   avatarFolders = DEFAULT_AVATAR_FOLDERS.map(f => ({ ...f }));
@@ -1483,6 +1489,7 @@ let avatarCatalog = safeReadJson(AVATAR_CATALOG_BACKUP_KEY, DEFAULT_AVATAR_CATAL
 if (!Array.isArray(avatarCatalog)) {
   avatarCatalog = DEFAULT_AVATAR_CATALOG.map(c => ({ ...c }));
 }
+sortAvatarCatalog();
 
 // Mochila limpia por defecto para no exponer grupos de ejemplo a usuarios nuevos
 let myBag = safeReadJson(MY_BAG_KEY, []);
@@ -1595,7 +1602,7 @@ function getPreviousYearPairsForDraw(draw) {
 function getCountdownParts(isoDate) {
   const target = new Date(isoDate).getTime();
   if (Number.isNaN(target)) {
-    return { days: '00', hours: '00', mins: '00', secs: '00' };
+    return { days: '00', hours: '00', mins: '00', secs: '00', finished: false };
   }
   const now = Date.now();
   const diff = Math.max(0, target - now);
@@ -1603,12 +1610,120 @@ function getCountdownParts(isoDate) {
   const hours = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
   const mins = String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, '0');
   const secs = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
-  return { days, hours, mins, secs };
+  return { days, hours, mins, secs, finished: now >= target };
+}
+
+function assignDrawTargets(draw) {
+  if (!draw || !Array.isArray(draw.participants) || draw.participants.length < 2) {
+    return { ok: false, reason: 'min_participants' };
+  }
+
+  const ids = draw.participants.map(p => p.id);
+  const forbidden = new Set();
+
+  // 1. Prohibir regalarse a uno mismo
+  ids.forEach(id => forbidden.add(`${id}->${id}`));
+
+  // 2. Prohibir parejas bloqueadas manualmente (bidireccional)
+  (draw.exclusions || []).forEach(([a, b]) => {
+    forbidden.add(`${a}->${b}`);
+    forbidden.add(`${b}->${a}`);
+  });
+
+  // 3. Prohibir emparejamientos del año anterior (mismo Código de Familia)
+  if (draw.avoidLastYear !== false) {
+    const prevPairs = getPreviousYearPairsForDraw(draw);
+    prevPairs.forEach(pair => {
+      const giver = draw.participants.find(p => p.name.trim().toLowerCase() === pair.giverName);
+      const receiver = draw.participants.find(p => p.name.trim().toLowerCase() === pair.receiverName);
+      if (giver && receiver) {
+        forbidden.add(`${giver.id}->${receiver.id}`);
+      }
+    });
+  }
+
+  // Buscador con backtracking + aleatorización y tope de seguridad
+  const assignment = {};
+  const usedReceivers = new Set();
+  const giversOrder = [...ids].sort(() => Math.random() - 0.5);
+  let steps = 0;
+  const MAX_STEPS = 50000;
+
+  function backtrack(index) {
+    if (++steps > MAX_STEPS) return false;
+    if (index === giversOrder.length) return true;
+    const giverId = giversOrder[index];
+    const candidates = ids
+      .filter(rId => !usedReceivers.has(rId) && !forbidden.has(`${giverId}->${rId}`))
+      .sort(() => Math.random() - 0.5);
+
+    for (const rId of candidates) {
+      assignment[giverId] = rId;
+      usedReceivers.add(rId);
+      if (backtrack(index + 1)) return true;
+      usedReceivers.delete(rId);
+      delete assignment[giverId];
+    }
+    return false;
+  }
+
+  if (!backtrack(0)) {
+    return { ok: false, reason: 'impossible_exclusions' };
+  }
+
+  draw.participants.forEach(p => {
+    p.targetId = assignment[p.id];
+    p.revealed = false;
+  });
+  return { ok: true };
+}
+
+function hasValidAssignments(draw) {
+  if (!draw || !Array.isArray(draw.participants) || draw.participants.length < 2) return false;
+  const validIds = new Set(draw.participants.map(p => p.id));
+  return draw.participants.every(p => p.targetId && validIds.has(p.targetId) && p.targetId !== p.id);
+}
+
+const autoDrawFailedIds = new Set();
+
+function checkCountdownExpiration(draw) {
+  if (!draw || draw.status !== 'countdown' || !draw.countdownIso) return false;
+  if (!cloudLoaded) return false; // Esperamos a sincronizar con Firebase para evitar dobles sorteos
+  if (currentScreen === 'admin' && isUserTypingInForm()) return false;
+
+  const target = new Date(draw.countdownIso).getTime();
+  if (Number.isNaN(target) || Date.now() < target) return false;
+
+  // Si aún no tiene parejas válidas, las genera respetando todos los bloqueos
+  if (!hasValidAssignments(draw)) {
+    if (autoDrawFailedIds.has(draw.id)) return false;
+    const result = assignDrawTargets(draw);
+    if (!result.ok) {
+      autoDrawFailedIds.add(draw.id);
+      if (currentScreen === 'admin') {
+        showToast('⚠️ Cuenta atrás terminada, pero no se pudo sortear (revisa participantes o bloqueos).');
+      }
+      return false;
+    }
+  }
+
+  draw.status = 'drawn';
+  autoDrawFailedIds.delete(draw.id);
+  saveState();
+  if (currentScreen === 'dashboard' || currentScreen === 'grid') {
+    launchConfetti();
+    showToast('🎉 ¡La cuenta atrás ha terminado! El sorteo ya está listo.');
+  }
+  if (currentScreen !== 'admin_login' && currentScreen !== 'pin' && !isUserTypingInForm()) {
+    renderAll();
+  }
+  return true;
 }
 
 setInterval(() => {
   const draw = getCurrentDraw();
   if (!draw || draw.status !== 'countdown') return;
+  if (checkCountdownExpiration(draw)) return;
   const cd = getCountdownParts(draw.countdownIso || '2026-12-20T20:00:00');
   const dEl = document.getElementById('cd-days');
   if (dEl) {
@@ -1662,7 +1777,9 @@ function buildCategorizedAvatarPickerHtml(selectedAvatarId, clickHandlerName, us
     </button>
   `).join('');
 
-  const itemsInFolder = avatarCatalog.filter(c => c.folder === activeAvatarFolder);
+  const itemsInFolder = avatarCatalog
+    .filter(c => c.folder === activeAvatarFolder)
+    .sort((a, b) => String(a?.name || '').trim().localeCompare(String(b?.name || '').trim(), 'es', { sensitivity: 'base' }));
 
   const cardsHtml = itemsInFolder.length > 0
     ? itemsInFolder.map(celeb => {
@@ -1785,6 +1902,7 @@ async function initCloudStorage() {
           }
           if (Array.isArray(cloudData.avatarCatalog)) {
             avatarCatalog = cloudData.avatarCatalog;
+            sortAvatarCatalog();
             localStorage.setItem(AVATAR_CATALOG_BACKUP_KEY, JSON.stringify(avatarCatalog));
           }
           ensureValidActiveFolder();
@@ -1795,6 +1913,9 @@ async function initCloudStorage() {
           } else if (currentDrawId && !draws.some(d => d.id === currentDrawId)) {
             currentDrawId = null;
           }
+          // Comprueba si el sorteo actual ya cumplió su fecha/hora de cuenta atrás
+          const activeDrawAfterSync = getCurrentDraw();
+          if (checkCountdownExpiration(activeDrawAfterSync)) return;
           // No interrumpir al usuario ni al admin mientras teclean un PIN o rellenan un formulario
           if (currentScreen !== 'admin_login' && currentScreen !== 'pin' && !isUserTypingInForm()) {
             renderAll();
@@ -2771,6 +2892,7 @@ function renderAdminScreen() {
   /* --- PESTAÑA ADMIN 3: GESTOR DE AVATARES Y CATEGORÍAS --- */
   if (adminTab === 'avatars') {
     sortAvatarFolders();
+    sortAvatarCatalog();
     ensureValidActiveFolder();
 
     const categoryRowsHtml = avatarFolders.map(f => {
@@ -2814,7 +2936,9 @@ function renderAdminScreen() {
       </button>
     `).join('');
 
-    const itemsInFolder = avatarCatalog.filter(c => c.folder === activeAvatarFolder);
+    const itemsInFolder = avatarCatalog
+      .filter(c => c.folder === activeAvatarFolder)
+      .sort((a, b) => String(a?.name || '').trim().localeCompare(String(b?.name || '').trim(), 'es', { sensitivity: 'base' }));
     const adminAvatarGridHtml = itemsInFolder.length > 0
       ? itemsInFolder.map(celeb => {
           const imgUrl = getCelebImageUrl(celeb);
@@ -3452,65 +3576,13 @@ window.app = {
       return;
     }
 
-    const ids = draw.participants.map(p => p.id);
-    const forbidden = new Set();
-
-    // 1. Prohibir regalarse a uno mismo
-    ids.forEach(id => forbidden.add(`${id}->${id}`));
-
-    // 2. Prohibir parejas bloqueadas manualmente (bidireccional)
-    (draw.exclusions || []).forEach(([a, b]) => {
-      forbidden.add(`${a}->${b}`);
-      forbidden.add(`${b}->${a}`);
-    });
-
-    // 3. Prohibir emparejamientos del año anterior (mismo Código de Familia)
-    if (draw.avoidLastYear !== false) {
-      const prevPairs = getPreviousYearPairsForDraw(draw);
-      prevPairs.forEach(pair => {
-        const giver = draw.participants.find(p => p.name.trim().toLowerCase() === pair.giverName);
-        const receiver = draw.participants.find(p => p.name.trim().toLowerCase() === pair.receiverName);
-        if (giver && receiver) {
-          forbidden.add(`${giver.id}->${receiver.id}`);
-        }
-      });
-    }
-
-    // Buscador con backtracking + aleatorización y tope de seguridad para evitar bloqueos del navegador
-    const assignment = {};
-    const usedReceivers = new Set();
-    const giversOrder = [...ids].sort(() => Math.random() - 0.5);
-    let steps = 0;
-    const MAX_STEPS = 50000;
-
-    function backtrack(index) {
-      if (++steps > MAX_STEPS) return false;
-      if (index === giversOrder.length) return true;
-      const giverId = giversOrder[index];
-      const candidates = ids
-        .filter(rId => !usedReceivers.has(rId) && !forbidden.has(`${giverId}->${rId}`))
-        .sort(() => Math.random() - 0.5);
-
-      for (const rId of candidates) {
-        assignment[giverId] = rId;
-        usedReceivers.add(rId);
-        if (backtrack(index + 1)) return true;
-        usedReceivers.delete(rId);
-        delete assignment[giverId];
-      }
-      return false;
-    }
-
-    const found = backtrack(0);
-    if (!found) {
+    const result = assignDrawTargets(draw);
+    if (!result.ok) {
       showToast('⚠️ Imposible sortear con tantos bloqueos. Quita alguna exclusión o añade participantes.');
       return;
     }
 
-    draw.participants.forEach(p => {
-      p.targetId = assignment[p.id];
-      p.revealed = false;
-    });
+    autoDrawFailedIds.delete(draw.id);
     draw.status = 'drawn';
     saveState();
     launchConfetti();
@@ -3550,6 +3622,7 @@ window.app = {
     draw.budget = budget || draw.budget;
     if (cdVal) draw.countdownIso = cdVal.length === 16 ? cdVal + ':00' : cdVal;
 
+    autoDrawFailedIds.delete(draw.id);
     saveState();
     renderAll();
     showToast('💾 Datos del sorteo guardados');
@@ -3885,6 +3958,7 @@ window.app = {
     };
 
     avatarCatalog.unshift(newAvatar);
+    sortAvatarCatalog();
     activeAvatarFolder = folder;
     newAvatarNameDraft = '';
     newAvatarUrlDraft = '';
@@ -3924,6 +3998,7 @@ window.app = {
     avatarFolders = DEFAULT_AVATAR_FOLDERS.map(f => ({ ...f }));
     sortAvatarFolders();
     avatarCatalog = DEFAULT_AVATAR_CATALOG.map(c => ({ ...c }));
+    sortAvatarCatalog();
     confirmResetCatalog = false;
     ensureValidActiveFolder();
     saveState();
