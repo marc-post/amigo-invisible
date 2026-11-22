@@ -1614,17 +1614,27 @@ function isUserTypingInForm() {
 
 async function initCloudStorage() {
   try {
-    const firebaseConfig = (typeof __firebase_config !== 'undefined' && __firebase_config)
-      ? JSON.parse(__firebase_config)
-      : {
-          apiKey: "AIzaSyDeUXZGx3CorQYKM2MzdkaKCiw0JXbtSlw",
-          authDomain: "amigo-invisible-8a0c3.firebaseapp.com",
-          projectId: "amigo-invisible-8a0c3",
-          storageBucket: "amigo-invisible-8a0c3.firebasestorage.app",
-          messagingSenderId: "578227364812",
-          appId: "1:578227364812:web:b30984cdc70e79ef0af369",
-          measurementId: "G-RCZSNWS27B"
-        };
+    const defaultFirebaseConfig = {
+      apiKey: "AIzaSyDeUXZGx3CorQYKM2MzdkaKCiwOJXbtSlw",
+      authDomain: "amigo-invisible-8a0c3.firebaseapp.com",
+      projectId: "amigo-invisible-8a0c3",
+      storageBucket: "amigo-invisible-8a0c3.firebasestorage.app",
+      messagingSenderId: "578227364812",
+      appId: "1:578227364812:web:b30984cdc70e79ef0af369",
+      measurementId: "G-RCZSNWS27B"
+    };
+
+    let firebaseConfig = defaultFirebaseConfig;
+    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+      try {
+        const parsed = JSON.parse(__firebase_config);
+        if (parsed && typeof parsed.apiKey === 'string' && parsed.apiKey.trim().length > 10) {
+          firebaseConfig = parsed;
+        }
+      } catch (e) {
+        firebaseConfig = defaultFirebaseConfig;
+      }
+    }
 
     const app = initializeApp(firebaseConfig);
     auth = getAuth(app);
@@ -1686,6 +1696,9 @@ async function initCloudStorage() {
     cloudStatus = 'error';
     cloudErrorMsg = err?.message || 'Error de conexión con Firebase';
     console.warn('Modo copia local activo:', err);
+    if (currentScreen !== 'admin_login' && currentScreen !== 'pin' && !isUserTypingInForm()) {
+      renderAll();
+    }
   }
 }
 
@@ -3044,6 +3057,14 @@ window.app = {
   },
 
   async forceCloudSync() {
+    if (auth && !currentUser) {
+      try {
+        await signInAnonymously(auth);
+      } catch (err) {
+        cloudStatus = 'error';
+        cloudErrorMsg = err?.message || 'Error de autenticación en Firebase';
+      }
+    }
     await saveState();
     renderAdminScreen();
     showToast(cloudStatus === 'connected' ? '☁️ Sincronizado con Firebase' : '⚠️ No se pudo conectar con Firebase');
