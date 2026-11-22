@@ -382,7 +382,8 @@
   .avatar-circle.has-photo {
     background: #FFFFFF !important;
   }
-  .avatar-circle img.celeb-img {
+  .avatar-circle img.celeb-img,
+  .tab-icon-badge img.celeb-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -392,18 +393,23 @@
     border-radius: 50%;
     display: block;
   }
-  .avatar-circle img.celeb-img.is-crest {
+  .avatar-circle img.celeb-img.is-crest,
+  .tab-icon-badge img.celeb-img.is-crest {
     object-fit: contain;
     object-position: center center;
     transform: scale(0.86);
     padding: 3px;
     background: #FFFFFF;
   }
-  .avatar-circle img.celeb-img.is-flag {
+  .avatar-circle img.celeb-img.is-flag,
+  .tab-icon-badge img.celeb-img.is-flag {
     object-fit: cover;
     object-position: center center;
     transform: scale(1.02);
     background: #FFFFFF;
+  }
+  .tab-icon-badge.has-photo {
+    background: #FFFFFF !important;
   }
 
   /* Pestañas de Carpetas de Avatares */
@@ -733,6 +739,25 @@
     align-items: center;
     gap: 10px;
     box-shadow: 0 3px 0 #E5DAC6;
+    flex-wrap: wrap;
+  }
+  .nowish-item {
+    background: #FFF5F5;
+    border: 2.5px solid #F3B8BC;
+    border-radius: 18px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 3px 0 #F1D0D2;
+  }
+  .wish-link-anchor {
+    text-decoration: none;
+    margin-top: 6px;
+    padding: 7px 12px;
+    font-size: 0.78rem;
   }
 
   /* Formularios con aire y bordes redondeados */
@@ -775,6 +800,205 @@
     border-color: var(--pine);
     box-shadow: 0 0 0 3px rgba(22, 74, 49, 0.12);
     background: #fff;
+  }
+  select.input-christmas {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23164A31' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+
+  /* Tarjeta de checkbox y chips de exclusiones */
+  .checkbox-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--paper);
+    border: 2px solid var(--border);
+    border-radius: 18px;
+    padding: 13px 14px;
+    cursor: pointer;
+    margin-bottom: 14px;
+    transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
+  }
+  .checkbox-card:hover {
+    border-color: var(--pine);
+    background: #FFFDF9;
+  }
+  .checkbox-card.is-open {
+    border-color: var(--pine);
+    background: #FFFDF9;
+    box-shadow: 0 4px 0 #E5DAC6;
+  }
+  .checkbox-card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+  }
+  .checkbox-card input[type="checkbox"] {
+    appearance: auto;
+    -webkit-appearance: checkbox;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    accent-color: var(--crimson);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .prev-pairs-toggle-pill {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--pine);
+    background: var(--paper-dark);
+    border: 1.5px solid var(--border);
+    padding: 3px 9px;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+  .prev-pairs-drawer {
+    padding-top: 10px;
+    border-top: 2px dashed var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    cursor: default;
+  }
+  .prev-pair-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: var(--paper);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 8px 11px;
+    font-size: 0.82rem;
+  }
+  .prev-pair-source {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--muted);
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+
+  /* Bloque visual mejorado para bloquear una pareja */
+  .pair-blocker-box {
+    background: linear-gradient(180deg, #FFFDF9 0%, var(--paper) 100%);
+    border: 2px dashed var(--gold);
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .pair-select-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+  @media (min-width: 420px) {
+    .pair-select-row {
+      grid-template-columns: 1fr auto 1fr;
+    }
+  }
+  .pair-select-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .pair-select-tag {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--muted);
+    padding-left: 6px;
+  }
+  .pair-select {
+    width: 100%;
+    padding: 12px 36px 12px 14px;
+    border-radius: 16px;
+    border: 2.5px solid var(--pine);
+    background-color: #fff;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B81D24' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: var(--ink);
+    box-shadow: 0 3px 0 var(--pine-dark);
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.08s;
+  }
+  .pair-select:focus {
+    outline: none;
+    border-color: var(--crimson);
+    box-shadow: 0 3px 0 var(--crimson-dark);
+  }
+  .pair-vs-badge {
+    width: 38px;
+    height: 38px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: #FFF5F5;
+    border: 2px solid var(--crimson);
+    color: var(--crimson);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    box-shadow: 0 3px 0 #F2C4C6;
+    flex-shrink: 0;
+  }
+  @media (min-width: 420px) {
+    .pair-vs-badge {
+      margin-top: 16px;
+    }
+  }
+  .exclusion-chip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: #FFF5F5;
+    border: 2px solid #F2C4C6;
+    border-radius: 16px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-weight: 800;
+    font-size: 0.88rem;
+    color: var(--crimson-dark);
+  }
+  .cloud-status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    border: 2px solid var(--pine);
+    background: #ECFDF5;
+    color: var(--pine-dark);
+  }
+  .cloud-status-bar.error {
+    border-color: var(--crimson);
+    background: #FFF5F5;
+    color: var(--crimson-dark);
+  }
+  .cloud-status-bar.connecting {
+    border-color: var(--gold);
+    background: var(--gold-light);
+    color: #781014;
   }
 
   /* Banner de Bienvenida al Unirse */
@@ -1134,20 +1358,44 @@ const defaultDraws = [
 /* =========================================================
    2. ESTADO GLOBAL, MOCHILA MULTISORTEO Y NUBE FIREBASE
 ========================================================= */
-let draws = JSON.parse(localStorage.getItem(LOCAL_BACKUP_KEY)) || defaultDraws;
+function safeReadJson(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+let draws = safeReadJson(LOCAL_BACKUP_KEY, defaultDraws);
+if (!Array.isArray(draws)) draws = defaultDraws;
 let adminPinCode = localStorage.getItem(ADMIN_PASS_KEY) || '2512';
 
-let myBag = JSON.parse(localStorage.getItem(MY_BAG_KEY)) || [
-  { drawId: 'familia-2026', userName: 'Marcos', familyCode: 'FAM-RODRIGO' },
-  { drawId: 'amigos-2026', userName: 'Marcos', familyCode: 'PANDILLA-AMIGOS' }
-];
+// Mochila limpia por defecto para no exponer grupos de ejemplo a usuarios nuevos
+let myBag = safeReadJson(MY_BAG_KEY, []);
+if (!Array.isArray(myBag)) myBag = [];
 
 const urlParams = new URLSearchParams(window.location.search);
 const urlDrawId = urlParams.get('sorteo') || urlParams.get('draw');
 
+// Seguridad: si no hay ?sorteo=... válido en la URL, NO se expone ningún sorteo por defecto
 let currentDrawId = (urlDrawId && draws.some(d => d.id === urlDrawId))
   ? urlDrawId
-  : (draws[0]?.id || null);
+  : null;
+
+let cloudLoaded = false;
+let cloudStatus = 'connecting'; // 'connecting' | 'connected' | 'error'
+let cloudErrorMsg = '';
+let hasAppliedUrlDraw = false;
 
 let currentScreen = 'grid'; // 'grid' | 'pin' | 'dashboard' | 'admin_login' | 'admin'
 let adminTab = 'current';   // 'current' | 'participants' | 'draws'
@@ -1160,13 +1408,38 @@ let justJoinedWelcome = false;
 let confirmDeleteDrawId = null;
 let adminEditingAvatarUserId = null;
 let newParticipantAvatar = null;
+let newMemberNameDraft = '';
 let showNewParticipantAvatarPicker = false;
+let showWishUrlField = false;
+let showPrevYearPairs = false;
+
+// Normaliza un enlace para asegurar que abre bien y bloquea esquemas inseguros
+function normalizeWishUrl(raw) {
+  const clean = (raw || '').trim();
+  if (!clean) return '';
+  if (/^javascript:/i.test(clean)) return '';
+  if (/^https?:\/\//i.test(clean)) return clean;
+  return 'https://' + clean;
+}
 
 let auth = null;
 let db = null;
 let currentUser = null;
 let stateDocRef = null;
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'amigo-invisible-navidad-app';
+
+function generateSecureDrawId() {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  const bytes = new Uint8Array(20);
+  if (window.crypto && window.crypto.getRandomValues) {
+    window.crypto.getRandomValues(bytes);
+  } else {
+    for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+  }
+  let id = 's_';
+  for (let i = 0; i < bytes.length; i++) id += chars[bytes[i] % chars.length];
+  return id;
+}
 
 function showToast(msg) {
   const el = document.getElementById('toast');
@@ -1178,11 +1451,41 @@ function showToast(msg) {
 }
 
 function getCurrentDraw() {
-  return draws.find(d => d.id === currentDrawId) || draws[0] || null;
+  if (!currentDrawId) return null;
+  return draws.find(d => d.id === currentDrawId) || null;
+}
+
+// Obtiene pares históricos (nombre -> nombre) de otros sorteos con el mismo Código de Familia
+function getPreviousYearPairsForDraw(draw) {
+  if (!draw || !draw.familyCode) return [];
+  const fam = draw.familyCode.trim().toUpperCase();
+  if (!fam) return [];
+  const pairs = [];
+  draws.forEach(other => {
+    if (other.id === draw.id) return;
+    if ((other.familyCode || '').trim().toUpperCase() !== fam) return;
+    (other.participants || []).forEach(p => {
+      if (!p.targetId) return;
+      const target = (other.participants || []).find(t => t.id === p.targetId);
+      if (target) {
+        pairs.push({
+          giverName: p.name.trim().toLowerCase(),
+          receiverName: target.name.trim().toLowerCase(),
+          giverDisplay: p.name,
+          receiverDisplay: target.name,
+          sourceTitle: other.title
+        });
+      }
+    });
+  });
+  return pairs;
 }
 
 function getCountdownParts(isoDate) {
   const target = new Date(isoDate).getTime();
+  if (Number.isNaN(target)) {
+    return { days: '00', hours: '00', mins: '00', secs: '00' };
+  }
   const now = Date.now();
   const diff = Math.max(0, target - now);
   const days = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
@@ -1223,15 +1526,15 @@ function getAvatarDisplay(person) {
       const imgUrl = getCelebImageUrl(celeb);
       const fallbackUri = buildCelebFallbackDataUri(celeb);
       const extraClass = celeb.kind === 'crest' ? 'is-crest' : (celeb.kind === 'flag' ? 'is-flag' : 'is-face');
-      return `<img class="celeb-img ${extraClass}" src="${imgUrl}" alt="${celeb.name}" onerror="this.onerror=null;this.src='${fallbackUri}';" />`;
+      return `<img class="celeb-img ${extraClass}" src="${escapeHtml(imgUrl)}" alt="${escapeHtml(celeb.name)}" onerror="this.onerror=null;this.src='${fallbackUri}';" />`;
     }
     if (av.startsWith('http://') || av.startsWith('https://') || av.startsWith('data:image')) {
-      return `<img class="celeb-img" src="${av}" alt="Avatar" />`;
+      return `<img class="celeb-img" src="${escapeHtml(av)}" alt="Avatar" />`;
     }
-    return av;
+    return escapeHtml(av);
   }
   const cleanName = (person?.name || '?').trim();
-  return cleanName.charAt(0).toUpperCase();
+  return escapeHtml(cleanName.charAt(0).toUpperCase());
 }
 
 function buildCategorizedAvatarPickerHtml(selectedAvatarId, clickHandlerName, userIdArg = null) {
@@ -1293,11 +1596,20 @@ function getLinkedDrawsForUser(currentUserObj, currentDrawObj) {
   const currentFam = (currentDrawObj?.familyCode || '').trim().toUpperCase();
 
   return draws.filter(d => {
-    if (currentFam && (d.familyCode || '').trim().toUpperCase() === currentFam) return true;
-    if (myBag.some(b => b.drawId === d.id || (b.familyCode && b.familyCode === d.familyCode))) return true;
-    if (uPin && d.participants.some(p => p.name.trim().toLowerCase() === uName && p.pin === uPin)) return true;
+    if (currentDrawObj && d.id === currentDrawObj.id) return true;
+    const dFam = (d.familyCode || '').trim().toUpperCase();
+    if (currentFam && dFam === currentFam) return true;
+    if (myBag.some(b => b.drawId === d.id || (b.familyCode && dFam && b.familyCode.trim().toUpperCase() === dFam))) return true;
+    if (uPin && (d.participants || []).some(p => p.name.trim().toLowerCase() === uName && p.pin === uPin)) return true;
     return false;
   });
+}
+
+function isUserTypingInForm() {
+  const main = document.getElementById('mainView');
+  const active = document.activeElement;
+  if (!main || !active || !main.contains(active)) return false;
+  return active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT';
 }
 
 async function initCloudStorage() {
@@ -1323,6 +1635,9 @@ async function initCloudStorage() {
       currentUser = user;
       if (!user) return;
       onSnapshot(stateDocRef, (snap) => {
+        cloudLoaded = true;
+        cloudStatus = 'connected';
+        cloudErrorMsg = '';
         if (snap.exists()) {
           const cloudData = snap.data();
           if (Array.isArray(cloudData.draws)) {
@@ -1330,18 +1645,34 @@ async function initCloudStorage() {
             localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(draws));
           }
           if (cloudData.adminPinCode) {
-            adminPinCode = String(cloudData.adminPinCode);
+            adminPinCode = String(cloudData.adminPinCode).trim();
             localStorage.setItem(ADMIN_PASS_KEY, adminPinCode);
           }
-          if (!draws.some(d => d.id === currentDrawId)) {
-            currentDrawId = (urlDrawId && draws.some(d => d.id === urlDrawId)) ? urlDrawId : (draws[0]?.id || null);
+          // Prioridad al ?sorteo=ID del enlace de WhatsApp solo en la carga inicial (sin pisar cambios manuales)
+          if (urlDrawId && !hasAppliedUrlDraw && draws.some(d => d.id === urlDrawId) && currentScreen !== 'admin') {
+            currentDrawId = urlDrawId;
+            hasAppliedUrlDraw = true;
+          } else if (currentDrawId && !draws.some(d => d.id === currentDrawId)) {
+            currentDrawId = null;
           }
-          renderAll();
+          // No interrumpir al usuario ni al admin mientras teclean un PIN o rellenan un formulario
+          if (currentScreen !== 'admin_login' && currentScreen !== 'pin' && !isUserTypingInForm()) {
+            renderAll();
+          }
         } else {
           saveState();
+          if (currentScreen !== 'admin_login' && currentScreen !== 'pin' && !isUserTypingInForm()) {
+            renderAll();
+          }
         }
       }, (err) => {
+        cloudLoaded = true;
+        cloudStatus = 'error';
+        cloudErrorMsg = err?.message || 'Sin permisos de lectura en Firestore';
         console.warn('Firestore snapshot error:', err);
+        if (currentScreen !== 'admin_login' && currentScreen !== 'pin' && !isUserTypingInForm()) {
+          renderAll();
+        }
       });
     });
 
@@ -1351,6 +1682,9 @@ async function initCloudStorage() {
       await signInAnonymously(auth);
     }
   } catch (err) {
+    cloudLoaded = true;
+    cloudStatus = 'error';
+    cloudErrorMsg = err?.message || 'Error de conexión con Firebase';
     console.warn('Modo copia local activo:', err);
   }
 }
@@ -1365,7 +1699,11 @@ async function saveState() {
         adminPinCode,
         updatedAt: Date.now()
       }, { merge: true });
+      cloudStatus = 'connected';
+      cloudErrorMsg = '';
     } catch (e) {
+      cloudStatus = 'error';
+      cloudErrorMsg = e?.message || 'Error al guardar en Firestore';
       console.warn('Error al sincronizar con la nube:', e);
     }
   }
@@ -1376,14 +1714,14 @@ async function saveState() {
 ========================================================= */
 function renderHeader() {
   const draw = getCurrentDraw();
+  const pillsEl = document.querySelector('.meta-pills');
   if (!draw) {
-    document.getElementById('headerTitle').textContent = 'Sin sorteos activos';
-    document.getElementById('headerDate').textContent = '📅 —';
-    document.getElementById('headerBudget').textContent = '🎁 —';
-    document.getElementById('headerStatus').textContent = '⚪ Vacío';
+    document.getElementById('headerTitle').textContent = 'Amigo Invisible Familiar';
+    if (pillsEl) pillsEl.style.display = 'none';
     return;
   }
 
+  if (pillsEl) pillsEl.style.display = 'flex';
   document.getElementById('headerTitle').textContent = draw.title;
   document.getElementById('headerDate').textContent = '📅 ' + (draw.dateText || 'Sin fecha');
   document.getElementById('headerBudget').textContent = '🎁 Máx. ' + (draw.budget || '—');
@@ -1423,25 +1761,43 @@ function renderFooter() {
 ========================================================= */
 function renderGridScreen() {
   const draw = getCurrentDraw();
-  if (!draw) {
+
+  // Si hay un enlace ?sorteo=... y aún estamos esperando respuesta de Firebase, mostrar carga
+  if (!draw && urlDrawId && !cloudLoaded) {
     document.getElementById('mainView').innerHTML = `
       <div class="pin-box">
-        <p style="font-weight:800;margin-bottom:14px;">Aún no hay ningún sorteo creado.</p>
-        <button type="button" class="btn-big btn-green" onclick="window.app.requestAdminAccess()">🔒 Entrar a Organización para crear uno</button>
+        <div style="font-size:2.4rem;margin-bottom:8px;">🎄</div>
+        <h2 class="christmas-title" style="font-size:1.7rem;">Abriendo tu sorteo...</h2>
+        <p style="font-size:0.9rem;color:var(--muted);margin-top:6px;">
+          Conectando con la nube para cargar tu grupo familiar.
+        </p>
+      </div>`;
+    return;
+  }
+
+  // Bloqueo de URL raíz o enlaces no válidos: acceso solo por invitación
+  if (!draw) {
+    document.getElementById('mainView').innerHTML = `
+      <div class="pin-box" style="padding:26px 18px;">
+        <div style="font-size:2.6rem;margin-bottom:8px;">🔒</div>
+        <h2 class="christmas-title" style="font-size:1.85rem;">Acceso solo por invitación</h2>
+        <p style="font-size:0.92rem;color:var(--muted);margin-top:8px;line-height:1.5;">
+          Para entrar a tu Amigo Invisible necesitas abrir el <strong>enlace privado de WhatsApp</strong> que te haya enviado el organizador de tu grupo.
+        </p>
       </div>`;
     return;
   }
 
   if (draw.status === 'archived') {
-    const rows = draw.participants.map(p => {
-      const target = draw.participants.find(t => t.id === p.targetId);
+    const rows = (draw.participants || []).map(p => {
+      const target = (draw.participants || []).find(t => t.id === p.targetId);
       return `
         <div class="wish-item">
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
             <div class="avatar-circle ${p.avatar ? 'has-photo' : ''}" style="width:38px;height:38px;font-size:1rem;">${getAvatarDisplay(p)}</div>
-            <strong style="color:var(--pine);">${p.name}</strong>
+            <strong style="color:var(--pine);">${escapeHtml(p.name)}</strong>
             <span style="color:var(--muted);font-weight:800;">➔ regaló a ➔</span>
-            <strong style="color:var(--crimson);">🎁 ${target ? target.name : '—'}</strong>
+            <strong style="color:var(--crimson);">🎁 ${escapeHtml(target ? target.name : '—')}</strong>
           </div>
         </div>`;
     }).join('');
@@ -1456,8 +1812,8 @@ function renderGridScreen() {
     return;
   }
 
-  const unclaimed = draw.participants.filter(p => !p.pin);
-  const claimed = draw.participants.filter(p => Boolean(p.pin));
+  const unclaimed = (draw.participants || []).filter(p => !p.pin);
+  const claimed = (draw.participants || []).filter(p => Boolean(p.pin));
   let html = '';
 
   if (unclaimed.length > 0) {
@@ -1470,7 +1826,7 @@ function renderGridScreen() {
         ${unclaimed.map(u => `
           <button type="button" class="user-card unclaimed" onclick="window.app.selectParticipant('${u.id}')">
             <div class="avatar-circle ${u.avatar ? 'has-photo' : ''}">${getAvatarDisplay(u)}</div>
-            <div class="user-name">${u.name}</div>
+            <div class="user-name">${escapeHtml(u.name)}</div>
             <span class="status-tag tag-new">✨ Elegir soy yo</span>
           </button>
         `).join('')}
@@ -1485,7 +1841,7 @@ function renderGridScreen() {
         ${claimed.map(u => `
           <button type="button" class="user-card claimed" onclick="window.app.selectParticipant('${u.id}')">
             <div class="avatar-circle ${u.avatar ? 'has-photo' : ''}">${getAvatarDisplay(u)}</div>
-            <div class="user-name">${u.name}</div>
+            <div class="user-name">${escapeHtml(u.name)}</div>
             <span class="status-tag tag-locked">🔑 Entrar con PIN</span>
           </button>
         `).join('')}
@@ -1518,14 +1874,14 @@ function renderPinScreen() {
 
   document.getElementById('mainView').innerHTML = `
     <button type="button" class="btn-big btn-back" onclick="window.app.backToGrid()">
-      ⬅️ No soy ${user.name}, volver atrás
+      ⬅️ No soy ${escapeHtml(user.name)}, volver atrás
     </button>
 
     <div class="pin-box">
       <div class="avatar-circle ${user.avatar ? 'has-photo' : ''}" style="margin:0 auto 12px;width:66px;height:66px;font-size:1.75rem;">
         ${getAvatarDisplay(user)}
       </div>
-      <h2 class="christmas-title" style="font-size:1.8rem;">¡Hola, ${user.name}!</h2>
+      <h2 class="christmas-title" style="font-size:1.8rem;">¡Hola, ${escapeHtml(user.name)}!</h2>
       <p style="font-size:0.9rem;color:var(--muted);margin-top:4px;line-height:1.4;">
         ${isFirstTime
           ? 'Invéntate un <strong>PIN de 4 números</strong> para proteger tu Amigo Invisible y que nadie más pueda mirarlo.'
@@ -1590,13 +1946,14 @@ function renderDashboardScreen() {
   const draw = getCurrentDraw();
   const user = draw?.participants.find(p => p.id === selectedUserId);
   if (!user) { currentScreen = 'grid'; renderAll(); return; }
+  if (!Array.isArray(user.wishes)) user.wishes = [];
 
   const target = draw.participants.find(p => p.id === user.targetId);
   const linkedDraws = getLinkedDrawsForUser(user, draw);
 
   const welcomeHtml = justJoinedWelcome ? `
     <div class="welcome-banner">
-      🎉 <strong>¡Gracias por unirte, ${user.name}!</strong> Tu nombre ya está protegido con tu PIN.
+      🎉 <strong>¡Gracias por unirte, ${escapeHtml(user.name)}!</strong> Tu nombre ya está protegido con tu PIN.
       ${draw.status === 'countdown'
         ? 'Aquí tienes la cuenta atrás para el sorteo. Sigue los botones de paso siguiente para rellenar tus deseos y elegir tu avatar.'
         : '¡El sorteo ya se ha celebrado! Pulsa en el sobre lacrado para descubrir a quién regalas.'}
@@ -1659,7 +2016,7 @@ function renderDashboardScreen() {
         bodyHtml = `
           <div class="envelope-box">
             <div style="font-size:0.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#FDE68A;">
-              Sobre Secreto para ${user.name}
+              Sobre Secreto para ${escapeHtml(user.name)}
             </div>
             <div class="wax-seal">🦌</div>
             <h3 class="christmas-title" style="color:#fff;font-size:1.75rem;text-shadow:none;">
@@ -1680,18 +2037,41 @@ function renderDashboardScreen() {
           </div>
         `;
       } else {
-        const targetWishes = (target && target.wishes.length > 0)
-          ? target.wishes.map(w => `
-              <div class="wish-item">
-                <div>
-                  <div style="font-weight:800;color:var(--ink);">🎁 ${w.title}</div>
-                  ${w.note ? `<div style="font-size:0.82rem;color:var(--muted);margin-top:2px;">${w.note}</div>` : ''}
+        const targetWishesArr = (target && Array.isArray(target.wishes)) ? target.wishes : [];
+        const targetWishes = targetWishesArr.length > 0
+          ? targetWishesArr.map(w => {
+              const safeUrl = normalizeWishUrl(w.url);
+              return `
+                <div class="wish-item">
+                  <div style="flex:1;min-width:160px;">
+                    <div style="font-weight:800;color:var(--ink);">🎁 ${escapeHtml(w.title)}</div>
+                    ${w.note ? `<div style="font-size:0.82rem;color:var(--muted);margin-top:2px;">${escapeHtml(w.note)}</div>` : ''}
+                    ${safeUrl ? `
+                      <a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" class="btn-3d-pill wish-link-anchor">
+                        🔗 Ver enlace
+                      </a>` : ''}
+                  </div>
                 </div>
-              </div>
-            `).join('')
+              `;
+            }).join('')
           : `<div class="wish-item" style="color:var(--muted);font-size:0.9rem;">
-               Todavía no ha escrito ideas en su carta de deseos. ¡Vuelve a mirar en unos días!
+               ${target
+                 ? 'Todavía no ha escrito ideas en su carta de deseos. ¡Vuelve a mirar en unos días!'
+                 : 'Todavía no tienes persona asignada. Pide a Organización que lance o repita el sorteo.'}
              </div>`;
+
+        const targetNoWishesList = (target && Array.isArray(target.noWishes) && target.noWishes.length > 0)
+          ? `
+            <div class="section-label" style="margin-top:18px;color:var(--crimson);">
+              🚫 Lo que ${escapeHtml(target.name)} NO quiere (o ya tiene suficientes):
+            </div>
+            ${target.noWishes.map(item => `
+              <div class="nowish-item">
+                <div style="font-weight:800;color:var(--crimson-dark);font-size:0.92rem;">🚫 ${escapeHtml(item)}</div>
+              </div>
+            `).join('')}
+          `
+          : '';
 
         bodyHtml = `
           <div class="envelope-box">
@@ -1702,15 +2082,16 @@ function renderDashboardScreen() {
               ${target ? getAvatarDisplay(target) : '🎁'}
             </div>
             <div class="christmas-title" style="color:#fff;font-size:2.3rem;margin:6px 0 12px;text-shadow:none;">
-              ${target ? target.name : 'Pendiente'}
+              ${escapeHtml(target ? target.name : 'Pendiente')}
             </div>
             <button type="button" class="btn-3d-pill gold" onclick="window.app.hideMyTargetAgain()">
               🙈 Ocultar nombre (modo anti-espías)
             </button>
           </div>
 
-          <div class="section-label">📜 Lo que desea ${target ? target.name : ''}:</div>
+          <div class="section-label">📜 ${target ? `Lo que desea ${escapeHtml(target.name)}:` : 'Asignación pendiente'}</div>
           ${targetWishes}
+          ${targetNoWishesList}
 
           <div class="guided-next-box">
             <button type="button" class="btn-big btn-green" onclick="window.app.setUserTab('mywishes')">
@@ -1725,17 +2106,36 @@ function renderDashboardScreen() {
   /* --- PESTAÑA 2: MIS DESEOS (Guía -> Mi Avatar) --- */
   if (userTab === 'mywishes') {
     const myWishesList = user.wishes.length > 0
-      ? user.wishes.map((w, idx) => `
-          <div class="wish-item">
-            <div>
-              <div style="font-weight:800;">⭐ ${w.title}</div>
-              ${w.note ? `<div style="font-size:0.82rem;color:var(--muted);margin-top:2px;">${w.note}</div>` : ''}
+      ? user.wishes.map((w, idx) => {
+          const safeUrl = normalizeWishUrl(w.url);
+          return `
+            <div class="wish-item">
+              <div style="flex:1;min-width:160px;">
+                <div style="font-weight:800;">⭐ ${escapeHtml(w.title)}</div>
+                ${w.note ? `<div style="font-size:0.82rem;color:var(--muted);margin-top:2px;">${escapeHtml(w.note)}</div>` : ''}
+                ${safeUrl ? `
+                  <a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" class="btn-3d-pill wish-link-anchor">
+                    🔗 Ver enlace
+                  </a>` : ''}
+              </div>
+              <button type="button" class="btn-3d-pill red" onclick="window.app.removeWish(${idx})">🗑️ Borrar</button>
             </div>
-            <button type="button" class="btn-3d-pill red" onclick="window.app.removeWish(${idx})">🗑️ Borrar</button>
-          </div>
-        `).join('')
+          `;
+        }).join('')
       : `<p style="font-size:0.88rem;color:var(--muted);margin-bottom:12px;text-align:center;">
            Aún no has puesto nada en tu lista. ¡Añade 2 o 3 ideas para ponérselo fácil a tu Amigo Invisible!
+         </p>`;
+
+    const myNoWishes = Array.isArray(user.noWishes) ? user.noWishes : [];
+    const myNoWishesList = myNoWishes.length > 0
+      ? myNoWishes.map((item, idx) => `
+          <div class="nowish-item">
+            <div style="font-weight:800;color:var(--crimson-dark);font-size:0.92rem;">🚫 ${escapeHtml(item)}</div>
+            <button type="button" class="btn-3d-pill red" onclick="window.app.removeNoWish(${idx})">🗑️ Quitar</button>
+          </div>
+        `).join('')
+      : `<p style="font-size:0.84rem;color:var(--muted);text-align:center;margin-top:6px;">
+           Opcional: apunta aquí si ya tienes demasiadas tazas, calcetines, colonias o algo que prefieres evitar.
          </p>`;
 
     bodyHtml = `
@@ -1749,9 +2149,33 @@ function renderDashboardScreen() {
           <label class="field-label">Talla, color, tienda o pista opcional</label>
           <input id="wishNote" class="input-christmas" placeholder="Ej. Talla M, color verde pino..." />
         </div>
+
+        <div style="margin-bottom:12px;">
+          <button type="button" class="btn-3d-pill ${showWishUrlField ? 'gold' : ''}" onclick="window.app.toggleWishUrlInput()">
+            🔗 ${showWishUrlField ? 'Ocultar enlace URL' : 'Añadir enlace / URL (opcional)'}
+          </button>
+        </div>
+
+        ${showWishUrlField ? `
+          <div class="field-group">
+            <label class="field-label">🔗 Enlace web del producto o tienda</label>
+            <input id="wishUrl" type="url" class="input-christmas" placeholder="https://www.amazon.es/..." />
+          </div>
+        ` : ''}
+
         <button type="button" class="btn-big btn-red" onclick="window.app.addWish()">➕ Añadir a mi lista de deseos</button>
       </div>
       ${myWishesList}
+
+      <div class="divider-ready" style="margin-top:24px;">🚫 Cosas que NO quiero o ya tengo suficientes</div>
+      <div class="admin-section" style="border-color:#F3B8BC;background:#FFFDFD;">
+        <div class="field-group">
+          <label class="field-label" style="color:var(--crimson);">¿Qué prefieres que NO te regalen?</label>
+          <input id="noWishText" class="input-christmas" placeholder="Ej. Tazas, calcetines, colonias dulces, alérgico a..." />
+        </div>
+        <button type="button" class="btn-big btn-gold" onclick="window.app.addNoWish()">🚫 Añadir a "No quiero / Ya tengo"</button>
+      </div>
+      ${myNoWishesList}
 
       <div class="guided-next-box">
         <button type="button" class="btn-big btn-green" onclick="window.app.setUserTab('avatar')">
@@ -1771,13 +2195,13 @@ function renderDashboardScreen() {
             ${getAvatarDisplay(user)}
           </div>
           <div>
-            <div style="font-weight:800;font-size:1rem;">${user.name}</div>
-            <div style="font-size:0.82rem;color:var(--muted);">Actual: <strong>${getCelebNameLabel(user.avatar, user.name)}</strong></div>
+            <div style="font-weight:800;font-size:1rem;">${escapeHtml(user.name)}</div>
+            <div style="font-size:0.82rem;color:var(--muted);">Actual: <strong>${escapeHtml(getCelebNameLabel(user.avatar, user.name))}</strong></div>
           </div>
         </div>
 
         <button type="button" class="btn-3d-pill ${!user.avatar ? 'red-solid' : ''}" style="width:100%;margin-bottom:10px;" onclick="window.app.setMyAvatar(null)">
-          🔤 Usar solo mi inicial (${user.name.trim().charAt(0).toUpperCase()})
+          🔤 Usar solo mi inicial (${escapeHtml(user.name.trim().charAt(0).toUpperCase())})
         </button>
 
         ${buildCategorizedAvatarPickerHtml(user.avatar, 'setMyAvatar')}
@@ -1805,9 +2229,9 @@ function renderDashboardScreen() {
       ${activeLinked.map(d => `
         <div class="wish-item" style="${d.id === draw.id ? 'border-color:var(--crimson);background:#FFFDF9;' : ''}">
           <div>
-            <div style="font-weight:800;font-size:0.98rem;">🎄 ${d.title}</div>
+            <div style="font-weight:800;font-size:0.98rem;">🎄 ${escapeHtml(d.title)}</div>
             <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">
-              ${d.dateText} · Máx. ${d.budget}
+              ${escapeHtml(d.dateText || 'Sin fecha')} · Máx. ${escapeHtml(d.budget || '—')}
             </div>
           </div>
           ${d.id === draw.id
@@ -1821,8 +2245,8 @@ function renderDashboardScreen() {
         ${archivedLinked.map(d => `
           <div class="wish-item">
             <div>
-              <div style="font-weight:800;">📜 ${d.title}</div>
-              <div style="font-size:0.78rem;color:var(--muted);">${d.dateText}</div>
+              <div style="font-weight:800;">📜 ${escapeHtml(d.title)}</div>
+              <div style="font-size:0.78rem;color:var(--muted);">${escapeHtml(d.dateText || '')}</div>
             </div>
             <button type="button" class="btn-3d-pill gold" onclick="window.app.jumpToLinkedDraw('${d.id}')">Ver historial</button>
           </div>
@@ -1847,7 +2271,7 @@ function renderDashboardScreen() {
         </div>
         <div>
           <div style="font-size:0.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;">Tu perfil</div>
-          <div style="font-weight:800;color:var(--pine);font-size:1rem;">${user.name}</div>
+          <div style="font-weight:800;color:var(--pine);font-size:1rem;">${escapeHtml(user.name)}</div>
         </div>
       </div>
       <button type="button" class="btn-3d-pill red" onclick="window.app.backToGrid()">🚪 Salir</button>
@@ -1911,6 +2335,22 @@ function renderAdminLoginScreen() {
 function renderAdminScreen() {
   const draw = getCurrentDraw();
 
+  const cloudBarClass = cloudStatus === 'error' ? 'error' : (cloudStatus === 'connecting' ? 'connecting' : '');
+  const cloudBarText = cloudStatus === 'connected'
+    ? '☁️ Nube Firebase conectada y sincronizada'
+    : (cloudStatus === 'connecting'
+      ? '⏳ Conectando con la nube Firebase...'
+      : `⚠️ Error nube: ${cloudErrorMsg || 'Revisa reglas/Authentication en Firebase'}`);
+
+  const cloudBarHtml = `
+    <div class="cloud-status-bar ${cloudBarClass}">
+      <span>${cloudBarText}</span>
+      <button type="button" class="btn-3d-pill" style="padding:6px 12px;font-size:0.75rem;" onclick="window.app.forceCloudSync()">
+        🔄 Sincronizar
+      </button>
+    </div>
+  `;
+
   const adminTabsHtml = `
     <div class="admin-nav-tabs">
       <button type="button" class="admin-tab-btn ${adminTab === 'current' ? 'active' : ''}" onclick="window.app.setAdminTab('current')">
@@ -1936,11 +2376,38 @@ function renderAdminScreen() {
       tabBodyHtml = `
         <div class="admin-section" style="text-align:center;">
           <p style="font-weight:800;margin-bottom:12px;">No hay ningún sorteo seleccionado.</p>
-          <button type="button" class="btn-big btn-green" onclick="window.app.setAdminTab('draws')">➕ Crear uno en Organización General</button>
+          <button type="button" class="btn-big btn-green" onclick="window.app.setAdminTab('draws')">➕ Elegir o crear uno en Organización General</button>
         </div>
       `;
     } else {
       const isoVal = (draw.countdownIso || '2026-12-20T20:00').slice(0, 16);
+      const exclusions = Array.isArray(draw.exclusions) ? draw.exclusions : [];
+      const avoidLastYear = draw.avoidLastYear !== false;
+      const prevPairs = getPreviousYearPairsForDraw(draw);
+
+      const participantOptionsA = draw.participants.map((p, idx) =>
+        `<option value="${p.id}" ${idx === 0 ? 'selected' : ''}>${escapeHtml(p.name)}</option>`
+      ).join('');
+      const participantOptionsB = draw.participants.map((p, idx) =>
+        `<option value="${p.id}" ${idx === 1 ? 'selected' : ''}>${escapeHtml(p.name)}</option>`
+      ).join('');
+
+      const exclusionsListHtml = exclusions.length > 0
+        ? exclusions.map((pair, idx) => {
+            const pA = draw.participants.find(p => p.id === pair[0]);
+            const pB = draw.participants.find(p => p.id === pair[1]);
+            if (!pA || !pB) return '';
+            return `
+              <div class="exclusion-chip">
+                <span>🚫 ${escapeHtml(pA.name)} ↔ ${escapeHtml(pB.name)}</span>
+                <button type="button" class="btn-3d-pill red" style="padding:6px 11px;font-size:0.75rem;" onclick="window.app.removeExclusionPair(${idx})">
+                  ✕ Quitar
+                </button>
+              </div>
+            `;
+          }).join('')
+        : `<p style="font-size:0.82rem;color:var(--muted);margin-bottom:4px;">No hay parejas bloqueadas manualmente todavía.</p>`;
+
       tabBodyHtml = `
         <div class="admin-section">
           <div class="section-label">📲 Compartir y Controlar Sorteo</div>
@@ -1960,23 +2427,93 @@ function renderAdminScreen() {
         </div>
 
         <div class="admin-section">
-          <div class="section-label">✏️ Datos de "${draw.title}"</div>
+          <div class="section-label">🚫 Bloqueos (Parejas y Año Anterior)</div>
+
+          <div class="checkbox-card ${showPrevYearPairs ? 'is-open' : ''}" onclick="window.app.togglePrevYearPairsView()">
+            <div class="checkbox-card-top">
+              <input type="checkbox" ${avoidLastYear ? 'checked' : ''} onclick="event.stopPropagation()" onchange="window.app.toggleAvoidLastYear(this.checked)" />
+              <div style="flex:1;">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span style="font-weight:800;font-size:0.88rem;color:var(--ink);">
+                    Evitar repetir parejas del año anterior
+                  </span>
+                  <span class="prev-pairs-toggle-pill">
+                    ${prevPairs.length > 0
+                      ? (showPrevYearPairs ? '▲ Ocultar lista' : `👁️ Ver (${prevPairs.length}) ▼`)
+                      : (showPrevYearPairs ? '▲ Ocultar' : 'ℹ️ Ver ▼')}
+                  </span>
+                </div>
+                <div style="font-size:0.78rem;color:var(--muted);margin-top:3px;">
+                  ${prevPairs.length > 0
+                    ? `✅ Detectados <strong>${prevPairs.length}</strong> emparejamientos anteriores con el código <strong>${escapeHtml(draw.familyCode)}</strong> que no se repetirán.`
+                    : `Usa el mismo Código de Familia (${escapeHtml(draw.familyCode || '—')}) que en sorteos pasados para bloquear automáticamente lo que tocó el año anterior.`}
+                </div>
+              </div>
+            </div>
+            ${showPrevYearPairs ? `
+              <div class="prev-pairs-drawer" onclick="event.stopPropagation()">
+                ${prevPairs.length > 0
+                  ? prevPairs.map(pair => `
+                      <div class="prev-pair-row">
+                        <span>
+                          <strong style="color:var(--pine);">${escapeHtml(pair.giverDisplay)}</strong>
+                          <span style="color:var(--crimson);font-weight:900;margin:0 4px;">➔</span>
+                          <strong style="color:var(--ink);">${escapeHtml(pair.receiverDisplay)}</strong>
+                        </span>
+                        <span class="prev-pair-source">📜 ${escapeHtml(pair.sourceTitle)}</span>
+                      </div>
+                    `).join('')
+                  : `<div style="font-size:0.8rem;color:var(--muted);text-align:center;padding:4px 0;">
+                       No se encontraron emparejamientos previos con el código <strong>${escapeHtml(draw.familyCode || '—')}</strong>.
+                     </div>`}
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="pair-blocker-box">
+            <div class="field-label" style="margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+              <span>💑 Bloquear una pareja</span>
+              <span style="font-weight:700;color:var(--muted);font-size:0.74rem;">No se regalan entre sí</span>
+            </div>
+            ${draw.participants.length >= 2 ? `
+              <div class="pair-select-row">
+                <div class="pair-select-col">
+                  <span class="pair-select-tag">Persona 1</span>
+                  <select id="exclSelectA" class="pair-select">${participantOptionsA}</select>
+                </div>
+                <div class="pair-vs-badge" title="No se regalan entre sí">🚫</div>
+                <div class="pair-select-col">
+                  <span class="pair-select-tag">Persona 2</span>
+                  <select id="exclSelectB" class="pair-select">${participantOptionsB}</select>
+                </div>
+              </div>
+              <button type="button" class="btn-3d-pill gold" style="width:100%;margin-top:12px;" onclick="window.app.addExclusionPair()">
+                ➕ Añadir Bloqueo de Pareja (A ↔ B)
+              </button>
+            ` : `<p style="font-size:0.82rem;color:var(--muted);">Añade al menos 2 participantes para configurar bloqueos.</p>`}
+          </div>
+
+          ${exclusionsListHtml}
+        </div>
+
+        <div class="admin-section">
+          <div class="section-label">✏️ Datos de "${escapeHtml(draw.title)}"</div>
           <div class="field-group">
             <label class="field-label">Título del sorteo</label>
-            <input id="editDrawTitle" class="input-christmas" value="${draw.title}" />
+            <input id="editDrawTitle" class="input-christmas" value="${escapeHtml(draw.title)}" />
           </div>
           <div class="field-group">
             <label class="field-label">Código de familia (vincula sorteos de varios años)</label>
-            <input id="editDrawFamilyCode" class="input-christmas" value="${draw.familyCode || ''}" />
+            <input id="editDrawFamilyCode" class="input-christmas" value="${escapeHtml(draw.familyCode || '')}" />
           </div>
           <div class="field-grid-2">
             <div>
               <label class="field-label">Fecha visible</label>
-              <input id="editDrawDate" class="input-christmas" value="${draw.dateText || ''}" />
+              <input id="editDrawDate" class="input-christmas" value="${escapeHtml(draw.dateText || '')}" />
             </div>
             <div>
               <label class="field-label">Presupuesto máximo</label>
-              <input id="editDrawBudget" class="input-christmas" value="${draw.budget || ''}" />
+              <input id="editDrawBudget" class="input-christmas" value="${escapeHtml(draw.budget || '')}" />
             </div>
           </div>
           <div class="field-group">
@@ -2006,7 +2543,7 @@ function renderAdminScreen() {
                   ${getAvatarDisplay(p)}
                 </div>
                 <div>
-                  <div style="font-weight:800;font-size:1rem;">${p.name}</div>
+                  <div style="font-weight:800;font-size:1rem;">${escapeHtml(p.name)}</div>
                   <span class="status-tag ${p.pin ? 'tag-locked' : 'tag-new'}" style="margin-top:3px;">
                     ${p.pin ? '🔒 Con PIN' : '⚪ Sin PIN'}
                   </span>
@@ -2030,10 +2567,10 @@ function renderAdminScreen() {
             ${isEditingThisAvatar ? `
               <div style="padding-top:10px;border-top:2px dashed var(--border);">
                 <div style="font-weight:800;font-size:0.86rem;color:var(--pine);margin-bottom:8px;">
-                  Elige tu avatar o inicial para ${p.name}:
+                  Elige tu avatar o inicial para ${escapeHtml(p.name)}:
                 </div>
                 <button type="button" class="btn-3d-pill ${!p.avatar ? 'red-solid' : ''}" style="width:100%;margin-bottom:8px;" onclick="window.app.setParticipantAvatarByAdmin('${p.id}', null)">
-                  🔤 Dejar solo inicial (${p.name.trim().charAt(0).toUpperCase()})
+                  🔤 Dejar solo inicial (${escapeHtml(p.name.trim().charAt(0).toUpperCase())})
                 </button>
                 ${buildCategorizedAvatarPickerHtml(p.avatar, 'setParticipantAvatarByAdmin', p.id)}
               </div>
@@ -2047,12 +2584,12 @@ function renderAdminScreen() {
           <div class="section-label">➕ Añadir Nuevo Participante</div>
           <div class="field-group">
             <label class="field-label">Nombre del familiar o amigo</label>
-            <input id="newMemberName" class="input-christmas" placeholder="Ej. Primo Sergio" />
+            <input id="newMemberName" class="input-christmas" placeholder="Ej. Primo Sergio" value="${escapeHtml(newMemberNameDraft)}" oninput="window.app.setNewMemberDraft(this.value)" />
           </div>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
             <button type="button" class="btn-3d-pill" onclick="window.app.toggleNewMemberAvatarPicker()">
-              🎭 Avatar: ${newParticipantAvatar ? getCelebNameLabel(newParticipantAvatar, 'A') : 'Inicial automática'}
+              🎭 Avatar: ${escapeHtml(newParticipantAvatar ? getCelebNameLabel(newParticipantAvatar, 'A') : 'Inicial automática')}
             </button>
             ${newParticipantAvatar ? `
               <button type="button" class="btn-3d-pill red" onclick="window.app.pickNewMemberAvatar(null)">
@@ -2092,10 +2629,10 @@ function renderAdminScreen() {
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;">
             <div>
               <div style="font-weight:800;font-size:1.05rem;color:${isEditing ? 'var(--crimson)' : 'var(--ink)'};">
-                ${d.title}
+                ${escapeHtml(d.title)}
               </div>
               <div style="font-size:0.8rem;color:var(--muted);margin-top:3px;">
-                Código: <strong>${d.familyCode || '—'}</strong> · ${d.participants.length} personas · ${statusText}
+                Código: <strong>${escapeHtml(d.familyCode || '—')}</strong> · ${(d.participants || []).length} personas · ${statusText}
               </div>
             </div>
             ${isEditing ? `<span class="status-tag tag-new">📍 Sorteo abierto</span>` : ''}
@@ -2179,6 +2716,7 @@ function renderAdminScreen() {
   }
 
   document.getElementById('mainView').innerHTML = `
+    ${cloudBarHtml}
     ${adminTabsHtml}
     ${tabBodyHtml}
   `;
@@ -2274,8 +2812,14 @@ window.app = {
   },
 
   setAvatarFolder(folderId) {
+    const memberInput = document.getElementById('newMemberName');
+    if (memberInput) newMemberNameDraft = memberInput.value;
     activeAvatarFolder = folderId;
     renderAll();
+  },
+
+  setNewMemberDraft(val) {
+    newMemberNameDraft = val;
   },
 
   revealMyTarget() {
@@ -2300,8 +2844,10 @@ window.app = {
   addWish() {
     const titleEl = document.getElementById('wishTitle');
     const noteEl = document.getElementById('wishNote');
+    const urlEl = document.getElementById('wishUrl');
     const title = titleEl?.value.trim();
     const note = noteEl?.value.trim() || '';
+    const url = normalizeWishUrl(urlEl?.value || '');
     if (!title) {
       showToast('✍️ Escribe primero un deseo');
       return;
@@ -2309,10 +2855,54 @@ window.app = {
     const draw = getCurrentDraw();
     const user = draw?.participants.find(p => p.id === selectedUserId);
     if (!user) return;
-    user.wishes.push({ title, note });
+    if (!Array.isArray(user.wishes)) user.wishes = [];
+    user.wishes.push({ title, note, url });
+    showWishUrlField = false;
     saveState();
     renderDashboardScreen();
     showToast('🎁 Deseo añadido a tu carta');
+  },
+
+  toggleWishUrlInput() {
+    // Mantiene lo que el usuario ya hubiera escrito en título y nota antes de desplegar el campo URL
+    const prevTitle = document.getElementById('wishTitle')?.value || '';
+    const prevNote = document.getElementById('wishNote')?.value || '';
+    showWishUrlField = !showWishUrlField;
+    renderDashboardScreen();
+    const tEl = document.getElementById('wishTitle');
+    const nEl = document.getElementById('wishNote');
+    if (tEl) tEl.value = prevTitle;
+    if (nEl) nEl.value = prevNote;
+    if (showWishUrlField) {
+      document.getElementById('wishUrl')?.focus();
+    }
+  },
+
+  addNoWish() {
+    const input = document.getElementById('noWishText');
+    const text = input?.value.trim();
+    if (!text) {
+      showToast('✍️ Escribe primero qué prefieres evitar');
+      return;
+    }
+    const draw = getCurrentDraw();
+    const user = draw?.participants.find(p => p.id === selectedUserId);
+    if (!user) return;
+    if (!Array.isArray(user.noWishes)) user.noWishes = [];
+    user.noWishes.push(text);
+    saveState();
+    renderDashboardScreen();
+    showToast('🚫 Añadido a tu lista de cosas que no quieres');
+  },
+
+  removeNoWish(idx) {
+    const draw = getCurrentDraw();
+    const user = draw?.participants.find(p => p.id === selectedUserId);
+    if (!user || !Array.isArray(user.noWishes)) return;
+    user.noWishes.splice(idx, 1);
+    saveState();
+    renderDashboardScreen();
+    showToast('🗑️ Elemento quitado');
   },
 
   removeWish(idx) {
@@ -2342,6 +2932,7 @@ window.app = {
     const oldUser = oldDraw?.participants.find(p => p.id === selectedUserId);
 
     currentDrawId = drawId;
+    hasAppliedUrlDraw = true;
     if (targetDraw.status === 'archived') {
       currentScreen = 'grid';
       selectedUserId = null;
@@ -2423,10 +3014,13 @@ window.app = {
     enteredAdminPin += digit;
     updateAdminPinDotsOnly();
     if (enteredAdminPin.length === 4) {
+      const attempt = enteredAdminPin.trim();
       setTimeout(() => {
-        if (enteredAdminPin === adminPinCode) {
+        const expected = String(adminPinCode || '2512').trim();
+        if (attempt === expected) {
           enteredAdminPin = '';
-          adminTab = 'current';
+          // Si entramos desde "Acceso solo por invitación" (sin sorteo abierto), abrir directo Org. General
+          adminTab = getCurrentDraw() ? 'current' : 'draws';
           currentScreen = 'admin';
           renderAll();
         } else {
@@ -2447,6 +3041,58 @@ window.app = {
   clearAdminPin() {
     enteredAdminPin = '';
     updateAdminPinDotsOnly();
+  },
+
+  async forceCloudSync() {
+    await saveState();
+    renderAdminScreen();
+    showToast(cloudStatus === 'connected' ? '☁️ Sincronizado con Firebase' : '⚠️ No se pudo conectar con Firebase');
+  },
+
+  toggleAvoidLastYear(checked) {
+    const draw = getCurrentDraw();
+    if (!draw) return;
+    draw.avoidLastYear = Boolean(checked);
+    saveState();
+    renderAdminScreen();
+    showToast(draw.avoidLastYear ? '✅ Bloqueo del año anterior activado' : '⚪ Bloqueo del año anterior desactivado');
+  },
+
+  togglePrevYearPairsView() {
+    showPrevYearPairs = !showPrevYearPairs;
+    renderAdminScreen();
+  },
+
+  addExclusionPair() {
+    const draw = getCurrentDraw();
+    if (!draw) return;
+    const idA = document.getElementById('exclSelectA')?.value;
+    const idB = document.getElementById('exclSelectB')?.value;
+    if (!idA || !idB || idA === idB) {
+      showToast('⚠️ Elige dos personas distintas');
+      return;
+    }
+    if (!Array.isArray(draw.exclusions)) draw.exclusions = [];
+    const exists = draw.exclusions.some(
+      pair => (pair[0] === idA && pair[1] === idB) || (pair[0] === idB && pair[1] === idA)
+    );
+    if (exists) {
+      showToast('ℹ️ Esa pareja ya estaba bloqueada');
+      return;
+    }
+    draw.exclusions.push([idA, idB]);
+    saveState();
+    renderAdminScreen();
+    showToast('🚫 Pareja bloqueada para el sorteo');
+  },
+
+  removeExclusionPair(idx) {
+    const draw = getCurrentDraw();
+    if (!draw || !Array.isArray(draw.exclusions)) return;
+    draw.exclusions.splice(idx, 1);
+    saveState();
+    renderAdminScreen();
+    showToast('🗑️ Bloqueo eliminado');
   },
 
   copyWhatsappLink(drawId) {
@@ -2473,19 +3119,71 @@ window.app = {
       showToast('⚠️ Se necesitan al menos 2 participantes');
       return;
     }
-    const shuffled = [...draw.participants].sort(() => Math.random() - 0.5);
-    for (let i = 0; i < shuffled.length; i++) {
-      const giver = shuffled[i];
-      const receiver = shuffled[(i + 1) % shuffled.length];
-      const realUser = draw.participants.find(p => p.id === giver.id);
-      realUser.targetId = receiver.id;
-      realUser.revealed = false;
+
+    const ids = draw.participants.map(p => p.id);
+    const forbidden = new Set();
+
+    // 1. Prohibir regalarse a uno mismo
+    ids.forEach(id => forbidden.add(`${id}->${id}`));
+
+    // 2. Prohibir parejas bloqueadas manualmente (bidireccional)
+    (draw.exclusions || []).forEach(([a, b]) => {
+      forbidden.add(`${a}->${b}`);
+      forbidden.add(`${b}->${a}`);
+    });
+
+    // 3. Prohibir emparejamientos del año anterior (mismo Código de Familia)
+    if (draw.avoidLastYear !== false) {
+      const prevPairs = getPreviousYearPairsForDraw(draw);
+      prevPairs.forEach(pair => {
+        const giver = draw.participants.find(p => p.name.trim().toLowerCase() === pair.giverName);
+        const receiver = draw.participants.find(p => p.name.trim().toLowerCase() === pair.receiverName);
+        if (giver && receiver) {
+          forbidden.add(`${giver.id}->${receiver.id}`);
+        }
+      });
     }
+
+    // Buscador con backtracking + aleatorización y tope de seguridad para evitar bloqueos del navegador
+    const assignment = {};
+    const usedReceivers = new Set();
+    const giversOrder = [...ids].sort(() => Math.random() - 0.5);
+    let steps = 0;
+    const MAX_STEPS = 50000;
+
+    function backtrack(index) {
+      if (++steps > MAX_STEPS) return false;
+      if (index === giversOrder.length) return true;
+      const giverId = giversOrder[index];
+      const candidates = ids
+        .filter(rId => !usedReceivers.has(rId) && !forbidden.has(`${giverId}->${rId}`))
+        .sort(() => Math.random() - 0.5);
+
+      for (const rId of candidates) {
+        assignment[giverId] = rId;
+        usedReceivers.add(rId);
+        if (backtrack(index + 1)) return true;
+        usedReceivers.delete(rId);
+        delete assignment[giverId];
+      }
+      return false;
+    }
+
+    const found = backtrack(0);
+    if (!found) {
+      showToast('⚠️ Imposible sortear con tantos bloqueos. Quita alguna exclusión o añade participantes.');
+      return;
+    }
+
+    draw.participants.forEach(p => {
+      p.targetId = assignment[p.id];
+      p.revealed = false;
+    });
     draw.status = 'drawn';
     saveState();
     launchConfetti();
     renderAll();
-    showToast('🎉 ¡Sorteo realizado en directo! Ya pueden abrir sus sobres.');
+    showToast('🎉 ¡Sorteo realizado respetando todos los bloqueos!');
   },
 
   toggleCountdownMode() {
@@ -2518,7 +3216,7 @@ window.app = {
     draw.familyCode = famCode || draw.familyCode;
     draw.dateText = dateText || draw.dateText;
     draw.budget = budget || draw.budget;
-    if (cdVal) draw.countdownIso = cdVal + ':00';
+    if (cdVal) draw.countdownIso = cdVal.length === 16 ? cdVal + ':00' : cdVal;
 
     saveState();
     renderAll();
@@ -2541,11 +3239,15 @@ window.app = {
   },
 
   toggleNewMemberAvatarPicker() {
+    const input = document.getElementById('newMemberName');
+    if (input) newMemberNameDraft = input.value;
     showNewParticipantAvatarPicker = !showNewParticipantAvatarPicker;
     renderAdminScreen();
   },
 
   pickNewMemberAvatar(avatarId) {
+    const input = document.getElementById('newMemberName');
+    if (input) newMemberNameDraft = input.value;
     newParticipantAvatar = avatarId;
     showNewParticipantAvatarPicker = false;
     renderAdminScreen();
@@ -2553,7 +3255,7 @@ window.app = {
 
   addParticipant() {
     const input = document.getElementById('newMemberName');
-    const name = input?.value.trim();
+    const name = (input ? input.value : newMemberNameDraft).trim();
     if (!name) {
       showToast('✍️ Escribe el nombre del participante');
       return;
@@ -2567,9 +3269,11 @@ window.app = {
       pin: null,
       targetId: null,
       revealed: false,
-      wishes: []
+      wishes: [],
+      noWishes: []
     });
     newParticipantAvatar = null;
+    newMemberNameDraft = '';
     showNewParticipantAvatarPicker = false;
     saveState();
     renderAdminScreen();
@@ -2589,14 +3293,24 @@ window.app = {
   removeParticipant(userId) {
     const draw = getCurrentDraw();
     if (!draw) return;
+    const hadBrokenTarget = draw.participants.some(p => p.targetId === userId);
     draw.participants = draw.participants.filter(p => p.id !== userId);
+    draw.participants.forEach(p => {
+      if (p.targetId === userId) p.targetId = null;
+    });
+    if (Array.isArray(draw.exclusions)) {
+      draw.exclusions = draw.exclusions.filter(pair => pair[0] !== userId && pair[1] !== userId);
+    }
     saveState();
     renderAdminScreen();
-    showToast('🗑️ Participante eliminado');
+    showToast(hadBrokenTarget && draw.status === 'drawn'
+      ? '🗑️ Eliminado. Repite el sorteo en "Sorteo Actual" para reasignar parejas.'
+      : '🗑️ Participante eliminado');
   },
 
   selectDrawInAdmin(drawId) {
     currentDrawId = drawId;
+    hasAppliedUrlDraw = true;
     adminTab = 'current';
     confirmDeleteDrawId = null;
     renderAll();
@@ -2626,7 +3340,7 @@ window.app = {
     draws = draws.filter(d => d.id !== drawId);
     confirmDeleteDrawId = null;
     if (currentDrawId === drawId) {
-      currentDrawId = draws[0]?.id || null;
+      currentDrawId = null;
     }
     saveState();
     renderAll();
@@ -2653,22 +3367,26 @@ window.app = {
       pin: null,
       targetId: null,
       revealed: false,
-      wishes: []
+      wishes: [],
+      noWishes: []
     }));
 
     const newDraw = {
-      id: 'sorteo_' + Date.now(),
+      id: generateSecureDrawId(),
       familyCode,
       title,
       dateText,
       countdownIso: '2026-12-24T20:00:00',
       budget,
       status: 'countdown',
+      avoidLastYear: true,
+      exclusions: [],
       participants
     };
 
     draws.unshift(newDraw);
     currentDrawId = newDraw.id;
+    hasAppliedUrlDraw = true;
     adminTab = 'current';
     saveState();
     renderAll();
