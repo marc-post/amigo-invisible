@@ -1092,6 +1092,18 @@
     border: 2px solid var(--gold);
     background: #FFFFFF;
   }
+  .avatar-upload-box {
+    background: var(--paper);
+    border: 2px dashed var(--gold);
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+  }
 
   .admin-participant-card {
     background: var(--paper);
@@ -1210,13 +1222,13 @@ const AVATAR_FOLDERS_BACKUP_KEY = 'amigo_invisible_avatar_folders_v4';
 const AVATAR_CATALOG_BACKUP_KEY = 'amigo_invisible_avatar_catalog_v4';
 
 const DEFAULT_AVATAR_FOLDERS = [
-  { id: 'escudos', label: '⚽ Escudos fútbol' },
-  { id: 'banderas', label: '🏳️ Banderas' },
-  { id: 'futbolistas', label: '🏃 Deporte' },
-  { id: 'famoseo', label: '📺 Famoseo' },
-  { id: 'cantantes', label: '🎤 Cantantes' },
   { id: 'actores', label: '🎬 Actores' },
-  { id: 'disney', label: '🏰 Disney' }
+  { id: 'banderas', label: '🏳️ Banderas' },
+  { id: 'cantantes', label: '🎤 Cantantes' },
+  { id: 'futbolistas', label: '🏃 Deporte' },
+  { id: 'disney', label: '🏰 Disney' },
+  { id: 'escudos', label: '⚽ Escudos fútbol' },
+  { id: 'famoseo', label: '📺 Famoseo' }
 ];
 
 const DEFAULT_AVATAR_CATALOG = [
@@ -1448,11 +1460,25 @@ let draws = safeReadJson(LOCAL_BACKUP_KEY, defaultDraws);
 if (!Array.isArray(draws)) draws = defaultDraws;
 let adminPinCode = localStorage.getItem(ADMIN_PASS_KEY) || '2512';
 
-// Catálogo dinámico de carpetas y avatares (sincronizado con Firebase)
+// Catálogo dinámico de carpetas y avatares (orden alfabético ignorando emojis iniciales)
+function getCategorySortKey(label) {
+  const raw = String(label || '').trim();
+  const stripped = raw.replace(/^[^\p{L}\p{N}]+/u, '').trim();
+  return stripped || raw;
+}
+
+function sortAvatarFolders() {
+  avatarFolders.sort((a, b) =>
+    getCategorySortKey(a.label).localeCompare(getCategorySortKey(b.label), 'es', { sensitivity: 'base' })
+  );
+}
+
 let avatarFolders = safeReadJson(AVATAR_FOLDERS_BACKUP_KEY, DEFAULT_AVATAR_FOLDERS.map(f => ({ ...f })));
 if (!Array.isArray(avatarFolders) || avatarFolders.length === 0) {
   avatarFolders = DEFAULT_AVATAR_FOLDERS.map(f => ({ ...f }));
 }
+sortAvatarFolders();
+
 let avatarCatalog = safeReadJson(AVATAR_CATALOG_BACKUP_KEY, DEFAULT_AVATAR_CATALOG.map(c => ({ ...c })));
 if (!Array.isArray(avatarCatalog)) {
   avatarCatalog = DEFAULT_AVATAR_CATALOG.map(c => ({ ...c }));
@@ -1486,7 +1512,11 @@ let justJoinedWelcome = false;
 let confirmDeleteDrawId = null;
 let confirmDeleteCategoryId = null;
 let confirmResetCatalog = false;
-let isImportingDisney = false;
+let newAvatarNameDraft = '';
+let newAvatarUrlDraft = '';
+let newAvatarUploadDataUrl = '';
+let newAvatarFolderDraft = '';
+let newAvatarKindDraft = 'face';
 let adminEditingAvatarUserId = null;
 let newParticipantAvatar = null;
 let newMemberNameDraft = '';
@@ -1750,6 +1780,7 @@ async function initCloudStorage() {
           }
           if (Array.isArray(cloudData.avatarFolders) && cloudData.avatarFolders.length > 0) {
             avatarFolders = cloudData.avatarFolders;
+            sortAvatarFolders();
             localStorage.setItem(AVATAR_FOLDERS_BACKUP_KEY, JSON.stringify(avatarFolders));
           }
           if (Array.isArray(cloudData.avatarCatalog)) {
@@ -2739,6 +2770,7 @@ function renderAdminScreen() {
 
   /* --- PESTAÑA ADMIN 3: GESTOR DE AVATARES Y CATEGORÍAS --- */
   if (adminTab === 'avatars') {
+    sortAvatarFolders();
     ensureValidActiveFolder();
 
     const categoryRowsHtml = avatarFolders.map(f => {
@@ -2770,8 +2802,11 @@ function renderAdminScreen() {
     }).join('');
 
     const folderSelectOpts = avatarFolders.map(f =>
-      `<option value="${f.id}" ${f.id === activeAvatarFolder ? 'selected' : ''}>${escapeHtml(f.label)}</option>`
+      `<option value="${f.id}" ${f.id === (newAvatarFolderDraft || activeAvatarFolder) ? 'selected' : ''}>${escapeHtml(f.label)}</option>`
     ).join('');
+
+    const previewSrc = newAvatarUploadDataUrl || normalizeWishUrl(newAvatarUrlDraft);
+    const previewExtraClass = newAvatarKindDraft === 'crest' ? 'is-crest' : (newAvatarKindDraft === 'flag' ? 'is-flag' : 'is-face');
 
     const folderTabsHtml = avatarFolders.map(f => `
       <button type="button" class="folder-tab-btn ${activeAvatarFolder === f.id ? 'active' : ''}" onclick="window.app.setAvatarFolder('${f.id}')">
@@ -2821,61 +2856,76 @@ function renderAdminScreen() {
         <div class="section-label">✨ Añadir Nuevo Avatar</div>
         <div class="field-group">
           <label class="field-label">Nombre del avatar</label>
-          <input id="newAvatarName" class="input-christmas" placeholder="Ej. Stitch, Rafa, Pikachu..." />
+          <input id="newAvatarName" class="input-christmas" placeholder="Ej. Stitch, Rafa, Pikachu..." value="${escapeHtml(newAvatarNameDraft)}" oninput="window.app.setNewAvatarDraft('name', this.value)" />
         </div>
+
+        <div class="avatar-upload-box">
+          <input id="newAvatarFileInput" type="file" accept="image/*" style="display:none;" onchange="window.app.handleNewAvatarFile(event)" />
+          ${previewSrc ? `
+            <div class="avatar-circle has-photo" style="width:74px;height:74px;border:3px solid var(--gold);">
+              <img class="celeb-img ${previewExtraClass}" src="${escapeHtml(previewSrc)}" alt="Vista previa" />
+            </div>
+          ` : `
+            <div style="font-size:1.8rem;">🖼️</div>
+          `}
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+            <button type="button" class="btn-3d-pill green-solid" onclick="document.getElementById('newAvatarFileInput').click()">
+              📷 ${newAvatarUploadDataUrl ? 'Cambiar imagen subida' : 'Subir imagen desde móvil o PC'}
+            </button>
+            ${newAvatarUploadDataUrl ? `
+              <button type="button" class="btn-3d-pill red" onclick="window.app.clearUploadedAvatar()">
+                ✕ Quitar imagen
+              </button>
+            ` : ''}
+          </div>
+          <div style="font-size:0.75rem;color:var(--muted);">
+            ${newAvatarUploadDataUrl
+              ? '✅ Imagen lista y optimizada para la nube.'
+              : 'Se optimiza automáticamente para guardar en Firebase, o puedes pegar una URL abajo.'}
+          </div>
+        </div>
+
         <div class="field-group">
-          <label class="field-label">URL directa de la imagen (PNG, JPG o WEBP)</label>
-          <input id="newAvatarUrl" type="url" class="input-christmas" placeholder="https://..." />
+          <label class="field-label">O pega una URL directa de imagen (opcional si subiste foto)</label>
+          <input id="newAvatarUrl" type="url" class="input-christmas" placeholder="https://..." value="${escapeHtml(newAvatarUrlDraft)}" oninput="window.app.setNewAvatarDraft('url', this.value)" />
         </div>
         <div class="field-grid-2">
           <div>
             <label class="field-label">Categoría</label>
-            <select id="newAvatarFolder" class="input-christmas">${folderSelectOpts}</select>
+            <select id="newAvatarFolder" class="input-christmas" onchange="window.app.setNewAvatarDraft('folder', this.value)">${folderSelectOpts}</select>
           </div>
           <div>
             <label class="field-label">Tipo de encuadre</label>
-            <select id="newAvatarKind" class="input-christmas">
-              <option value="face">🙂 Retrato / Cara (zoom centrado)</option>
-              <option value="crest">🛡️ Escudo / PNG transparente</option>
-              <option value="flag">🏳️ Bandera / Imagen completa</option>
+            <select id="newAvatarKind" class="input-christmas" onchange="window.app.setNewAvatarDraft('kind', this.value)">
+              <option value="face" ${newAvatarKindDraft === 'face' ? 'selected' : ''}>🙂 Retrato / Cara (zoom centrado)</option>
+              <option value="crest" ${newAvatarKindDraft === 'crest' ? 'selected' : ''}>🛡️ Escudo / PNG transparente</option>
+              <option value="flag" ${newAvatarKindDraft === 'flag' ? 'selected' : ''}>🏳️ Bandera / Imagen completa</option>
             </select>
           </div>
         </div>
         <button type="button" class="btn-big btn-red" onclick="window.app.createAvatarInCatalog()">
           ➕ Añadir Avatar a la Galería
         </button>
-
-        <div style="margin-top:14px;padding-top:14px;border-top:2px dashed var(--border);">
-          <button type="button" class="btn-big btn-gold" onclick="window.app.importDisneyPack()" ${isImportingDisney ? 'disabled' : ''}>
-            ${isImportingDisney ? '⏳ Importando personajes de Disney...' : '🏰 Importar 16 personajes más de Disney automáticamente'}
-          </button>
-          <p style="font-size:0.76rem;color:var(--muted);margin-top:6px;text-align:center;">
-            Carga automáticamente Minnie, Donald, Goofy, Stitch, Simba, Elsa, Olaf, Buzz, Woody, Dory, Moana y más desde Disney API.
-          </p>
-        </div>
       </div>
 
       <div class="admin-section">
-        <div class="section-label">🎭 Galería Actual (${avatarCatalog.length} avatares)</div>
+        <div class="section-label">🖼️ Galería de Avatares (${avatarCatalog.length})</div>
         <p style="font-size:0.82rem;color:var(--muted);margin-bottom:8px;">
-          Elige una categoría para ver sus avatares y eliminar los que no quieras mostrar:
+          Selecciona una categoría para ver o eliminar sus avatares:
         </p>
         <div class="folder-tabs">${folderTabsHtml}</div>
         <div class="celeb-picker-grid">${adminAvatarGridHtml}</div>
 
         <div style="margin-top:16px;padding-top:14px;border-top:2px dashed var(--border);text-align:center;">
           ${confirmResetCatalog ? `
-            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-              <button type="button" class="btn-3d-pill red-solid" onclick="window.app.confirmRestoreDefaultCatalog()">
-                ⚠️ Sí, restaurar avatares de fábrica
-              </button>
-              <button type="button" class="btn-3d-pill" onclick="window.app.cancelRestoreDefaultCatalog()">
-                Cancelar
-              </button>
+            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center;">
+              <span style="font-size:0.82rem;font-weight:800;color:var(--crimson);">¿Restaurar todo el catálogo de fábrica?</span>
+              <button type="button" class="btn-3d-pill red-solid" onclick="window.app.confirmRestoreDefaultCatalog()">⚠️ Sí, restaurar</button>
+              <button type="button" class="btn-3d-pill" onclick="window.app.cancelRestoreDefaultCatalog()">Cancelar</button>
             </div>
           ` : `
-            <button type="button" class="btn-3d-pill" onclick="window.app.askRestoreDefaultCatalog()">
-              🔄 Restaurar catálogo de avatares por defecto
+            <button type="button" class="btn-3d-pill gold" onclick="window.app.askRestoreDefaultCatalog()">
+              🔄 Restaurar avatares por defecto
             </button>
           `}
         </div>
@@ -2885,65 +2935,71 @@ function renderAdminScreen() {
 
   /* --- PESTAÑA ADMIN 4: ORGANIZACIÓN GENERAL (TODOS LOS SORTEOS Y CLAVE) --- */
   if (adminTab === 'draws') {
-    const drawsListHtml = draws.map(d => {
-      const isEditing = draw && d.id === draw.id;
-      const isConfirming = confirmDeleteDrawId === d.id;
-      const statusText = d.status === 'countdown' ? '⏳ Cuenta atrás' : (d.status === 'drawn' ? '✨ Sorteado' : '📜 Histórico');
+    const drawsCardsHtml = draws.length > 0
+      ? draws.map(d => {
+          const isCurrent = d.id === currentDrawId;
+          const isConfirming = confirmDeleteDrawId === d.id;
+          const statusLabel = d.status === 'archived'
+            ? '📜 Histórico'
+            : (d.status === 'drawn' ? '✨ Sorteado' : '⏳ Cuenta atrás');
 
-      return `
-        <div class="admin-draw-card ${isEditing ? 'is-active' : ''}">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;">
-            <div>
-              <div style="font-weight:800;font-size:1.05rem;color:${isEditing ? 'var(--crimson)' : 'var(--ink)'};">
-                ${escapeHtml(d.title)}
+          return `
+            <div class="admin-draw-card ${isCurrent ? 'is-active' : ''}">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;">
+                <div>
+                  <div style="font-weight:800;font-size:1.05rem;color:${isCurrent ? 'var(--crimson)' : 'var(--ink)'};">
+                    ${escapeHtml(d.title)}
+                  </div>
+                  <div style="font-size:0.78rem;color:var(--muted);margin-top:3px;font-weight:700;">
+                    Código Familia: <strong>${escapeHtml(d.familyCode || '—')}</strong> · ${(d.participants || []).length} personas · ${statusLabel}
+                  </div>
+                </div>
+                ${isCurrent ? `<span class="status-tag tag-new">📍 Editando</span>` : ''}
               </div>
-              <div style="font-size:0.8rem;color:var(--muted);margin-top:3px;">
-                Código: <strong>${escapeHtml(d.familyCode || '—')}</strong> · ${(d.participants || []).length} personas · ${statusText}
+
+              <div class="admin-actions-row">
+                <button type="button" class="btn-3d-pill green-solid" onclick="window.app.copyWhatsappLink('${d.id}')">
+                  📲 Link WhatsApp
+                </button>
+                ${!isCurrent ? `
+                  <button type="button" class="btn-3d-pill gold" onclick="window.app.selectDrawInAdmin('${d.id}')">
+                    ✏️ Gestionar
+                  </button>
+                ` : ''}
+                ${d.status !== 'archived' ? `
+                  <button type="button" class="btn-3d-pill" onclick="window.app.archiveDraw('${d.id}')">
+                    📜 Archivar Año
+                  </button>
+                ` : ''}
+                ${isConfirming ? `
+                  <button type="button" class="btn-3d-pill red-solid" onclick="window.app.confirmDeleteDraw('${d.id}')">
+                    ⚠️ Sí, eliminar
+                  </button>
+                  <button type="button" class="btn-3d-pill" onclick="window.app.cancelDeleteDraw()">
+                    Cancelar
+                  </button>
+                ` : `
+                  <button type="button" class="btn-3d-pill red" onclick="window.app.askDeleteDraw('${d.id}')">
+                    🗑️ Eliminar
+                  </button>
+                `}
               </div>
             </div>
-            ${isEditing ? `<span class="status-tag tag-new">📍 Sorteo abierto</span>` : ''}
-          </div>
-
-          <div class="admin-actions-row">
-            <button type="button" class="btn-3d-pill green-solid" onclick="window.app.copyWhatsappLink('${d.id}')">
-              📲 Link WhatsApp
-            </button>
-            ${!isEditing ? `
-              <button type="button" class="btn-3d-pill gold" onclick="window.app.selectDrawInAdmin('${d.id}')">
-                ✏️ Gestionar este
-              </button>` : ''}
-            ${d.status !== 'archived' ? `
-              <button type="button" class="btn-3d-pill" onclick="window.app.archiveDraw('${d.id}')">
-                📜 Archivar Año
-              </button>` : ''}
-            ${isConfirming ? `
-              <button type="button" class="btn-3d-pill red-solid" onclick="window.app.confirmDeleteDraw('${d.id}')">
-                ⚠️ Sí, borrar ahora
-              </button>
-              <button type="button" class="btn-3d-pill" onclick="window.app.cancelDeleteDraw()">
-                Cancelar
-              </button>
-            ` : `
-              <button type="button" class="btn-3d-pill red" onclick="window.app.askDeleteDraw('${d.id}')">
-                🗑️ Eliminar
-              </button>
-            `}
-          </div>
-        </div>
-      `;
-    }).join('');
+          `;
+        }).join('')
+      : `<p style="font-size:0.86rem;color:var(--muted);text-align:center;padding:12px 0;">Todavía no hay sorteos creados.</p>`;
 
     tabBodyHtml = `
       <div class="admin-section">
-        <div class="section-label">🗂️ Todos los Sorteos y Familias</div>
-        ${drawsListHtml || '<p style="color:var(--muted);font-size:0.9rem;">Todavía no hay sorteos creados.</p>'}
+        <div class="section-label">🗂️ Todos los Sorteos / Familias (${draws.length})</div>
+        ${drawsCardsHtml}
       </div>
 
       <div class="admin-section">
-        <div class="section-label">➕ Crear Nuevo Sorteo Familiar</div>
+        <div class="section-label">➕ Crear Nuevo Sorteo (Otra Familia o Nuevo Año)</div>
         <div class="field-group">
           <label class="field-label">Título del sorteo</label>
-          <input id="newDrawTitle" class="input-christmas" placeholder="Ej. Navidad Familia Política 2026" />
+          <input id="newDrawTitle" class="input-christmas" placeholder="Ej. Navidad Familia Política · 2026" />
         </div>
         <div class="field-grid-2">
           <div>
@@ -2952,16 +3008,16 @@ function renderAdminScreen() {
           </div>
           <div>
             <label class="field-label">Presupuesto</label>
-            <input id="newDrawBudget" class="input-christmas" placeholder="Ej. 40€" />
+            <input id="newDrawBudget" class="input-christmas" placeholder="Ej. 35€" />
           </div>
         </div>
         <div class="field-group">
-          <label class="field-label">Fecha de entrega</label>
-          <input id="newDrawDate" class="input-christmas" placeholder="Ej. 6 Enero · Reyes" />
+          <label class="field-label">Fecha de entrega visible</label>
+          <input id="newDrawDate" class="input-christmas" placeholder="Ej. 6 Ene 2027 · Reyes" />
         </div>
         <div class="field-group">
           <label class="field-label">Participantes separados por coma</label>
-          <input id="newDrawMembers" class="input-christmas" placeholder="Ej. Mamá, Papá, Ana, Luis" />
+          <input id="newDrawMembers" class="input-christmas" placeholder="Ej. Marcos, Laura, Abuela, Tío Pepe" />
         </div>
         <button type="button" class="btn-big btn-red" onclick="window.app.createNewDraw()">
           ✨ Crear Nuevo Sorteo Familiar
@@ -2971,8 +3027,8 @@ function renderAdminScreen() {
       <div class="admin-section">
         <div class="section-label">🔐 Clave de Acceso a Organización</div>
         <div class="field-group">
-          <label class="field-label">Código numérico de 4 dígitos (actual: ${adminPinCode})</label>
-          <input id="newAdminPinInput" class="input-christmas" maxlength="4" inputmode="numeric" value="${adminPinCode}" />
+          <label class="field-label">Código numérico de 4 dígitos (actual: ${escapeHtml(adminPinCode)})</label>
+          <input id="newAdminPinInput" class="input-christmas" maxlength="4" inputmode="numeric" value="${escapeHtml(adminPinCode)}" />
         </div>
         <button type="button" class="btn-big btn-green" onclick="window.app.changeAdminPin()">
           💾 Guardar Nueva Clave
@@ -3538,6 +3594,7 @@ window.app = {
     }
     const draw = getCurrentDraw();
     if (!draw) return;
+    if (!Array.isArray(draw.participants)) draw.participants = [];
     draw.participants.push({
       id: 'u_' + Date.now(),
       name,
@@ -3682,6 +3739,70 @@ window.app = {
   },
 
   /* --- GESTIÓN DE CATEGORÍAS Y AVATARES DESDE ORGANIZACIÓN --- */
+  setNewAvatarDraft(field, value) {
+    if (field === 'name') newAvatarNameDraft = value;
+    else if (field === 'url') newAvatarUrlDraft = value;
+    else if (field === 'folder') newAvatarFolderDraft = value;
+    else if (field === 'kind') {
+      newAvatarKindDraft = value;
+      if (newAvatarUploadDataUrl || newAvatarUrlDraft) renderAdminScreen();
+    }
+  },
+
+  clearUploadedAvatar() {
+    newAvatarUploadDataUrl = '';
+    renderAdminScreen();
+  },
+
+  handleNewAvatarFile(event) {
+    const file = event?.target?.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showToast('⚠️ Selecciona un archivo de imagen válido');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const maxSide = 220;
+        let w = img.width;
+        let h = img.height;
+        if (w > maxSide || h > maxSide) {
+          if (w >= h) {
+            h = Math.round((h * maxSide) / w);
+            w = maxSide;
+          } else {
+            w = Math.round((w * maxSide) / h);
+            h = maxSide;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+
+        let compressed = '';
+        try {
+          const webp = canvas.toDataURL('image/webp', 0.82);
+          compressed = webp.startsWith('data:image/webp') ? webp : canvas.toDataURL('image/jpeg', 0.82);
+        } catch (e) {
+          compressed = canvas.toDataURL('image/jpeg', 0.82);
+        }
+        newAvatarUploadDataUrl = compressed;
+        renderAdminScreen();
+        showToast('📷 Imagen cargada y lista para añadir');
+      };
+      img.onerror = () => showToast('⚠️ No se pudo leer esa imagen');
+      img.src = reader.result;
+    };
+    reader.onerror = () => showToast('⚠️ Error al abrir el archivo');
+    reader.readAsDataURL(file);
+  },
+
   createAvatarCategory() {
     const input = document.getElementById('newCategoryLabel');
     const label = (input?.value || '').trim();
@@ -3691,6 +3812,7 @@ window.app = {
     }
     const id = 'cat_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6);
     avatarFolders.push({ id, label });
+    sortAvatarFolders();
     activeAvatarFolder = id;
     saveState();
     renderAdminScreen();
@@ -3707,6 +3829,7 @@ window.app = {
     const folder = avatarFolders.find(f => f.id === folderId);
     if (!folder) return;
     folder.label = newLabel;
+    sortAvatarFolders();
     saveState();
     renderAdminScreen();
     showToast(`✅ Categoría renombrada a "${newLabel}"`);
@@ -3737,18 +3860,18 @@ window.app = {
   },
 
   createAvatarInCatalog() {
-    const name = (document.getElementById('newAvatarName')?.value || '').trim();
-    const rawUrl = (document.getElementById('newAvatarUrl')?.value || '').trim();
-    const folder = document.getElementById('newAvatarFolder')?.value || activeAvatarFolder;
-    const kind = document.getElementById('newAvatarKind')?.value || 'face';
+    const name = (document.getElementById('newAvatarName')?.value ?? newAvatarNameDraft).trim();
+    const rawUrl = (document.getElementById('newAvatarUrl')?.value ?? newAvatarUrlDraft).trim();
+    const folder = document.getElementById('newAvatarFolder')?.value || newAvatarFolderDraft || activeAvatarFolder;
+    const kind = document.getElementById('newAvatarKind')?.value || newAvatarKindDraft || 'face';
 
     if (!name) {
       showToast('✍️ Escribe el nombre del avatar');
       return;
     }
-    const safeUrl = normalizeWishUrl(rawUrl);
-    if (!safeUrl) {
-      showToast('🔗 Pega una URL válida de imagen');
+    const finalImage = newAvatarUploadDataUrl || normalizeWishUrl(rawUrl);
+    if (!finalImage) {
+      showToast('📷 Sube una imagen o pega una URL válida');
       return;
     }
 
@@ -3758,11 +3881,16 @@ window.app = {
       kind,
       name,
       accent: '#B81D24',
-      url: safeUrl
+      url: finalImage
     };
 
     avatarCatalog.unshift(newAvatar);
     activeAvatarFolder = folder;
+    newAvatarNameDraft = '';
+    newAvatarUrlDraft = '';
+    newAvatarUploadDataUrl = '';
+    newAvatarFolderDraft = folder;
+    newAvatarKindDraft = 'face';
     saveState();
     renderAdminScreen();
     showToast(`🎭 Avatar "${name}" añadido a la galería`);
@@ -3782,74 +3910,6 @@ window.app = {
     showToast(`🗑️ Avatar "${found ? found.name : ''}" eliminado`);
   },
 
-  async importDisneyPack() {
-    if (isImportingDisney) return;
-    isImportingDisney = true;
-    renderAdminScreen();
-
-    try {
-      // Asegurar que existe una carpeta Disney
-      let disneyFolder = avatarFolders.find(f => f.id === 'disney' || f.label.toLowerCase().includes('disney'));
-      if (!disneyFolder) {
-        disneyFolder = { id: 'disney', label: '🏰 Disney' };
-        avatarFolders.push(disneyFolder);
-      }
-
-      const disneyNames = [
-        'Mickey Mouse', 'Minnie Mouse', 'Donald Duck', 'Goofy', 'Stitch',
-        'Simba', 'Genie', 'Elsa', 'Olaf', 'Buzz Lightyear', 'Woody',
-        'Mike Wazowski', 'Lightning McQueen', 'Dory', 'Mulan', 'Moana',
-        'Hades', 'Kuzco'
-      ];
-
-      const results = await Promise.all(
-        disneyNames.map(async (name) => {
-          try {
-            const res = await fetch(`https://api.disneyapi.dev/character?name=${encodeURIComponent(name)}`);
-            const json = await res.json();
-            const list = Array.isArray(json.data) ? json.data : (json.data ? [json.data] : []);
-            const match = list.find(c => c?.name?.toLowerCase() === name.toLowerCase()) || list[0];
-            return { name, imageUrl: match?.imageUrl || null };
-          } catch (e) {
-            return { name, imageUrl: null };
-          }
-        })
-      );
-
-      let addedCount = 0;
-      results.forEach((item, idx) => {
-        if (!item.imageUrl) return;
-        const norm = item.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        const alreadyExists = avatarCatalog.some(a =>
-          a.folder === disneyFolder.id &&
-          a.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') === norm
-        );
-        if (!alreadyExists) {
-          avatarCatalog.push({
-            id: `disney_api_${Date.now().toString(36)}_${idx}`,
-            folder: disneyFolder.id,
-            kind: 'crest',
-            name: item.name,
-            accent: '#1D4ED8',
-            url: item.imageUrl
-          });
-          addedCount++;
-        }
-      });
-
-      activeAvatarFolder = disneyFolder.id;
-      await saveState();
-      showToast(addedCount > 0
-        ? `🏰 ¡${addedCount} personajes de Disney importados y guardados!`
-        : '🏰 Todos los personajes de Disney ya estaban en tu galería');
-    } catch (err) {
-      showToast('⚠️ Error al conectar con Disney API');
-    } finally {
-      isImportingDisney = false;
-      renderAdminScreen();
-    }
-  },
-
   askRestoreDefaultCatalog() {
     confirmResetCatalog = true;
     renderAdminScreen();
@@ -3862,6 +3922,7 @@ window.app = {
 
   confirmRestoreDefaultCatalog() {
     avatarFolders = DEFAULT_AVATAR_FOLDERS.map(f => ({ ...f }));
+    sortAvatarFolders();
     avatarCatalog = DEFAULT_AVATAR_CATALOG.map(c => ({ ...c }));
     confirmResetCatalog = false;
     ensureValidActiveFolder();
