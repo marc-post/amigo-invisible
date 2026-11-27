@@ -1083,6 +1083,10 @@
       margin-bottom: 16px;
     }
 
+    .admin-tabs.cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
     .admin-tab-btn {
       background: #FFFFFF;
       border: 2px solid var(--pine);
@@ -1307,13 +1311,81 @@
       gap: 6px;
     }
 
-    /* Pantalla acceso solo por invitación */
+    /* Pantalla portada y acceso por invitación / organizadores */
     .invite-only-box {
       text-align: center;
-      padding: 26px 16px;
+      padding: 22px 16px;
       background: #FFFFFF;
       border: 2.5px dashed var(--gold);
       border-radius: 22px;
+    }
+
+    .landing-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .landing-card {
+      background: #FFFFFF;
+      border: 2.5px solid var(--border);
+      border-radius: 22px;
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 4px 0 #E5DAC6;
+    }
+
+    .landing-card.organizer {
+      background: linear-gradient(180deg, #FFFDF9 0%, var(--gold-light) 100%);
+      border-color: var(--gold);
+      box-shadow: 0 4px 0 #D6B16A;
+    }
+
+    .btn-google {
+      width: 100%;
+      padding: 13px 18px;
+      border-radius: 16px;
+      border: 2px solid #D1D5DB;
+      background: #FFFFFF;
+      color: #1F2937;
+      font-family: inherit;
+      font-size: 0.94rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 0 #CBD5E1;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .btn-google:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #CBD5E1;
+    }
+
+    .organizer-bar {
+      background: #FFFFFF;
+      border: 2px solid var(--pine);
+      border-radius: 18px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      box-shadow: 0 3px 0 #D8E6DD;
+    }
+
+    .migration-banner {
+      background: linear-gradient(180deg, #FFFBEB 0%, #FEF3C7 100%);
+      border: 2px solid var(--gold);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 3px 0 #D6B16A;
     }
 
     /* Toast flotante */
@@ -1359,8 +1431,8 @@
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-    import { getFirestore, doc, setDoc, onSnapshot, getDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+    import { getAuth, signInAnonymously, signInWithCustomToken, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+    import { getFirestore, doc, collection, query, where, setDoc, deleteDoc, onSnapshot, getDoc, getDocs, runTransaction } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
     /* =====================================================================
        CONFIGURACIÓN DE FIREBASE Y CLAVES LOCALES (NO CAMBIAR PARA NO PERDER DATOS)
@@ -1382,6 +1454,10 @@
     const AVATAR_FOLDERS_BACKUP_KEY = 'amigo_invisible_avatar_folders_v4';
     const AVATAR_CATALOG_BACKUP_KEY = 'amigo_invisible_avatar_catalog_v4';
     const AVATAR_REQUESTS_BACKUP_KEY = 'amigo_invisible_avatar_requests_v1';
+
+    // Emails con permisos de super-admin (catálogo global de avatares e importación desde estado_global)
+    // Cambia este email por tu cuenta real de Google (el mismo que pondrás en las reglas de Firestore)
+    const SUPER_ADMIN_EMAILS = ['TU_EMAIL_DE_GOOGLE@gmail.com'];
 
     /* =====================================================================
        CATÁLOGO DE AVATARES Y CARPETAS POR DEFECTO
@@ -1474,29 +1550,6 @@
       { id: 'fam_leticia_sabater', name: 'Leticia Sabater', folder: 'famoseo', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Madrid_Pride_2025_-_Leticia_Sabater_-_250706_210210.jpg?width=300' },
       { id: 'fam_maria_pombo', name: 'María Pombo', folder: 'famoseo', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/25th_Laureus_World_Sports_Awards_-_Red_Carpet_-_Mar%C3%ADa_Pombo_-_240422_191705-2.jpg?width=300' },
       { id: 'fam_mercedes_mila', name: 'Mercedes Milá', folder: 'famoseo', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Mercedes_Mil%C3%A1.jpg?width=300' }
-    ];
-
-    const DEFAULT_DRAWS = [
-      {
-        id: 'familia-2026',
-        title: 'Navidad Familia · 2026',
-        familyCode: 'FAMILIA',
-        dateText: '24 Dic 2026 · Nochebuena',
-        budget: '35€',
-        status: 'countdown',
-        countdownIso: '2026-12-20T20:00',
-        avoidLastYear: true,
-        exclusions: [],
-        anonQuestions: [],
-        participants: [
-          { id: 'p_pepe', name: 'Tío Pepe', pin: null, avatar: null, targetId: null, revealed: false, giftBought: false, wishes: [], noWishes: [], sizes: { clothes: '', shoes: '', color: '' } },
-          { id: 'p_carmen', name: 'Abuela Carmen', pin: null, avatar: 'can_lola_flores', targetId: null, revealed: false, giftBought: false, wishes: [], noWishes: [], sizes: { clothes: '', shoes: '', color: '' } },
-          { id: 'p_lucia', name: 'Prima Lucía', pin: null, avatar: null, targetId: null, revealed: false, giftBought: false, wishes: [], noWishes: [], sizes: { clothes: '', shoes: '', color: '' } },
-          { id: 'p_marcos', name: 'Marcos', pin: '1234', avatar: 'dep_alonso', targetId: 'p_laura', revealed: false, giftBought: false, wishes: [{ id: 'w_demo1', title: 'Libro de cocina casera', note: 'Tapa blanda', url: '' }], noWishes: ['Tazas'], sizes: { clothes: 'L', shoes: '43', color: 'Verde' } },
-          { id: 'p_laura', name: 'Laura', pin: '1234', avatar: 'can_rosalia', targetId: 'p_loly', revealed: false, giftBought: false, wishes: [{ id: 'w_demo2', title: 'Bufanda suave', note: 'Tonos claros', url: '' }], noWishes: [], sizes: { clothes: 'M', shoes: '38', color: 'Beige' } },
-          { id: 'p_loly', name: 'Tía Loly', pin: '1234', avatar: 'dis_mickey', targetId: 'p_marcos', revealed: false, giftBought: false, wishes: [], noWishes: [], sizes: { clothes: '', shoes: '', color: '' } }
-        ]
-      }
     ];
 
     /* =====================================================================
@@ -1596,11 +1649,30 @@
       return changed;
     }
 
-    function getSanitizedDrawsForStorage() {
-      return draws.map(d => ({
+    function stripUndefinedDeep(obj) {
+      try {
+        return JSON.parse(JSON.stringify(obj));
+      } catch (e) {
+        return obj;
+      }
+    }
+
+    function sanitizeSingleDrawForStorage(d) {
+      if (!d || typeof d !== 'object') return null;
+      return stripUndefinedDeep({
         ...d,
         participants: (d.participants || []).map(p => ({
           ...p,
+          avatar: p.avatar ?? null,
+          pin: p.pin ?? null,
+          targetId: p.targetId ?? null,
+          revealed: Boolean(p.revealed),
+          giftBought: Boolean(p.giftBought),
+          sizes: {
+            clothes: String(p.sizes?.clothes || ''),
+            shoes: String(p.sizes?.shoes || ''),
+            color: String(p.sizes?.color || '')
+          },
           wishes: Array.isArray(p.wishes)
             ? p.wishes.filter(w => !isWishEmpty(w)).map(w => ({
                 ...w,
@@ -1613,7 +1685,11 @@
             ? p.noWishes.map(item => String(item || '').trim()).filter(Boolean)
             : []
         }))
-      }));
+      });
+    }
+
+    function getSanitizedDrawsForStorage() {
+      return draws.map(sanitizeSingleDrawForStorage).filter(Boolean);
     }
 
     function copyTextFallback(text) {
@@ -1631,12 +1707,8 @@
     /* =====================================================================
        ESTADO GLOBAL DE LA APLICACIÓN
        ===================================================================== */
-    let draws = safeReadJson(LOCAL_BACKUP_KEY, DEFAULT_DRAWS.map(d => ({ ...d, participants: d.participants.map(p => ({ ...p })) })));
-    if (!Array.isArray(draws) || draws.length === 0) {
-      draws = DEFAULT_DRAWS.map(d => ({ ...d, participants: d.participants.map(p => ({ ...p })) }));
-    }
-
-    let adminPinCode = localStorage.getItem(ADMIN_PASS_KEY) || '2512';
+    // En modelo multi-organizador, los sorteos siempre llegan de Firestore (nunca datos de ejemplo)
+    let draws = [];
 
     let avatarFolders = safeReadJson(AVATAR_FOLDERS_BACKUP_KEY, DEFAULT_AVATAR_FOLDERS.map(f => ({ ...f })));
     if (!Array.isArray(avatarFolders) || avatarFolders.length === 0) {
@@ -1650,8 +1722,7 @@
     }
     sortAvatarCatalog();
 
-    let avatarRequests = safeReadJson(AVATAR_REQUESTS_BACKUP_KEY, []);
-    if (!Array.isArray(avatarRequests)) avatarRequests = [];
+    let avatarRequests = [];
 
     // Mochila limpia por defecto para no exponer grupos de ejemplo
     let myBag = safeReadJson(MY_BAG_KEY, []);
@@ -1660,16 +1731,15 @@
     const urlParams = new URLSearchParams(window.location.search);
     const urlDrawId = urlParams.get('s') || urlParams.get('sorteo') || urlParams.get('draw');
 
-    // Si la URL no trae ?s= o ?sorteo= válido, NO mostramos ningún sorteo (solo invitación)
-    let currentDrawId = (urlDrawId && draws.some(d => d.id === urlDrawId)) ? urlDrawId : null;
-    let hasAppliedUrlDraw = Boolean(currentDrawId);
+    let currentDrawId = null;
+    let hasAppliedUrlDraw = false;
+    let lastGuestDrawId = urlDrawId || null;
 
-    let currentScreen = 'grid'; // 'grid' | 'pin' | 'dashboard' | 'admin_pin' | 'admin'
+    let currentScreen = 'grid'; // 'grid' | 'pin' | 'dashboard' | 'admin'
     let userTab = 'status'; // 'status' | 'mywishes' | 'avatar' | 'multisorteo'
-    let adminTab = 'current'; // 'current' | 'people' | 'avatars' | 'draws'
+    let adminTab = 'draws'; // 'current' | 'people' | 'avatars' | 'draws'
     let selectedUserId = null;
     let enteredPin = '';
-    let enteredAdminPin = '';
     let justJoinedWelcome = false;
 
     let activeAvatarFolder = avatarFolders[0]?.id || 'actores';
@@ -1695,18 +1765,88 @@
     const saveBadgeTimers = {};
     let toastTimer = null;
 
-    // Estado de la nube Firebase
+    // Estado de la nube Firebase (multi-organizador: 1 doc por sorteo + avatares + migración estado_global)
     let auth = null;
     let db = null;
-    let stateDocRef = null;
+    let drawsColRef = null;
+    let avatarsDocRef = null;
+    let avatarRequestsColRef = null;
+    let legacyStateDocRef = null;
+    let stateDocRef = null; // Alias de solo lectura hacia estado_global
     let currentUser = null;
     let cloudStatus = 'connecting'; // 'connecting' | 'connected' | 'error'
     let cloudErrorMsg = '';
     let hasReceivedCloudSnapshot = false;
 
+    let authBootstrapAttempted = false;
+    let pendingOpenAdminAfterLogin = false;
+    let loadingUrlDraw = Boolean(urlDrawId);
+    let urlDrawNotFound = false;
+    let ownerDrawsMap = new Map();
+    let guestDrawsMap = new Map();
+    let unsubOwnerDraws = null;
+    let unsubActiveDraw = null;
+    let activeSubDrawId = null;
+    let unsubAvatars = null;
+    let unsubAvatarRequests = null;
+    let avatarsCloudDocExists = false;
+    let legacyMigrationInfo = null; // { draws, totalLegacyDraws, hasLegacyAvatars, avatarFolders, avatarCatalog, avatarRequests }
+    let isMigratingLegacy = false;
+    let isSigningInGoogle = false;
+    let isSigningInAnon = false;
+    let isExpiringCountdown = false;
+
+    function mergeIncomingDrawPreservingLocalDraft(incoming) {
+      if (!incoming || !incoming.id) return incoming;
+      if (!pendingAutosave || !selectedUserId || currentDrawId !== incoming.id) return incoming;
+      const localDraw = draws.find(d => d.id === incoming.id);
+      const localUser = localDraw?.participants?.find(p => p.id === selectedUserId);
+      if (!localUser || !Array.isArray(incoming.participants)) return incoming;
+      return {
+        ...incoming,
+        participants: incoming.participants.map(p =>
+          p.id === selectedUserId
+            ? { ...p, wishes: localUser.wishes, noWishes: localUser.noWishes, sizes: localUser.sizes }
+            : p
+        )
+      };
+    }
+
+    function isGoogleOrganizer(user = currentUser) {
+      if (!user || user.isAnonymous) return false;
+      return (user.providerData || []).some(p => p.providerId === 'google.com');
+    }
+
+    function isSuperAdminUser(user = currentUser) {
+      if (!isGoogleOrganizer(user)) return false;
+      const email = String(user.email || '').trim().toLowerCase();
+      if (!email) return false;
+      return SUPER_ADMIN_EMAILS.some(e => String(e || '').trim().toLowerCase() === email);
+    }
+
+    function rebuildDrawsArray() {
+      const merged = new Map();
+      ownerDrawsMap.forEach((d, id) => merged.set(id, d));
+      guestDrawsMap.forEach((d, id) => {
+        if (!merged.has(id)) merged.set(id, d);
+      });
+      draws = Array.from(merged.values()).sort((a, b) => (b.updatedAt || b.createdAt || 0) - (a.updatedAt || a.createdAt || 0));
+    }
+
+    function getMyOwnedDraws() {
+      if (!isGoogleOrganizer()) return [];
+      return draws.filter(d => d.ownerId === currentUser.uid);
+    }
+
     function getCurrentDraw() {
       if (!currentDrawId) return null;
       return draws.find(d => d.id === currentDrawId) || null;
+    }
+
+    function getAdminCurrentDraw() {
+      const owned = getMyOwnedDraws();
+      if (!currentDrawId) return null;
+      return owned.find(d => d.id === currentDrawId) || null;
     }
 
     function ensureValidActiveFolder() {
@@ -1796,10 +1936,11 @@
 
     function getLinkedDrawsForUser(user, activeDraw) {
       const fam = (activeDraw?.familyCode || '').trim().toUpperCase();
+      const activeOwner = activeDraw?.ownerId || null;
       return draws.filter(d => {
         if (d.id === activeDraw?.id) return true;
-        if (fam && (d.familyCode || '').trim().toUpperCase() === fam) return true;
         if (myBag.includes(d.id)) return true;
+        if (fam && activeOwner && d.ownerId === activeOwner && (d.familyCode || '').trim().toUpperCase() === fam) return true;
         return false;
       });
     }
@@ -1817,7 +1958,7 @@
       const av = getAvatarById(avatarId);
       if (!av || !av.url) return initial;
       const cls = av.kind === 'badge' ? 'avatar-img badge' : (av.kind === 'flag' ? 'avatar-img flag' : 'avatar-img');
-      return `<img src="${escapeHtml(av.url)}" alt="${escapeHtml(av.name)}" class="${cls}" loading="lazy" onerror="this.parentElement.classList.remove('has-photo');this.replaceWith(document.createTextNode('${initial}'))" />`;
+      return `<img src="${escapeHtml(av.url)}" alt="${escapeHtml(av.name)}" data-initial="${initial}" class="${cls}" loading="lazy" onerror="this.parentElement.classList.remove('has-photo');this.replaceWith(document.createTextNode(this.dataset.initial || '?'))" />`;
     }
 
     function getCelebNameLabel(avatarId, fallbackName) {
@@ -1832,8 +1973,9 @@
       if (!draw) return [];
       const fam = (draw.familyCode || '').trim().toUpperCase();
       if (!fam) return [];
+      const sourceDraws = draw.ownerId ? draws.filter(d => d.ownerId === draw.ownerId) : draws;
       const pairs = [];
-      draws.forEach(other => {
+      sourceDraws.forEach(other => {
         if (other.id === draw.id) return;
         if ((other.familyCode || '').trim().toUpperCase() !== fam) return;
         if (other.status !== 'drawn' && other.status !== 'archived') return;
@@ -1947,7 +2089,7 @@
       };
     }
 
-    function checkCountdownExpiration() {
+    async function checkCountdownExpiration() {
       const draw = getCurrentDraw();
       if (!draw || draw.status !== 'countdown' || !draw.countdownIso) return;
       const parts = getCountdownParts(draw.countdownIso);
@@ -1962,17 +2104,51 @@
       if (sEl) sEl.textContent = parts.secs;
 
       if (parts.expired) {
-        if (cloudStatus === 'connecting' && !hasReceivedCloudSnapshot) return;
-        const missingTargets = (draw.participants || []).some(p => !p.targetId);
-        if (missingTargets && (draw.participants || []).length >= 2) {
-          const res = computeDrawPairings(draw);
-          if (!res.ok) return;
+        if (!currentUser || !hasReceivedCloudSnapshot || !db || !drawsColRef || isExpiringCountdown) return;
+        isExpiringCountdown = true;
+        try {
+          const drawRef = doc(drawsColRef, draw.id);
+          let didWin = false;
+          const finalDraw = await runTransaction(db, async (tx) => {
+            const snap = await tx.get(drawRef);
+            if (!snap.exists()) return null;
+            const fresh = { id: snap.id, ...snap.data() };
+            if (fresh.status !== 'countdown') {
+              return fresh;
+            }
+            const missingTargets = (fresh.participants || []).some(p => !p.targetId);
+            if (missingTargets && (fresh.participants || []).length >= 2) {
+              const res = computeDrawPairings(fresh);
+              if (!res.ok) return null;
+            }
+            fresh.status = 'drawn';
+            const clean = sanitizeSingleDrawForStorage(fresh);
+            clean.id = fresh.id;
+            clean.updatedAt = Date.now();
+            tx.set(drawRef, clean, { merge: true });
+            didWin = true;
+            return clean;
+          });
+
+          if (finalDraw) {
+            if (finalDraw.ownerId && currentUser && finalDraw.ownerId === currentUser.uid) {
+              ownerDrawsMap.set(finalDraw.id, finalDraw);
+            }
+            if (guestDrawsMap.has(finalDraw.id)) {
+              guestDrawsMap.set(finalDraw.id, finalDraw);
+            }
+            rebuildDrawsArray();
+            launchConfetti();
+            renderAll();
+            if (didWin) {
+              showToast('🎉 ¡Llegó la hora! El sorteo ya está disponible.');
+            }
+          }
+        } catch (e) {
+          console.warn('Error al cerrar cuenta atrás en transacción:', e);
+        } finally {
+          isExpiringCountdown = false;
         }
-        draw.status = 'drawn';
-        saveState();
-        launchConfetti();
-        renderAll();
-        showToast('🎉 ¡Llegó la hora! El sorteo ya está disponible.');
       }
     }
 
@@ -2028,6 +2204,236 @@
       return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
     }
 
+    function teardownCloudListeners() {
+      if (unsubOwnerDraws) { try { unsubOwnerDraws(); } catch (e) {} unsubOwnerDraws = null; }
+      if (unsubActiveDraw) { try { unsubActiveDraw(); } catch (e) {} unsubActiveDraw = null; }
+      activeSubDrawId = null;
+      if (unsubAvatars) { try { unsubAvatars(); } catch (e) {} unsubAvatars = null; }
+      if (unsubAvatarRequests) { try { unsubAvatarRequests(); } catch (e) {} unsubAvatarRequests = null; }
+    }
+
+    let legacyRawSnapshotData = null;
+
+    function refreshLegacyMigrationInfo() {
+      if (!legacyRawSnapshotData || !isSuperAdminUser()) {
+        legacyMigrationInfo = null;
+        return;
+      }
+      const allLegacyDraws = Array.isArray(legacyRawSnapshotData.draws) ? legacyRawSnapshotData.draws : [];
+      const pendingDraws = allLegacyDraws.filter(d => d && d.id && !ownerDrawsMap.has(d.id));
+      const legacyFolders = Array.isArray(legacyRawSnapshotData.avatarFolders) && legacyRawSnapshotData.avatarFolders.length > 0
+        ? legacyRawSnapshotData.avatarFolders : null;
+      const legacyCatalog = Array.isArray(legacyRawSnapshotData.avatarCatalog) && legacyRawSnapshotData.avatarCatalog.length > 0
+        ? legacyRawSnapshotData.avatarCatalog : null;
+      const hasPendingAvatars = !avatarsCloudDocExists && Boolean(legacyFolders || legacyCatalog);
+      const legacyReqs = Array.isArray(legacyRawSnapshotData.avatarRequests) ? legacyRawSnapshotData.avatarRequests : [];
+      const existingReqIds = new Set(avatarRequests.map(r => r.id));
+      const pendingReqs = legacyReqs.filter(r => r && r.id && !existingReqIds.has(r.id));
+
+      const hasPending = pendingDraws.length > 0 || hasPendingAvatars || pendingReqs.length > 0;
+      legacyMigrationInfo = {
+        hasPending,
+        draws: pendingDraws,
+        totalLegacyDraws: allLegacyDraws.length,
+        hasPendingAvatars,
+        avatarFolders: legacyFolders,
+        avatarCatalog: legacyCatalog,
+        avatarRequests: pendingReqs
+      };
+    }
+
+    async function checkLegacyMigration() {
+      if (!db || !legacyStateDocRef || !isSuperAdminUser()) {
+        legacyRawSnapshotData = null;
+        legacyMigrationInfo = null;
+        return;
+      }
+      try {
+        const snap = await getDoc(legacyStateDocRef);
+        if (snap.exists()) {
+          legacyRawSnapshotData = snap.data() || null;
+          refreshLegacyMigrationInfo();
+          if (currentScreen === 'admin' && !isUserTypingInInput()) {
+            renderAdminScreen();
+          }
+        } else {
+          legacyRawSnapshotData = null;
+          legacyMigrationInfo = null;
+        }
+      } catch (e) {
+        legacyRawSnapshotData = null;
+        legacyMigrationInfo = null;
+      }
+    }
+
+    function subscribeToAvatars() {
+      if (!avatarsDocRef || !currentUser) return;
+      if (unsubAvatars) { try { unsubAvatars(); } catch (e) {} unsubAvatars = null; }
+      unsubAvatars = onSnapshot(avatarsDocRef, (snap) => {
+        if (snap.exists()) {
+          avatarsCloudDocExists = true;
+          const data = snap.data() || {};
+          if (Array.isArray(data.avatarFolders) && data.avatarFolders.length > 0) {
+            avatarFolders = data.avatarFolders;
+            sortAvatarFolders();
+            localStorage.setItem(AVATAR_FOLDERS_BACKUP_KEY, JSON.stringify(avatarFolders));
+          }
+          if (Array.isArray(data.avatarCatalog) && data.avatarCatalog.length > 0) {
+            avatarCatalog = data.avatarCatalog;
+            sortAvatarCatalog();
+            localStorage.setItem(AVATAR_CATALOG_BACKUP_KEY, JSON.stringify(avatarCatalog));
+          }
+          ensureValidActiveFolder();
+        } else {
+          avatarsCloudDocExists = false;
+        }
+        refreshLegacyMigrationInfo();
+        if (!isUserTypingInInput() && currentScreen !== 'pin') {
+          renderAll();
+        }
+      }, (err) => {
+        console.warn('No se pudo escuchar el catálogo de avatares:', err);
+      });
+    }
+
+    function subscribeToAvatarRequests() {
+      if (!avatarRequestsColRef || !isSuperAdminUser()) {
+        avatarRequests = [];
+        return;
+      }
+      if (unsubAvatarRequests) { try { unsubAvatarRequests(); } catch (e) {} unsubAvatarRequests = null; }
+      unsubAvatarRequests = onSnapshot(avatarRequestsColRef, (qs) => {
+        const list = [];
+        qs.forEach(docSnap => {
+          list.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        avatarRequests = list;
+        refreshLegacyMigrationInfo();
+        if (currentScreen === 'admin' && !isUserTypingInInput()) {
+          renderAdminScreen();
+        }
+      }, (err) => {
+        console.warn('No se pudieron leer las solicitudes de avatares:', err);
+      });
+    }
+
+    function subscribeToSingleDraw(drawId) {
+      if (!drawId || !drawsColRef || !currentUser) return;
+      if (activeSubDrawId === drawId && unsubActiveDraw) return;
+      if (unsubActiveDraw) { try { unsubActiveDraw(); } catch (e) {} unsubActiveDraw = null; }
+      activeSubDrawId = drawId;
+      if (drawId === urlDrawId) {
+        loadingUrlDraw = true;
+        urlDrawNotFound = false;
+      }
+
+      unsubActiveDraw = onSnapshot(doc(drawsColRef, drawId), (snap) => {
+        hasReceivedCloudSnapshot = true;
+        cloudStatus = 'connected';
+        cloudErrorMsg = '';
+        if (drawId === urlDrawId) loadingUrlDraw = false;
+
+        if (snap.exists()) {
+          const data = mergeIncomingDrawPreservingLocalDraft({ id: snap.id, ...snap.data() });
+          guestDrawsMap.set(data.id, data);
+          if (ownerDrawsMap.has(data.id)) ownerDrawsMap.set(data.id, data);
+          rebuildDrawsArray();
+          if (drawId === urlDrawId) urlDrawNotFound = false;
+          if (drawId === urlDrawId && !hasAppliedUrlDraw && currentScreen !== 'admin') {
+            currentDrawId = data.id;
+            lastGuestDrawId = data.id;
+            hasAppliedUrlDraw = true;
+          }
+        } else {
+          guestDrawsMap.delete(drawId);
+          rebuildDrawsArray();
+          if (drawId === urlDrawId) urlDrawNotFound = true;
+          if (currentDrawId === drawId && !ownerDrawsMap.has(drawId)) {
+            currentDrawId = null;
+          }
+        }
+
+        if (!isUserTypingInInput() && currentScreen !== 'pin') {
+          renderAll();
+        }
+        checkCountdownExpiration();
+      }, (err) => {
+        if (drawId === urlDrawId) loadingUrlDraw = false;
+        cloudStatus = 'error';
+        cloudErrorMsg = err?.message || 'Permisos insuficientes en Firestore';
+        if (!isUserTypingInInput() && currentScreen !== 'pin') {
+          renderAll();
+        }
+      });
+    }
+
+    async function loadMyBagDraws(forceRefresh = false) {
+      if (!drawsColRef || !currentUser || myBag.length === 0) return;
+      let changed = false;
+      for (const bagId of myBag) {
+        if (!bagId) continue;
+        if (!forceRefresh && (ownerDrawsMap.has(bagId) || guestDrawsMap.has(bagId))) continue;
+        try {
+          const snap = await getDoc(doc(drawsColRef, bagId));
+          if (snap.exists()) {
+            const data = mergeIncomingDrawPreservingLocalDraft({ id: snap.id, ...snap.data() });
+            guestDrawsMap.set(snap.id, data);
+            changed = true;
+          }
+        } catch (e) {}
+      }
+      if (changed) {
+        rebuildDrawsArray();
+        if (!isUserTypingInInput() && currentScreen !== 'pin') {
+          renderAll();
+        }
+      }
+    }
+
+    function subscribeToOwnerDraws(uid) {
+      if (!drawsColRef || !uid) return;
+      if (unsubOwnerDraws) { try { unsubOwnerDraws(); } catch (e) {} unsubOwnerDraws = null; }
+      const q = query(drawsColRef, where('ownerId', '==', uid));
+      unsubOwnerDraws = onSnapshot(q, (qs) => {
+        hasReceivedCloudSnapshot = true;
+        cloudStatus = 'connected';
+        cloudErrorMsg = '';
+        ownerDrawsMap.clear();
+        qs.forEach(docSnap => {
+          const data = mergeIncomingDrawPreservingLocalDraft({ id: docSnap.id, ...docSnap.data() });
+          ownerDrawsMap.set(docSnap.id, data);
+        });
+        rebuildDrawsArray();
+        refreshLegacyMigrationInfo();
+
+        if (urlDrawId && !hasAppliedUrlDraw && ownerDrawsMap.has(urlDrawId) && currentScreen !== 'admin') {
+          currentDrawId = urlDrawId;
+          lastGuestDrawId = urlDrawId;
+          hasAppliedUrlDraw = true;
+          loadingUrlDraw = false;
+          urlDrawNotFound = false;
+        }
+        if (currentScreen === 'admin') {
+          const owned = getMyOwnedDraws();
+          if (currentDrawId && !owned.some(d => d.id === currentDrawId)) {
+            currentDrawId = owned[0]?.id || null;
+          } else if (!currentDrawId && owned.length > 0 && adminTab !== 'draws' && adminTab !== 'avatars') {
+            currentDrawId = owned[0].id;
+          }
+        }
+
+        if (!isUserTypingInInput() && currentScreen !== 'pin') {
+          renderAll();
+        }
+        checkCountdownExpiration();
+      }, (err) => {
+        cloudStatus = 'error';
+        cloudErrorMsg = err?.message || 'Permisos insuficientes al cargar tus sorteos';
+        if (currentScreen === 'admin') renderAdminScreen();
+      });
+    }
+
     async function initCloudStorage() {
       try {
         let cfg = defaultFirebaseConfig;
@@ -2041,70 +2447,95 @@
         const firebaseApp = initializeApp(cfg);
         auth = getAuth(firebaseApp);
         db = getFirestore(firebaseApp);
-        stateDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'app_state', 'estado_global');
+        drawsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'draws');
+        avatarsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'app_config', 'avatars');
+        avatarRequestsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'avatar_requests');
+        legacyStateDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'app_state', 'estado_global');
+        stateDocRef = legacyStateDocRef;
 
         onAuthStateChanged(auth, async (user) => {
           currentUser = user;
-          if (!user) return;
-          try {
-            onSnapshot(stateDocRef, (snap) => {
-              hasReceivedCloudSnapshot = true;
-              cloudStatus = 'connected';
-              cloudErrorMsg = '';
-              if (snap.exists()) {
-                const cloudData = snap.data() || {};
-                if (Array.isArray(cloudData.draws) && cloudData.draws.length > 0) {
-                  draws = cloudData.draws;
-                  localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(draws));
-                }
-                if (cloudData.adminPinCode) {
-                  adminPinCode = String(cloudData.adminPinCode);
-                  localStorage.setItem(ADMIN_PASS_KEY, adminPinCode);
-                }
-                if (Array.isArray(cloudData.avatarFolders) && cloudData.avatarFolders.length > 0) {
-                  avatarFolders = cloudData.avatarFolders;
-                  sortAvatarFolders();
-                  localStorage.setItem(AVATAR_FOLDERS_BACKUP_KEY, JSON.stringify(avatarFolders));
-                }
-                if (Array.isArray(cloudData.avatarCatalog) && cloudData.avatarCatalog.length > 0) {
-                  avatarCatalog = cloudData.avatarCatalog;
-                  sortAvatarCatalog();
-                  localStorage.setItem(AVATAR_CATALOG_BACKUP_KEY, JSON.stringify(avatarCatalog));
-                }
-                if (Array.isArray(cloudData.avatarRequests)) {
-                  avatarRequests = cloudData.avatarRequests;
-                  localStorage.setItem(AVATAR_REQUESTS_BACKUP_KEY, JSON.stringify(avatarRequests));
-                }
-                ensureValidActiveFolder();
+          teardownCloudListeners();
 
-                if (urlDrawId && !hasAppliedUrlDraw && draws.some(d => d.id === urlDrawId) && currentScreen !== 'admin') {
-                  currentDrawId = urlDrawId;
-                  hasAppliedUrlDraw = true;
-                } else if (currentDrawId && !draws.some(d => d.id === currentDrawId)) {
-                  currentDrawId = null;
+          if (!user) {
+            ownerDrawsMap.clear();
+            legacyRawSnapshotData = null;
+            legacyMigrationInfo = null;
+            avatarRequests = [];
+            rebuildDrawsArray();
+            if (!isSigningInAnon) {
+              isSigningInAnon = true;
+              try {
+                if (!authBootstrapAttempted && typeof window.__initial_auth_token === 'string' && window.__initial_auth_token.trim()) {
+                  authBootstrapAttempted = true;
+                  await signInWithCustomToken(auth, window.__initial_auth_token);
+                } else {
+                  authBootstrapAttempted = true;
+                  await signInAnonymously(auth);
                 }
-              }
-              if (!isUserTypingInInput() && currentScreen !== 'pin' && currentScreen !== 'admin_pin') {
+              } catch (e) {
+                cloudStatus = 'error';
+                cloudErrorMsg = e?.message || 'No se pudo iniciar sesión en Firebase';
                 renderAll();
+              } finally {
+                isSigningInAnon = false;
               }
-              checkCountdownExpiration();
-            }, (err) => {
-              cloudStatus = 'error';
-              cloudErrorMsg = err?.message || 'Permisos insuficientes en Firestore';
-              if (currentScreen === 'admin') renderAdminScreen();
-            });
-          } catch (e) {
-            cloudStatus = 'error';
-            cloudErrorMsg = e?.message || 'Error al escuchar Firestore';
-            if (currentScreen === 'admin') renderAdminScreen();
+            } else {
+              renderAll();
+            }
+            return;
+          }
+
+          cloudStatus = 'connected';
+          cloudErrorMsg = '';
+          subscribeToAvatars();
+
+          if (isGoogleOrganizer(user)) {
+            subscribeToOwnerDraws(user.uid);
+            if (isSuperAdminUser(user)) {
+              subscribeToAvatarRequests();
+              checkLegacyMigration();
+            } else {
+              avatarRequests = [];
+              legacyRawSnapshotData = null;
+              legacyMigrationInfo = null;
+            }
+            if (pendingOpenAdminAfterLogin) {
+              pendingOpenAdminAfterLogin = false;
+              currentScreen = 'admin';
+              const owned = getMyOwnedDraws();
+              if (currentDrawId && owned.some(d => d.id === currentDrawId)) {
+                adminTab = 'current';
+              } else {
+                currentDrawId = owned[0]?.id || null;
+                adminTab = owned.length > 0 ? 'current' : 'draws';
+              }
+            }
+          } else {
+            ownerDrawsMap.clear();
+            avatarRequests = [];
+            legacyRawSnapshotData = null;
+            legacyMigrationInfo = null;
+            rebuildDrawsArray();
+            if (currentScreen === 'admin') {
+              currentScreen = 'grid';
+              currentDrawId = lastGuestDrawId || null;
+            }
+          }
+
+          const targetGuestDrawId = urlDrawId || (currentScreen !== 'admin' ? currentDrawId : null);
+          if (targetGuestDrawId) {
+            subscribeToSingleDraw(targetGuestDrawId);
+          } else {
+            loadingUrlDraw = false;
+            hasReceivedCloudSnapshot = true;
+          }
+
+          loadMyBagDraws();
+          if (!isUserTypingInInput() && currentScreen !== 'pin') {
+            renderAll();
           }
         });
-
-        if (typeof window.__initial_auth_token === 'string' && window.__initial_auth_token.trim()) {
-          await signInWithCustomToken(auth, window.__initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
-        }
       } catch (e) {
         cloudStatus = 'error';
         cloudErrorMsg = e?.message || 'No se pudo conectar con Firebase';
@@ -2112,30 +2543,60 @@
       }
     }
 
-    async function saveState() {
-      const cleanDraws = getSanitizedDrawsForStorage();
-      localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(cleanDraws));
-      localStorage.setItem(ADMIN_PASS_KEY, adminPinCode);
-      localStorage.setItem(AVATAR_FOLDERS_BACKUP_KEY, JSON.stringify(avatarFolders));
-      localStorage.setItem(AVATAR_CATALOG_BACKUP_KEY, JSON.stringify(avatarCatalog));
-      localStorage.setItem(AVATAR_REQUESTS_BACKUP_KEY, JSON.stringify(avatarRequests));
-      if (db && stateDocRef && currentUser) {
+    async function saveDraw(drawObj) {
+      if (!drawObj || !drawObj.id) return;
+      const cleanDraw = sanitizeSingleDrawForStorage(drawObj);
+      if (!cleanDraw) return;
+      cleanDraw.id = drawObj.id;
+      cleanDraw.updatedAt = Date.now();
+      drawObj.updatedAt = cleanDraw.updatedAt;
+
+      if (cleanDraw.ownerId && currentUser && cleanDraw.ownerId === currentUser.uid) {
+        ownerDrawsMap.set(cleanDraw.id, drawObj);
+      }
+      if (guestDrawsMap.has(cleanDraw.id)) {
+        guestDrawsMap.set(cleanDraw.id, drawObj);
+      }
+      rebuildDrawsArray();
+
+      if (db && drawsColRef && currentUser) {
         try {
-          await setDoc(stateDocRef, {
-            draws: cleanDraws,
-            adminPinCode,
-            avatarFolders,
-            avatarCatalog,
-            avatarRequests,
-            updatedAt: Date.now()
-          }, { merge: true });
+          await setDoc(doc(drawsColRef, cleanDraw.id), cleanDraw, { merge: true });
           cloudStatus = 'connected';
           cloudErrorMsg = '';
         } catch (e) {
           cloudStatus = 'error';
-          cloudErrorMsg = e?.message || 'Error al guardar en Firestore';
-          console.warn('Error al sincronizar con la nube:', e);
+          cloudErrorMsg = e?.message || 'Error al guardar el sorteo en Firestore';
+          console.warn('Error al sincronizar sorteo con la nube:', e);
         }
+      }
+    }
+
+    async function saveAvatarCatalogState() {
+      localStorage.setItem(AVATAR_FOLDERS_BACKUP_KEY, JSON.stringify(avatarFolders));
+      localStorage.setItem(AVATAR_CATALOG_BACKUP_KEY, JSON.stringify(avatarCatalog));
+      if (db && avatarsDocRef && isSuperAdminUser()) {
+        try {
+          await setDoc(avatarsDocRef, stripUndefinedDeep({
+            avatarFolders,
+            avatarCatalog,
+            updatedAt: Date.now()
+          }), { merge: true });
+          avatarsCloudDocExists = true;
+          cloudStatus = 'connected';
+          cloudErrorMsg = '';
+        } catch (e) {
+          cloudStatus = 'error';
+          cloudErrorMsg = e?.message || 'Error al guardar el catálogo de avatares';
+          console.warn('Error al guardar avatares:', e);
+        }
+      }
+    }
+
+    async function saveState(targetDraw = null) {
+      const drawToSave = targetDraw || (currentScreen === 'admin' ? getAdminCurrentDraw() : getCurrentDraw());
+      if (drawToSave) {
+        await saveDraw(drawToSave);
       }
     }
 
@@ -2179,7 +2640,7 @@
        ===================================================================== */
     function renderHeader() {
       const header = document.getElementById('headerArea');
-      const draw = getCurrentDraw();
+      const draw = currentScreen === 'admin' ? getAdminCurrentDraw() : getCurrentDraw();
 
       if (!draw) {
         header.innerHTML = `
@@ -2215,7 +2676,17 @@
             👤 Vista usuario
           </button>
           <button type="button" class="btn-3d-pill gold" onclick="window.app.setAdminTab('draws')">
-            🗂️ Organización general
+            🗂️ Mis sorteos
+          </button>
+        `;
+        return;
+      }
+
+      if (isGoogleOrganizer()) {
+        const shortName = (currentUser.displayName || currentUser.email || 'Organizador').split(' ')[0];
+        footer.innerHTML = `
+          <button type="button" class="btn-3d-pill gold" onclick="window.app.openAdminPanel()">
+            🛠️ Mi panel (${escapeHtml(shortName)})
           </button>
         `;
         return;
@@ -2223,7 +2694,7 @@
 
       footer.innerHTML = `
         <button type="button" class="footer-org-btn" onclick="window.app.requestAdminAccess()">
-          🔒 Organización
+          🔒 Organización (Google)
         </button>
       `;
     }
@@ -2234,28 +2705,89 @@
       if (currentScreen === 'grid') renderGridScreen();
       else if (currentScreen === 'pin') renderPinScreen();
       else if (currentScreen === 'dashboard') renderDashboardScreen();
-      else if (currentScreen === 'admin_pin') renderAdminPinScreen();
       else if (currentScreen === 'admin') renderAdminScreen();
     }
 
-    /* --- PANTALLA 1: CUADRÍCULA O ACCESO SOLO POR INVITACIÓN --- */
+    /* --- PANTALLA 1: PORTADA MULTI-ORGANIZADOR O CUADRÍCULA DEL SORTEO --- */
     function renderGridScreen() {
       const container = document.getElementById('appContent');
       const draw = getCurrentDraw();
 
       if (!draw) {
-        container.innerHTML = `
-          <div class="invite-only-box">
-            <div style="font-size:2.6rem;margin-bottom:8px;">🔒</div>
-            <h2 class="christmas-title" style="font-size:1.7rem;margin-bottom:8px;">Acceso solo por invitación</h2>
-            <p style="font-size:0.9rem;color:var(--muted);line-height:1.5;max-width:360px;margin:0 auto;">
-              Para entrar a tu Amigo Invisible necesitas abrir el enlace privado de WhatsApp que te haya enviado el organizador de tu grupo.
-            </p>
-            ${urlDrawId && cloudStatus === 'connecting' ? `
-              <p style="font-size:0.8rem;color:var(--pine);font-weight:800;margin-top:12px;">
-                ⏳ Buscando tu sorteo en la nube...
+        const bagDraws = draws.filter(d => myBag.includes(d.id));
+        const googleGIcon = `<svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>`;
+
+        const urlStatusHtml = urlDrawId
+          ? (loadingUrlDraw
+              ? `<p style="font-size:0.84rem;color:var(--pine);font-weight:800;margin-top:12px;">⏳ Buscando tu sorteo en la nube...</p>`
+              : (urlDrawNotFound
+                  ? `<p style="font-size:0.82rem;color:var(--crimson);font-weight:800;margin-top:12px;background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:12px;padding:8px 10px;">⚠️ No hemos encontrado ningún sorteo con este enlace. Pide al organizador que te lo reenvíe.</p>`
+                  : (cloudStatus === 'error'
+                      ? `<p style="font-size:0.8rem;color:var(--crimson);font-weight:800;margin-top:12px;">⚠️ ${escapeHtml(cloudErrorMsg || 'Error al conectar con la nube')}</p>`
+                      : '')))
+          : '';
+
+        const bagQuickHtml = bagDraws.length > 0 ? `
+          <div style="margin-top:14px;padding-top:12px;border-top:1.5px dashed var(--border);text-align:left;">
+            <div style="font-size:0.78rem;font-weight:900;color:var(--pine);margin-bottom:8px;">🎒 Tus grupos recientes en este dispositivo:</div>
+            ${bagDraws.map(d => `
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--paper);border:1.5px solid var(--border);border-radius:14px;padding:9px 11px;margin-bottom:7px;">
+                <div style="min-width:0;">
+                  <div style="font-weight:900;font-size:0.88rem;color:var(--pine);">${escapeHtml(d.title)}</div>
+                  <div style="font-size:0.74rem;color:var(--muted);">📅 ${escapeHtml(d.dateText || '-')}</div>
+                </div>
+                <button type="button" class="btn-3d-pill green-solid" style="padding:6px 12px;font-size:0.76rem;flex-shrink:0;" onclick="window.app.switchDrawFromUser('${escapeHtml(d.id)}')">
+                  Entrar →
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        ` : '';
+
+        const organizerCardHtml = isGoogleOrganizer()
+          ? `
+            <div class="landing-card organizer">
+              <div style="font-size:2.1rem;margin-bottom:6px;">🎄</div>
+              <h2 class="christmas-title" style="font-size:1.55rem;margin-bottom:6px;">Hola, ${escapeHtml((currentUser.displayName || 'Organizador').split(' ')[0])}</h2>
+              <p style="font-size:0.84rem;color:var(--muted);line-height:1.45;margin-bottom:14px;">
+                Sesión iniciada como <strong>${escapeHtml(currentUser.email || '')}</strong>. Gestiona tus sorteos privados o crea uno nuevo.
               </p>
-            ` : ''}
+              <div style="display:flex;flex-direction:column;gap:9px;">
+                <button type="button" class="btn-big btn-green" onclick="window.app.openAdminPanel()">
+                  🛠️ Ir a mi Panel de Organización (${getMyOwnedDraws().length})
+                </button>
+                <button type="button" class="btn-3d-pill red" style="width:100%;" onclick="window.app.signOutGoogle()">
+                  🚪 Cerrar sesión de Google
+                </button>
+              </div>
+            </div>
+          `
+          : `
+            <div class="landing-card organizer">
+              <div style="font-size:2.1rem;margin-bottom:6px;">🎁</div>
+              <h2 class="christmas-title" style="font-size:1.55rem;margin-bottom:6px;">¿Quieres organizar tu propio sorteo?</h2>
+              <p style="font-size:0.85rem;color:var(--muted);line-height:1.45;max-width:360px;margin:0 auto 14px;">
+                Entra con tu cuenta de Google para crear sorteos privados, añadir participantes y enviar la invitación por WhatsApp. Solo tú verás tus sorteos.
+              </p>
+              <button type="button" class="btn-google" onclick="window.app.signInWithGoogle(true)">
+                ${googleGIcon}
+                <span>Entrar con Google</span>
+              </button>
+            </div>
+          `;
+
+        container.innerHTML = `
+          <div class="landing-stack">
+            <div class="invite-only-box">
+              <div style="font-size:2.2rem;margin-bottom:6px;">💌</div>
+              <h2 class="christmas-title" style="font-size:1.55rem;margin-bottom:6px;">¿Te han invitado a un sorteo?</h2>
+              <p style="font-size:0.86rem;color:var(--muted);line-height:1.48;max-width:360px;margin:0 auto;">
+                Abre el enlace privado que te han enviado por WhatsApp. No necesitas registrarte ni usar cuenta de Google: solo elige tu nombre y tu PIN de 4 números.
+              </p>
+              ${urlStatusHtml}
+              ${bagQuickHtml}
+            </div>
+            ${organizerCardHtml}
           </div>
         `;
         return;
@@ -2803,45 +3335,25 @@
       container.innerHTML = welcomeHtml + topBarHtml + tabsHtml + tabContentHtml;
     }
 
-    /* --- PANTALLA 4: TECLADO PIN DE ORGANIZACIÓN --- */
-    function renderAdminPinScreen() {
-      const container = document.getElementById('appContent');
-      const dotsHtml = [0, 1, 2, 3].map(i => `
-        <div class="pin-dot ${enteredAdminPin.length > i ? 'filled' : ''}">
-          ${enteredAdminPin.length > i ? '•' : ''}
-        </div>
-      `).join('');
-
-      container.innerHTML = `
-        <div class="pin-box">
-          <button type="button" class="btn-3d-pill" style="width:100%;margin-bottom:14px;" onclick="window.app.backToGrid()">
-            ← Volver atrás
-          </button>
-          <div style="font-size:2.2rem;margin-bottom:4px;">🔒</div>
-          <h2 class="christmas-title" style="font-size:1.8rem;margin-bottom:6px;">Zona de Organización</h2>
-          <p style="font-size:0.84rem;color:var(--muted);">Introduce la clave de 4 números del organizador.</p>
-
-          <div class="pin-dots">${dotsHtml}</div>
-
-          <div class="keypad">
-            ${[1,2,3,4,5,6,7,8,9].map(n => `
-              <button type="button" class="key-btn" onclick="window.app.pressAdminPin('${n}')">${n}</button>
-            `).join('')}
-            <button type="button" class="key-btn action" onclick="window.app.clearAdminPin()">Borrar</button>
-            <button type="button" class="key-btn" onclick="window.app.pressAdminPin('0')">0</button>
-            <button type="button" class="key-btn ok" onclick="window.app.submitAdminPin()">Entrar ✓</button>
-          </div>
-        </div>
-      `;
-    }
-
-    /* --- PANTALLA 5: PANEL DE ORGANIZACIÓN --- */
+    /* --- PANTALLA 4: PANEL DE ORGANIZACIÓN (CUENTA GOOGLE) --- */
     function renderAdminScreen() {
       const container = document.getElementById('appContent');
-      let draw = getCurrentDraw();
-      if (!draw && draws.length > 0 && adminTab !== 'draws' && adminTab !== 'avatars') {
-        currentDrawId = draws[0].id;
-        draw = draws[0];
+      if (!isGoogleOrganizer()) {
+        currentScreen = 'grid';
+        renderAll();
+        return;
+      }
+
+      const isSuper = isSuperAdminUser();
+      if (adminTab === 'avatars' && !isSuper) {
+        adminTab = 'draws';
+      }
+
+      const ownedDraws = getMyOwnedDraws();
+      let draw = getAdminCurrentDraw();
+      if (!draw && ownedDraws.length > 0 && adminTab !== 'draws' && adminTab !== 'avatars') {
+        currentDrawId = ownedDraws[0].id;
+        draw = ownedDraws[0];
         renderHeader();
       }
 
@@ -2852,9 +3364,44 @@
             ? `⚠️ Error nube: ${escapeHtml(cloudErrorMsg || 'Sin conexión')}`
             : '⏳ Conectando con Firebase...');
 
-      const pendingReqCount = avatarRequests.length;
+      const pendingReqCount = isSuper ? avatarRequests.length : 0;
+      const orgName = currentUser.displayName || 'Organizador';
+      const orgEmail = currentUser.email || '';
+      const orgPhoto = currentUser.photoURL || '';
+      const orgInitial = escapeHtml((orgName || orgEmail || 'G').trim().charAt(0).toUpperCase());
+
+      const legacyBannerHtml = (isSuper && legacyMigrationInfo && legacyMigrationInfo.hasPending) ? `
+        <div class="migration-banner">
+          <div style="font-weight:900;font-size:0.92rem;color:#784808;margin-bottom:4px;">
+            📦 Sorteos antiguos detectados en <code>estado_global</code>
+          </div>
+          <p style="font-size:0.8rem;color:#6B3E07;line-height:1.4;margin-bottom:10px;">
+            ${legacyMigrationInfo.draws.length > 0
+              ? `Hay <strong>${legacyMigrationInfo.draws.length} sorteo${legacyMigrationInfo.draws.length === 1 ? '' : 's'} antiguo${legacyMigrationInfo.draws.length === 1 ? '' : 's'}</strong> listo${legacyMigrationInfo.draws.length === 1 ? '' : 's'} para importar a tu cuenta de Google conservando sus enlaces originales de WhatsApp.`
+              : 'Hay datos de avatares o solicitudes antiguos pendientes de copiar a la nueva estructura.'}
+          </p>
+          <button type="button" class="btn-big btn-gold" ${isMigratingLegacy ? 'disabled' : ''} onclick="window.app.importLegacyData()">
+            ${isMigratingLegacy ? '⏳ Importando...' : `📥 Importar datos antiguos${legacyMigrationInfo.draws.length > 0 ? ` (${legacyMigrationInfo.draws.length})` : ''}`}
+          </button>
+        </div>
+      ` : '';
 
       const topHtml = `
+        <div class="organizer-bar">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+            <div class="avatar-circle ${orgPhoto ? 'has-photo' : ''}" style="width:40px;height:40px;font-size:1.05rem;">
+              ${orgPhoto ? `<img src="${escapeHtml(orgPhoto)}" alt="${escapeHtml(orgName)}" class="avatar-img" referrerpolicy="no-referrer" />` : orgInitial}
+            </div>
+            <div style="min-width:0;">
+              <div style="font-weight:900;font-size:0.9rem;color:var(--pine);line-height:1.2;word-break:break-word;">${escapeHtml(orgName)}</div>
+              <div style="font-size:0.72rem;color:var(--muted);word-break:break-all;">${escapeHtml(orgEmail)}</div>
+            </div>
+          </div>
+          <button type="button" class="btn-3d-pill red" style="padding:6px 12px;font-size:0.74rem;flex-shrink:0;" onclick="window.app.signOutGoogle()">
+            🚪 Salir
+          </button>
+        </div>
+
         <div class="cloud-banner ${cloudBannerClass}">
           <span>${cloudBannerText}</span>
           <button type="button" class="btn-3d-pill" style="padding:5px 11px;font-size:0.74rem;" onclick="window.app.forceCloudSync()">
@@ -2862,7 +3409,9 @@
           </button>
         </div>
 
-        <div class="admin-tabs">
+        ${legacyBannerHtml}
+
+        <div class="admin-tabs ${isSuper ? '' : 'cols-3'}">
           <button type="button" class="admin-tab-btn ${adminTab === 'current' ? 'active' : ''}" onclick="window.app.setAdminTab('current')">
             <span>🎲</span>
             <span>Sorteo</span>
@@ -2871,20 +3420,35 @@
             <span>👥</span>
             <span>Gente</span>
           </button>
-          <button type="button" class="admin-tab-btn ${adminTab === 'avatars' ? 'active' : ''}" onclick="window.app.setAdminTab('avatars')">
-            <span>🎭</span>
-            <span>Avatares${pendingReqCount > 0 ? `<span class="tab-notif-pill">${pendingReqCount}</span>` : ''}</span>
-          </button>
+          ${isSuper ? `
+            <button type="button" class="admin-tab-btn ${adminTab === 'avatars' ? 'active' : ''}" onclick="window.app.setAdminTab('avatars')">
+              <span>🎭</span>
+              <span>Avatares${pendingReqCount > 0 ? `<span class="tab-notif-pill">${pendingReqCount}</span>` : ''}</span>
+            </button>
+          ` : ''}
           <button type="button" class="admin-tab-btn ${adminTab === 'draws' ? 'active' : ''}" onclick="window.app.setAdminTab('draws')">
             <span>🗂️</span>
-            <span>General</span>
+            <span>Mis Sorteos</span>
           </button>
         </div>
       `;
 
       let bodyHtml = '';
 
-      if (adminTab === 'current' && draw) {
+      if ((adminTab === 'current' || adminTab === 'people') && !draw) {
+        bodyHtml = `
+          <div class="admin-section" style="text-align:center;padding:24px 16px;">
+            <div style="font-size:2.3rem;margin-bottom:8px;">🎄</div>
+            <div class="section-label" style="justify-content:center;">Todavía no tienes ningún sorteo</div>
+            <p style="font-size:0.86rem;color:var(--muted);margin-bottom:14px;">
+              Crea tu primer sorteo privado de Amigo Invisible y comparte el enlace por WhatsApp con tu familia o amigos.
+            </p>
+            <button type="button" class="btn-big btn-green" onclick="window.app.setAdminTab('draws')">
+              ✨ Crear mi primer sorteo
+            </button>
+          </div>
+        `;
+      } else if (adminTab === 'current' && draw) {
         const prevPairs = getPreviousYearPairsForDraw(draw);
         const pList = draw.participants || [];
         const optionsA = pList.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)}</option>`).join('');
@@ -3192,8 +3756,8 @@
       } else if (adminTab === 'draws') {
         bodyHtml = `
           <div class="admin-section">
-            <div class="section-label">🗂️ Todos tus Sorteos (${draws.length})</div>
-            ${draws.map(d => {
+            <div class="section-label">🗂️ Tus Sorteos Privados (${ownedDraws.length})</div>
+            ${ownedDraws.length > 0 ? ownedDraws.map(d => {
               const isCurr = d.id === currentDrawId;
               return `
                 <div class="admin-card-item" style="${isCurr ? 'border-color:var(--pine);background:#ECFDF5;' : ''}">
@@ -3212,7 +3776,11 @@
                   </div>
                 </div>
               `;
-            }).join('')}
+            }).join('') : `
+              <p style="font-size:0.85rem;color:var(--muted);text-align:center;padding:8px 0;">
+                Aún no has creado ningún sorteo con esta cuenta de Google. ¡Crea el primero aquí abajo!
+              </p>
+            `}
           </div>
 
           <div class="admin-section">
@@ -3243,14 +3811,6 @@
               🎄 Crear Nuevo Sorteo Privado
             </button>
           </div>
-
-          <div class="admin-section">
-            <div class="section-label">🔑 Clave de Organización</div>
-            <div style="display:flex;gap:8px;">
-              <input id="newAdminPinInput" type="password" inputmode="numeric" maxlength="4" class="input-christmas" placeholder="Nueva clave de 4 dígitos" />
-              <button type="button" class="btn-3d-pill gold" style="flex-shrink:0;" onclick="window.app.changeAdminPin()">Guardar</button>
-            </div>
-          </div>
         `;
       }
 
@@ -3273,9 +3833,11 @@
         flushAutosave(true);
         selectedUserId = null;
         enteredPin = '';
-        enteredAdminPin = '';
         justJoinedWelcome = false;
         currentScreen = 'grid';
+        if (!currentDrawId && lastGuestDrawId && draws.some(d => d.id === lastGuestDrawId)) {
+          currentDrawId = lastGuestDrawId;
+        }
         renderAll();
       },
 
@@ -3504,7 +4066,7 @@
         showToast('🎭 ¡Avatar actualizado!');
       },
 
-      submitAvatarRequest() {
+      async submitAvatarRequest() {
         const draw = getCurrentDraw();
         const user = draw?.participants?.find(p => p.id === selectedUserId);
         const input = document.getElementById('requestAvatarInput');
@@ -3514,61 +4076,113 @@
           showToast('Escribe qué avatar te gustaría pedir');
           return;
         }
-        avatarRequests.unshift({
-          id: 'req_' + Date.now().toString(36),
+        const req = {
+          id: 'req_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 5),
           text,
           byName: user ? user.name : 'Participante',
           drawTitle: draw ? draw.title : '',
           createdAt: Date.now()
-        });
+        };
         input.value = '';
-        saveState();
-        showToast('📩 ¡Solicitud enviada al organizador!');
+        if (db && avatarRequestsColRef && currentUser) {
+          try {
+            await setDoc(doc(avatarRequestsColRef, req.id), req);
+            showToast('📩 ¡Solicitud enviada al administrador!');
+          } catch (e) {
+            console.warn('Error al enviar solicitud de avatar:', e);
+            showToast('⚠️ No se pudo enviar la solicitud');
+          }
+        }
       },
 
       switchDrawFromUser(drawId) {
         flushAutosave(true);
         currentDrawId = drawId;
+        lastGuestDrawId = drawId;
         selectedUserId = null;
         currentScreen = 'grid';
+        subscribeToSingleDraw(drawId);
         renderAll();
       },
 
-      /* --- Acceso y acciones de Organización --- */
-      requestAdminAccess() {
+      /* --- Acceso con Google y acciones de Organización --- */
+      async signInWithGoogle(openAdmin = true) {
         flushAutosave(true);
-        enteredAdminPin = '';
-        currentScreen = 'admin_pin';
+        if (isSigningInGoogle) return;
+        if (!auth) {
+          showToast('⏳ Conectando con Firebase, inténtalo en un segundo');
+          return;
+        }
+        isSigningInGoogle = true;
+        try {
+          pendingOpenAdminAfterLogin = Boolean(openAdmin);
+          const provider = new GoogleAuthProvider();
+          provider.setCustomParameters({ prompt: 'select_account' });
+          await signInWithPopup(auth, provider);
+          showToast('✅ ¡Sesión iniciada con Google!');
+        } catch (e) {
+          pendingOpenAdminAfterLogin = false;
+          const code = e?.code || '';
+          if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+            return;
+          }
+          if (code === 'auth/popup-blocked') {
+            showToast('⚠️ El navegador bloqueó la ventana de Google. Permite ventanas emergentes.');
+          } else if (code === 'auth/unauthorized-domain') {
+            showToast('⚠️ Añade este dominio en Firebase Console → Authentication → Authorized domains.');
+          } else if (code === 'auth/operation-not-allowed') {
+            showToast('⚠️ Activa Google en Firebase Console → Authentication → Sign-in method.');
+          } else {
+            showToast(`⚠️ Error al entrar con Google: ${e?.message || 'inténtalo de nuevo'}`);
+          }
+        } finally {
+          isSigningInGoogle = false;
+        }
+      },
+
+      async signOutGoogle() {
+        flushAutosave(true);
+        if (!auth) return;
+        try {
+          pendingOpenAdminAfterLogin = false;
+          currentScreen = 'grid';
+          selectedUserId = null;
+          lastGuestDrawId = urlDrawId || null;
+          currentDrawId = (urlDrawId && guestDrawsMap.has(urlDrawId)) ? urlDrawId : null;
+          ownerDrawsMap.clear();
+          avatarRequests = [];
+          legacyRawSnapshotData = null;
+          legacyMigrationInfo = null;
+          rebuildDrawsArray();
+          await signOut(auth);
+          renderAll();
+          showToast('👋 Sesión de Google cerrada');
+        } catch (e) {
+          showToast('⚠️ Error al cerrar sesión');
+        }
+      },
+
+      openAdminPanel() {
+        flushAutosave(true);
+        if (!isGoogleOrganizer()) {
+          this.signInWithGoogle(true);
+          return;
+        }
+        const owned = getMyOwnedDraws();
+        if (!currentDrawId || !owned.some(d => d.id === currentDrawId)) {
+          currentDrawId = owned[0]?.id || null;
+        }
+        currentScreen = 'admin';
+        adminTab = currentDrawId ? 'current' : 'draws';
         renderAll();
       },
 
-      pressAdminPin(digit) {
-        if (enteredAdminPin.length >= 4) return;
-        enteredAdminPin += digit;
-        renderAdminPinScreen();
-        if (enteredAdminPin.length === 4) {
-          setTimeout(() => this.submitAdminPin(), 120);
-        }
-      },
-
-      clearAdminPin() {
-        enteredAdminPin = '';
-        renderAdminPinScreen();
-      },
-
-      submitAdminPin() {
-        if (enteredAdminPin === String(adminPinCode)) {
-          currentScreen = 'admin';
-          adminTab = currentDrawId ? 'current' : 'draws';
-          renderAll();
-        } else {
-          enteredAdminPin = '';
-          renderAdminPinScreen();
-          showToast('❌ Clave de organización incorrecta');
-        }
+      requestAdminAccess() {
+        this.openAdminPanel();
       },
 
       setAdminTab(tab) {
+        if (tab === 'avatars' && !isSuperAdminUser()) return;
         adminTab = tab;
         confirmDeleteDrawId = null;
         confirmDeleteFolderId = null;
@@ -3580,15 +4194,73 @@
         cloudStatus = 'connecting';
         renderAdminScreen();
         try {
-          if (!db || !stateDocRef) {
+          if (!db || !drawsColRef) {
             await initCloudStorage();
           } else if (currentUser) {
-            await saveState();
-            const snap = await getDoc(stateDocRef);
-            if (snap.exists()) cloudStatus = 'connected';
+            // Sincronización de SOLO LECTURA desde Firebase (nunca sobrescribe la nube)
+            if (isGoogleOrganizer(currentUser)) {
+              const qs = await getDocs(query(drawsColRef, where('ownerId', '==', currentUser.uid)));
+              ownerDrawsMap.clear();
+              qs.forEach(docSnap => {
+                const data = mergeIncomingDrawPreservingLocalDraft({ id: docSnap.id, ...docSnap.data() });
+                ownerDrawsMap.set(docSnap.id, data);
+              });
+              rebuildDrawsArray();
+              if (currentScreen === 'admin' && currentDrawId && !ownerDrawsMap.has(currentDrawId)) {
+                currentDrawId = getMyOwnedDraws()[0]?.id || null;
+              }
+            }
+
+            if (avatarsDocRef) {
+              const avSnap = await getDoc(avatarsDocRef);
+              if (avSnap.exists()) {
+                avatarsCloudDocExists = true;
+                const data = avSnap.data() || {};
+                if (Array.isArray(data.avatarFolders) && data.avatarFolders.length > 0) {
+                  avatarFolders = data.avatarFolders;
+                  sortAvatarFolders();
+                  localStorage.setItem(AVATAR_FOLDERS_BACKUP_KEY, JSON.stringify(avatarFolders));
+                }
+                if (Array.isArray(data.avatarCatalog) && data.avatarCatalog.length > 0) {
+                  avatarCatalog = data.avatarCatalog;
+                  sortAvatarCatalog();
+                  localStorage.setItem(AVATAR_CATALOG_BACKUP_KEY, JSON.stringify(avatarCatalog));
+                }
+                ensureValidActiveFolder();
+              } else {
+                avatarsCloudDocExists = false;
+              }
+            }
+
+            if (isSuperAdminUser()) {
+              if (avatarRequestsColRef) {
+                const reqQs = await getDocs(avatarRequestsColRef);
+                const list = [];
+                reqQs.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() }));
+                list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                avatarRequests = list;
+              }
+              await checkLegacyMigration();
+            }
+
+            if (urlDrawId && drawsColRef) {
+              try {
+                const urlSnap = await getDoc(doc(drawsColRef, urlDrawId));
+                if (urlSnap.exists()) {
+                  const data = mergeIncomingDrawPreservingLocalDraft({ id: urlSnap.id, ...urlSnap.data() });
+                  guestDrawsMap.set(urlSnap.id, data);
+                  rebuildDrawsArray();
+                }
+              } catch (e) {}
+            }
+            await loadMyBagDraws(true);
+            refreshLegacyMigrationInfo();
+            hasReceivedCloudSnapshot = true;
+            cloudStatus = 'connected';
+            cloudErrorMsg = '';
           }
-          renderAdminScreen();
-          showToast('☁️ Sincronización completada');
+          renderAll();
+          showToast('☁️ Datos actualizados desde Firebase');
         } catch (e) {
           cloudStatus = 'error';
           cloudErrorMsg = e?.message || 'Error de red';
@@ -3597,7 +4269,7 @@
       },
 
       shareWhatsappInvite() {
-        const draw = getCurrentDraw();
+        const draw = getAdminCurrentDraw();
         if (!draw) return;
         const baseUrl = window.location.href.split('?')[0].split('#')[0];
         const shortUrl = `${baseUrl}?s=${encodeURIComponent(draw.id)}`;
@@ -3622,7 +4294,7 @@
       },
 
       executeLiveDraw() {
-        const draw = getCurrentDraw();
+        const draw = getAdminCurrentDraw();
         if (!draw) return;
         const res = computeDrawPairings(draw);
         if (!res.ok) {
@@ -3637,7 +4309,7 @@
       },
 
       cycleDrawStatus() {
-        const draw = getCurrentDraw();
+        const draw = getAdminCurrentDraw();
         if (!draw) return;
         if (draw.status === 'countdown') {
           const missing = (draw.participants || []).some(p => !p.targetId);
@@ -3659,7 +4331,7 @@
       },
 
       saveDrawDetails() {
-        const draw = getCurrentDraw();
+        const draw = getAdminCurrentDraw();
         if (!draw) return;
         draw.title = (document.getElementById('editDrawTitle')?.value || '').trim() || draw.title;
         draw.familyCode = (document.getElementById('editDrawFamily')?.value || '').trim().toUpperCase();
@@ -3677,14 +4349,14 @@
       },
 
       toggleAvoidLastYear(checked) {
-        const draw = getCurrentDraw();
+        const draw = getAdminCurrentDraw();
         if (!draw) return;
         draw.avoidLastYear = checked;
         saveState();
       },
 
       addExclusion() {
-        const draw = getCurrentDraw();
+        const draw = getAdminCurrentDraw();
         if (!draw) return;
         const a = document.getElementById('exclSelectA')?.value;
         const b = document.getElementById('exclSelectB')?.value;
@@ -3705,7 +4377,7 @@
       },
 
       removeExclusion(idx) {
-        const draw = getCurrentDraw();
+        const draw = getAdminCurrentDraw();
         if (!draw || !Array.isArray(draw.exclusions)) return;
         draw.exclusions.splice(idx, 1);
         saveState();
@@ -3729,7 +4401,7 @@
       },
 
       addParticipant() {
-        const draw = getCurrentDraw();
+        const draw = getAdminCurrentDraw();
         if (!draw) return;
         const name = (document.getElementById('newMemberName')?.value || newMemberNameDraft || '').trim();
         if (!name) {
@@ -3768,7 +4440,7 @@
       },
 
       adminSetParticipantAvatar(userId, avatarId) {
-        const draw = getCurrentDraw();
+        const draw = getAdminCurrentDraw();
         const p = draw?.participants?.find(x => x.id === userId);
         if (!p) return;
         p.avatar = avatarId;
@@ -3779,7 +4451,7 @@
       },
 
       resetParticipantPin(userId) {
-        const draw = getCurrentDraw();
+        const draw = getAdminCurrentDraw();
         const p = draw?.participants?.find(x => x.id === userId);
         if (!p) return;
         p.pin = null;
@@ -3789,7 +4461,7 @@
       },
 
       removeParticipant(userId) {
-        const draw = getCurrentDraw();
+        const draw = getAdminCurrentDraw();
         if (!draw) return;
         const wasDrawn = draw.status === 'drawn';
         draw.participants = (draw.participants || []).filter(p => p.id !== userId);
@@ -3801,6 +4473,7 @@
 
       /* --- Gestor de Avatares y Solicitudes (Admin) --- */
       useAvatarRequestInForm(reqId) {
+        if (!isSuperAdminUser()) return;
         const req = avatarRequests.find(r => r.id === reqId);
         if (!req) return;
         newAvatarNameDraft = req.text;
@@ -3809,9 +4482,16 @@
         if (el) el.focus();
       },
 
-      dismissAvatarRequest(reqId) {
+      async dismissAvatarRequest(reqId) {
+        if (!isSuperAdminUser()) return;
         avatarRequests = avatarRequests.filter(r => r.id !== reqId);
-        saveState();
+        if (db && avatarRequestsColRef) {
+          try {
+            await deleteDoc(doc(avatarRequestsColRef, reqId));
+          } catch (e) {
+            console.warn('Error al borrar solicitud de avatar:', e);
+          }
+        }
         renderAdminScreen();
         showToast('✅ Solicitud completada');
       },
@@ -3828,6 +4508,7 @@
       },
 
       handleAvatarFileUpload(event) {
+        if (!isSuperAdminUser()) return;
         const file = event.target?.files?.[0];
         if (!file) return;
         const reader = new FileReader();
@@ -3839,10 +4520,19 @@
             canvas.width = size;
             canvas.height = size;
             const ctx = canvas.getContext('2d');
-            const minSide = Math.min(img.width, img.height);
-            const sx = (img.width - minSide) / 2;
-            const sy = (img.height - minSide) / 2;
-            ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, size, size);
+            if (newAvatarKindDraft === 'badge') {
+              const scale = Math.min(size / img.width, size / img.height);
+              const dw = img.width * scale;
+              const dh = img.height * scale;
+              ctx.drawImage(img, (size - dw) / 2, (size - dh) / 2, dw, dh);
+            } else {
+              const minSide = Math.min(img.width, img.height);
+              const sx = (img.width - minSide) / 2;
+              const sy = (img.height - minSide) / 2;
+              ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
+            }
             newAvatarUrlDraft = canvas.toDataURL('image/jpeg', 0.8);
             renderAdminScreen();
             showToast('📷 Imagen cargada y optimizada');
@@ -3853,6 +4543,7 @@
       },
 
       createCustomAvatar() {
+        if (!isSuperAdminUser()) return;
         const name = (newAvatarNameDraft || '').trim();
         const url = (newAvatarUrlDraft || '').trim();
         if (!name || !url) {
@@ -3871,12 +4562,13 @@
         activeAvatarFolder = newAvatarFolderDraft;
         newAvatarNameDraft = '';
         newAvatarUrlDraft = '';
-        saveState();
+        saveAvatarCatalogState();
         renderAdminScreen();
         showToast(`🎭 Avatar "${name}" añadido`);
       },
 
       createAvatarFolder() {
+        if (!isSuperAdminUser()) return;
         const input = document.getElementById('newFolderLabelInput');
         const label = (input?.value || '').trim();
         if (!label) return;
@@ -3885,12 +4577,13 @@
         sortAvatarFolders();
         activeAvatarFolder = id;
         newAvatarFolderDraft = id;
-        saveState();
+        saveAvatarCatalogState();
         renderAdminScreen();
         showToast(`📁 Categoría "${label}" creada`);
       },
 
       renameAvatarFolder(folderId) {
+        if (!isSuperAdminUser()) return;
         const input = document.getElementById(`renameFolder_${folderId}`);
         const newLabel = (input?.value || '').trim();
         if (!newLabel) return;
@@ -3898,13 +4591,14 @@
         if (f) {
           f.label = newLabel;
           sortAvatarFolders();
-          saveState();
+          saveAvatarCatalogState();
           renderAdminScreen();
           showToast('💾 Categoría renombrada');
         }
       },
 
       askDeleteAvatarFolder(folderId) {
+        if (!isSuperAdminUser()) return;
         if (avatarFolders.length <= 1) {
           showToast('Debe quedar al menos 1 categoría');
           return;
@@ -3914,35 +4608,39 @@
       },
 
       confirmDeleteAvatarFolder(folderId) {
+        if (!isSuperAdminUser()) return;
         avatarFolders = avatarFolders.filter(f => f.id !== folderId);
         avatarCatalog = avatarCatalog.filter(a => a.folder !== folderId);
         confirmDeleteFolderId = null;
         ensureValidActiveFolder();
-        saveState();
+        saveAvatarCatalogState();
         renderAdminScreen();
         showToast('🗑️ Categoría eliminada');
       },
 
       deleteAvatarFromCatalog(avatarId) {
+        if (!isSuperAdminUser()) return;
         avatarCatalog = avatarCatalog.filter(a => a.id !== avatarId);
-        saveState();
+        saveAvatarCatalogState();
         renderAdminScreen();
         showToast('🗑️ Avatar eliminado');
       },
 
       askRestoreAvatarCatalog() {
+        if (!isSuperAdminUser()) return;
         confirmRestoreCatalog = true;
         renderAdminScreen();
       },
 
       confirmRestoreAvatarCatalog() {
+        if (!isSuperAdminUser()) return;
         avatarFolders = DEFAULT_AVATAR_FOLDERS.map(f => ({ ...f }));
         avatarCatalog = DEFAULT_AVATAR_CATALOG.map(a => ({ ...a }));
         sortAvatarFolders();
         sortAvatarCatalog();
         confirmRestoreCatalog = false;
         ensureValidActiveFolder();
-        saveState();
+        saveAvatarCatalogState();
         renderAdminScreen();
         showToast('🔄 Catálogo original restaurado');
       },
@@ -3959,13 +4657,23 @@
         renderAdminScreen();
       },
 
-      confirmDeleteDraw(drawId) {
-        draws = draws.filter(d => d.id !== drawId);
+      async confirmDeleteDraw(drawId) {
+        if (!isGoogleOrganizer()) return;
+        ownerDrawsMap.delete(drawId);
+        guestDrawsMap.delete(drawId);
+        rebuildDrawsArray();
         if (currentDrawId === drawId) {
-          currentDrawId = draws[0]?.id || null;
+          currentDrawId = getMyOwnedDraws()[0]?.id || null;
         }
         confirmDeleteDrawId = null;
-        saveState();
+        if (db && drawsColRef) {
+          try {
+            await deleteDoc(doc(drawsColRef, drawId));
+          } catch (e) {
+            console.warn('Error al borrar sorteo en Firestore:', e);
+            showToast('⚠️ No se pudo borrar el sorteo en la nube');
+          }
+        }
         renderAll();
         showToast('🗑️ Sorteo eliminado');
       },
@@ -3977,7 +4685,11 @@
         renderAdminScreen();
       },
 
-      createNewDraw() {
+      async createNewDraw() {
+        if (!isGoogleOrganizer()) {
+          showToast('Inicia sesión con Google para crear sorteos');
+          return;
+        }
         const title = (document.getElementById('createDrawTitle')?.value || '').trim();
         const familyCode = (document.getElementById('createDrawFamily')?.value || '').trim().toUpperCase();
         const budget = (document.getElementById('createDrawBudget')?.value || '').trim() || '35€';
@@ -3989,8 +4701,13 @@
         }
         const names = rawPeople.split(',').map(s => s.trim()).filter(Boolean);
         const newId = generateSecureDrawId();
+        const now = Date.now();
         const newDraw = {
           id: newId,
+          ownerId: currentUser.uid,
+          ownerEmail: currentUser.email || '',
+          createdAt: now,
+          updatedAt: now,
           title,
           familyCode,
           dateText,
@@ -4013,24 +4730,69 @@
             sizes: { clothes: '', shoes: '', color: '' }
           }))
         };
-        draws.unshift(newDraw);
+        ownerDrawsMap.set(newId, newDraw);
+        rebuildDrawsArray();
         currentDrawId = newId;
         adminTab = 'current';
-        saveState();
+        await saveDraw(newDraw);
         renderAll();
         showToast(`🎄 Sorteo "${title}" creado`);
       },
 
-      changeAdminPin() {
-        const val = (document.getElementById('newAdminPinInput')?.value || '').trim();
-        if (!/^\d{4}$/.test(val)) {
-          showToast('La clave debe tener exactamente 4 números');
-          return;
+      async importLegacyData() {
+        if (!isSuperAdminUser() || !legacyMigrationInfo || isMigratingLegacy) return;
+        isMigratingLegacy = true;
+        renderAdminScreen();
+        let importedCount = 0;
+        try {
+          for (const oldDraw of legacyMigrationInfo.draws) {
+            const sanitized = sanitizeSingleDrawForStorage(oldDraw);
+            if (!sanitized || !sanitized.id) continue;
+            const payload = {
+              ...sanitized,
+              id: oldDraw.id,
+              ownerId: currentUser.uid,
+              ownerEmail: currentUser.email || '',
+              migratedFromLegacy: true,
+              createdAt: oldDraw.createdAt || Date.now(),
+              updatedAt: Date.now()
+            };
+            await setDoc(doc(drawsColRef, payload.id), payload, { merge: true });
+            ownerDrawsMap.set(payload.id, payload);
+            importedCount++;
+          }
+
+          if (legacyMigrationInfo.hasPendingAvatars) {
+            const foldersToSave = legacyMigrationInfo.avatarFolders || avatarFolders;
+            const catalogToSave = legacyMigrationInfo.avatarCatalog || avatarCatalog;
+            await setDoc(avatarsDocRef, stripUndefinedDeep({
+              avatarFolders: foldersToSave,
+              avatarCatalog: catalogToSave,
+              updatedAt: Date.now()
+            }), { merge: true });
+            avatarsCloudDocExists = true;
+          }
+
+          for (const oldReq of (legacyMigrationInfo.avatarRequests || [])) {
+            if (!oldReq || !oldReq.id) continue;
+            await setDoc(doc(avatarRequestsColRef, oldReq.id), stripUndefinedDeep(oldReq), { merge: true });
+          }
+
+          rebuildDrawsArray();
+          refreshLegacyMigrationInfo();
+          if (!currentDrawId) {
+            currentDrawId = getMyOwnedDraws()[0]?.id || null;
+          }
+          showToast(importedCount > 0
+            ? `✅ ¡${importedCount} sorteo${importedCount === 1 ? '' : 's'} importado${importedCount === 1 ? '' : 's'} conservando sus enlaces!`
+            : '✅ ¡Datos antiguos importados correctamente!');
+        } catch (e) {
+          console.warn('Error al importar desde estado_global:', e);
+          showToast(`⚠️ Error al importar: ${e?.message || 'revisa las reglas de Firestore'}`);
+        } finally {
+          isMigratingLegacy = false;
+          renderAll();
         }
-        adminPinCode = val;
-        saveState();
-        document.getElementById('newAdminPinInput').value = '';
-        showToast('🔑 Clave de organización actualizada');
       }
     };
 
