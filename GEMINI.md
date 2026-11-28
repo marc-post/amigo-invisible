@@ -6,6 +6,7 @@
   - `draws/{drawId}`: 1 documento independiente por sorteo con campo `ownerId` (UID de Google del organizador). Los organizadores inician sesión con Google Sign-In y solo listan/gestionan sus propios sorteos; los invitados acceden por `?s={drawId}` con sesión anónima y PIN de 4 dígitos.
   - `app_config/avatars`: catálogo global de avatares compartido (edición reservada a `SUPER_ADMIN_EMAILS`).
   - `avatar_requests/{reqId}`: solicitudes de nuevos avatares enviadas por participantes.
+  - `organizers/{uid}`: perfil de cada organizador autenticado con Google (visible para el super-admin en la pestaña **👑 Usuarios** junto al recuento de sorteos).
 - **PROHIBIDO cambiar** la clave local `MY_BAG_KEY = 'amigo_invisible_mi_mochila_v3'`.
 - **Nunca** sobrescribir Firestore con datos de ejemplo al iniciar la app ni antes de recibir el primer snapshot real de la nube.
 - Cualquier funcionalidad nueva debe ser 100 % retrocompatible con los sorteos y participantes ya guardados en Firestore.

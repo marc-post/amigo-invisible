@@ -1087,6 +1087,16 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
+    .admin-tabs.cols-5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 5px;
+    }
+
+    .admin-tabs.cols-5 .admin-tab-btn {
+      padding: 9px 2px;
+      font-size: 0.68rem;
+    }
+
     .admin-tab-btn {
       background: #FFFFFF;
       border: 2px solid var(--pine);
@@ -1379,6 +1389,58 @@
       box-shadow: 0 3px 0 #D8E6DD;
     }
 
+    .organizer-bar.super-admin {
+      background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+      border-color: var(--gold);
+      box-shadow: 0 3px 0 #D6B16A;
+    }
+
+    .super-admin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 99px;
+      background: linear-gradient(135deg, #B45309, #D97706);
+      color: #FFFFFF;
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      box-shadow: 0 2px 4px rgba(180, 83, 9, 0.25);
+      white-space: nowrap;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .kpi-card {
+      background: var(--paper);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 6px;
+      text-align: center;
+    }
+
+    .kpi-num {
+      font-family: 'Berkshire Swash', Georgia, serif;
+      font-size: 1.55rem;
+      color: var(--crimson);
+      line-height: 1.1;
+    }
+
+    .kpi-lbl {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
     .migration-banner {
       background: linear-gradient(180deg, #FFFBEB 0%, #FEF3C7 100%);
       border: 2px solid var(--gold);
@@ -1457,7 +1519,7 @@
 
     // Emails con permisos de super-admin (catálogo global de avatares e importación desde estado_global)
     // Cambia este email por tu cuenta real de Google (el mismo que pondrás en las reglas de Firestore)
-    const SUPER_ADMIN_EMAILS = ['TU_EMAIL_DE_GOOGLE@gmail.com'];
+    const SUPER_ADMIN_EMAILS = ['marcospostigorodrigo@gmail.com'];
 
     /* =====================================================================
        CATÁLOGO DE AVATARES Y CARPETAS POR DEFECTO
@@ -1784,6 +1846,7 @@
     let drawsColRef = null;
     let avatarsDocRef = null;
     let avatarRequestsColRef = null;
+    let organizersColRef = null;
     let legacyStateDocRef = null;
     let stateDocRef = null; // Alias de solo lectura hacia estado_global
     let currentUser = null;
@@ -1802,6 +1865,10 @@
     let activeSubDrawId = null;
     let unsubAvatars = null;
     let unsubAvatarRequests = null;
+    let unsubSuperAdminOrganizers = null;
+    let unsubSuperAdminAllDraws = null;
+    let superAdminOrganizersMap = new Map();
+    let superAdminDrawStatsMap = new Map();
     let avatarsCloudDocExists = false;
     let legacyMigrationInfo = null; // { draws, totalLegacyDraws, hasLegacyAvatars, avatarFolders, avatarCatalog, avatarRequests }
     let isMigratingLegacy = false;
@@ -2224,6 +2291,8 @@
       activeSubDrawId = null;
       if (unsubAvatars) { try { unsubAvatars(); } catch (e) {} unsubAvatars = null; }
       if (unsubAvatarRequests) { try { unsubAvatarRequests(); } catch (e) {} unsubAvatarRequests = null; }
+      if (unsubSuperAdminOrganizers) { try { unsubSuperAdminOrganizers(); } catch (e) {} unsubSuperAdminOrganizers = null; }
+      if (unsubSuperAdminAllDraws) { try { unsubSuperAdminAllDraws(); } catch (e) {} unsubSuperAdminAllDraws = null; }
     }
 
     let legacyRawSnapshotData = null;
@@ -2236,10 +2305,16 @@
       const allLegacyDraws = Array.isArray(legacyRawSnapshotData.draws) ? legacyRawSnapshotData.draws : [];
       const pendingDraws = allLegacyDraws.filter(d => d && d.id && !ownerDrawsMap.has(d.id));
       const legacyFolders = Array.isArray(legacyRawSnapshotData.avatarFolders) && legacyRawSnapshotData.avatarFolders.length > 0
-        ? legacyRawSnapshotData.avatarFolders : null;
+        ? legacyRawSnapshotData.avatarFolders : [];
       const legacyCatalog = Array.isArray(legacyRawSnapshotData.avatarCatalog) && legacyRawSnapshotData.avatarCatalog.length > 0
-        ? legacyRawSnapshotData.avatarCatalog : null;
-      const hasPendingAvatars = !avatarsCloudDocExists && Boolean(legacyFolders || legacyCatalog);
+        ? legacyRawSnapshotData.avatarCatalog : [];
+      const existingFolderIds = new Set(avatarFolders.map(f => f.id));
+      const existingAvatarIds = new Set(avatarCatalog.map(a => a.id));
+      const missingLegacyFolders = legacyFolders.filter(f => f && f.id && !existingFolderIds.has(f.id));
+      const missingLegacyAvatars = legacyCatalog.filter(a => a && a.id && !existingAvatarIds.has(a.id));
+      const hasPendingAvatars = (!avatarsCloudDocExists && (legacyFolders.length > 0 || legacyCatalog.length > 0))
+        || missingLegacyFolders.length > 0
+        || missingLegacyAvatars.length > 0;
       const legacyReqs = Array.isArray(legacyRawSnapshotData.avatarRequests) ? legacyRawSnapshotData.avatarRequests : [];
       const existingReqIds = new Set(avatarRequests.map(r => r.id));
       const pendingReqs = legacyReqs.filter(r => r && r.id && !existingReqIds.has(r.id));
@@ -2250,6 +2325,8 @@
         draws: pendingDraws,
         totalLegacyDraws: allLegacyDraws.length,
         hasPendingAvatars,
+        missingAvatarsCount: missingLegacyAvatars.length,
+        missingFoldersCount: missingLegacyFolders.length,
         avatarFolders: legacyFolders,
         avatarCatalog: legacyCatalog,
         avatarRequests: pendingReqs
@@ -2448,6 +2525,103 @@
       });
     }
 
+    async function syncOrganizerProfile(user) {
+      if (!db || !organizersColRef || !isGoogleOrganizer(user)) return;
+      try {
+        await setDoc(doc(organizersColRef, user.uid), stripUndefinedDeep({
+          uid: user.uid,
+          displayName: user.displayName || '',
+          email: user.email || '',
+          photoURL: user.photoURL || '',
+          lastLoginAt: Date.now()
+        }), { merge: true });
+      } catch (e) {
+        console.warn('No se pudo registrar perfil de organizador:', e);
+      }
+    }
+
+    function subscribeToSuperAdminUsers() {
+      if (!isSuperAdminUser() || !organizersColRef || !drawsColRef) {
+        superAdminOrganizersMap.clear();
+        superAdminDrawStatsMap.clear();
+        return;
+      }
+      if (unsubSuperAdminOrganizers) { try { unsubSuperAdminOrganizers(); } catch (e) {} unsubSuperAdminOrganizers = null; }
+      if (unsubSuperAdminAllDraws) { try { unsubSuperAdminAllDraws(); } catch (e) {} unsubSuperAdminAllDraws = null; }
+
+      unsubSuperAdminOrganizers = onSnapshot(organizersColRef, (qs) => {
+        superAdminOrganizersMap.clear();
+        qs.forEach(docSnap => {
+          superAdminOrganizersMap.set(docSnap.id, { uid: docSnap.id, ...docSnap.data() });
+        });
+        if (currentScreen === 'admin' && adminTab === 'users' && !isUserTypingInInput()) {
+          renderAdminScreen();
+        }
+      }, (err) => {
+        console.warn('No se pudo leer la colección de organizadores:', err);
+      });
+
+      unsubSuperAdminAllDraws = onSnapshot(drawsColRef, (qs) => {
+        superAdminDrawStatsMap.clear();
+        qs.forEach(docSnap => {
+          const data = docSnap.data() || {};
+          const ownerId = data.ownerId || 'sin_dueno';
+          const prev = superAdminDrawStatsMap.get(ownerId) || {
+            count: 0,
+            totalParticipants: 0,
+            lastActivityAt: 0,
+            ownerEmail: data.ownerEmail || ''
+          };
+          prev.count += 1;
+          prev.totalParticipants += Array.isArray(data.participants) ? data.participants.length : 0;
+          prev.lastActivityAt = Math.max(prev.lastActivityAt, data.updatedAt || data.createdAt || 0);
+          if (!prev.ownerEmail && data.ownerEmail) prev.ownerEmail = data.ownerEmail;
+          superAdminDrawStatsMap.set(ownerId, prev);
+        });
+        if (currentScreen === 'admin' && adminTab === 'users' && !isUserTypingInInput()) {
+          renderAdminScreen();
+        }
+      }, (err) => {
+        console.warn('No se pudieron leer las estadísticas globales de sorteos:', err);
+      });
+    }
+
+    function getSuperAdminUsersSummary() {
+      const uids = new Set([
+        ...superAdminOrganizersMap.keys(),
+        ...superAdminDrawStatsMap.keys()
+      ]);
+      const users = [];
+      let totalDraws = 0;
+      let totalParticipants = 0;
+
+      uids.forEach(uid => {
+        const profile = superAdminOrganizersMap.get(uid) || {};
+        const stats = superAdminDrawStatsMap.get(uid) || { count: 0, totalParticipants: 0, lastActivityAt: 0, ownerEmail: '' };
+        totalDraws += stats.count;
+        totalParticipants += stats.totalParticipants;
+        const email = profile.email || stats.ownerEmail || '';
+        const isSuper = Boolean(email) && SUPER_ADMIN_EMAILS.some(e => String(e || '').trim().toLowerCase() === email.trim().toLowerCase());
+        users.push({
+          uid,
+          displayName: profile.displayName || (email ? email.split('@')[0] : 'Organizador'),
+          email: email || '(sin email guardado)',
+          photoURL: profile.photoURL || '',
+          lastLoginAt: profile.lastLoginAt || stats.lastActivityAt || 0,
+          drawCount: stats.count,
+          totalParticipants: stats.totalParticipants,
+          isSuper
+        });
+      });
+
+      users.sort((a, b) => {
+        if (b.drawCount !== a.drawCount) return b.drawCount - a.drawCount;
+        return (b.lastLoginAt || 0) - (a.lastLoginAt || 0);
+      });
+
+      return { users, totalDraws, totalParticipants };
+    }
+
     async function initCloudStorage() {
       try {
         let cfg = defaultFirebaseConfig;
@@ -2464,6 +2638,7 @@
         drawsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'draws');
         avatarsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'app_config', 'avatars');
         avatarRequestsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'avatar_requests');
+        organizersColRef = collection(db, 'artifacts', appId, 'public', 'data', 'organizers');
         legacyStateDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'app_state', 'estado_global');
         stateDocRef = legacyStateDocRef;
 
@@ -2505,12 +2680,16 @@
           subscribeToAvatars();
 
           if (isGoogleOrganizer(user)) {
+            syncOrganizerProfile(user);
             subscribeToOwnerDraws(user.uid);
             if (isSuperAdminUser(user)) {
               subscribeToAvatarRequests();
+              subscribeToSuperAdminUsers();
               checkLegacyMigration();
             } else {
               avatarRequests = [];
+              superAdminOrganizersMap.clear();
+              superAdminDrawStatsMap.clear();
               legacyRawSnapshotData = null;
               legacyMigrationInfo = null;
             }
@@ -2698,9 +2877,10 @@
 
       if (isGoogleOrganizer()) {
         const shortName = (currentUser.displayName || currentUser.email || 'Organizador').split(' ')[0];
+        const isSuper = isSuperAdminUser();
         footer.innerHTML = `
           <button type="button" class="btn-3d-pill gold" onclick="window.app.openAdminPanel()">
-            🛠️ Mi panel (${escapeHtml(shortName)})
+            ${isSuper ? '👑 Super Admin' : '🛠️ Mi panel'} (${escapeHtml(shortName)})
           </button>
         `;
         return;
@@ -2761,14 +2941,15 @@
         const organizerCardHtml = isGoogleOrganizer()
           ? `
             <div class="landing-card organizer">
-              <div style="font-size:2.1rem;margin-bottom:6px;">🎄</div>
+              <div style="font-size:2.1rem;margin-bottom:6px;">${isSuperAdminUser() ? '👑' : '🎄'}</div>
+              ${isSuperAdminUser() ? `<div style="margin-bottom:6px;"><span class="super-admin-badge">👑 Cuenta Super Admin</span></div>` : ''}
               <h2 class="christmas-title" style="font-size:1.55rem;margin-bottom:6px;">Hola, ${escapeHtml((currentUser.displayName || 'Organizador').split(' ')[0])}</h2>
               <p style="font-size:0.84rem;color:var(--muted);line-height:1.45;margin-bottom:14px;">
                 Sesión iniciada como <strong>${escapeHtml(currentUser.email || '')}</strong>. Gestiona tus sorteos privados o crea uno nuevo.
               </p>
               <div style="display:flex;flex-direction:column;gap:9px;">
                 <button type="button" class="btn-big btn-green" onclick="window.app.openAdminPanel()">
-                  🛠️ Ir a mi Panel de Organización (${getMyOwnedDraws().length})
+                  ${isSuperAdminUser() ? '👑 Ir a mi Panel Super Admin' : '🛠️ Ir a mi Panel de Organización'} (${getMyOwnedDraws().length})
                 </button>
                 <button type="button" class="btn-3d-pill red" style="width:100%;" onclick="window.app.signOutGoogle()">
                   🚪 Cerrar sesión de Google
@@ -3343,6 +3524,20 @@
               </div>
             `;
           }).join('')}
+
+          <div class="avatar-request-card">
+            <div style="font-weight:900;font-size:0.88rem;color:var(--pine);margin-bottom:6px;">
+              🔗 ¿Cómo vincular aquí todos tus sorteos?
+            </div>
+            <ol style="font-size:0.8rem;color:var(--muted);line-height:1.5;padding-left:18px;margin-bottom:8px;">
+              <li>Abre el <strong>enlace privado de WhatsApp</strong> de cada sorteo al que te hayan invitado (desde este mismo navegador).</li>
+              <li>Toca tu nombre e introduce tu <strong>PIN de 4 números</strong> para entrar en tu perfil.</li>
+              <li>¡Listo! Cada grupo quedará <strong>vinculado automáticamente aquí</strong> para cambiar entre ellos sin volver a buscar el enlace.</li>
+            </ol>
+            <p style="font-size:0.74rem;color:var(--muted);line-height:1.4;">
+              💡 <em>Tus grupos se guardan en este dispositivo. Si cambias de móvil o borras los datos del navegador, solo tienes que volver a abrir el enlace de WhatsApp.</em>
+            </p>
+          </div>
         `;
       }
 
@@ -3359,13 +3554,13 @@
       }
 
       const isSuper = isSuperAdminUser();
-      if (adminTab === 'avatars' && !isSuper) {
+      if ((adminTab === 'avatars' || adminTab === 'users') && !isSuper) {
         adminTab = 'draws';
       }
 
       const ownedDraws = getMyOwnedDraws();
       let draw = getAdminCurrentDraw();
-      if (!draw && ownedDraws.length > 0 && adminTab !== 'draws' && adminTab !== 'avatars') {
+      if (!draw && ownedDraws.length > 0 && adminTab !== 'draws' && adminTab !== 'avatars' && adminTab !== 'users') {
         currentDrawId = ownedDraws[0].id;
         draw = ownedDraws[0];
         renderHeader();
@@ -3387,12 +3582,14 @@
       const legacyBannerHtml = (isSuper && legacyMigrationInfo && legacyMigrationInfo.hasPending) ? `
         <div class="migration-banner">
           <div style="font-weight:900;font-size:0.92rem;color:#784808;margin-bottom:4px;">
-            📦 Sorteos antiguos detectados en <code>estado_global</code>
+            📦 Datos antiguos detectados en <code>estado_global</code>
           </div>
           <p style="font-size:0.8rem;color:#6B3E07;line-height:1.4;margin-bottom:10px;">
-            ${legacyMigrationInfo.draws.length > 0
-              ? `Hay <strong>${legacyMigrationInfo.draws.length} sorteo${legacyMigrationInfo.draws.length === 1 ? '' : 's'} antiguo${legacyMigrationInfo.draws.length === 1 ? '' : 's'}</strong> listo${legacyMigrationInfo.draws.length === 1 ? '' : 's'} para importar a tu cuenta de Google conservando sus enlaces originales de WhatsApp.`
-              : 'Hay datos de avatares o solicitudes antiguos pendientes de copiar a la nueva estructura.'}
+            ${[
+              legacyMigrationInfo.draws.length > 0 ? `<strong>${legacyMigrationInfo.draws.length} sorteo${legacyMigrationInfo.draws.length === 1 ? '' : 's'}</strong>` : '',
+              legacyMigrationInfo.hasPendingAvatars ? `<strong>catálogo de avatares${legacyMigrationInfo.missingAvatarsCount > 0 ? ` (+${legacyMigrationInfo.missingAvatarsCount})` : ''}</strong>` : '',
+              legacyMigrationInfo.avatarRequests.length > 0 ? `<strong>${legacyMigrationInfo.avatarRequests.length} solicitud${legacyMigrationInfo.avatarRequests.length === 1 ? '' : 'es'} de avatar</strong>` : ''
+            ].filter(Boolean).join(', ')} pendiente${(legacyMigrationInfo.draws.length + (legacyMigrationInfo.hasPendingAvatars ? 1 : 0) + legacyMigrationInfo.avatarRequests.length) === 1 ? '' : 's'} de importar conservando enlaces originales.
           </p>
           <button type="button" class="btn-big btn-gold" ${isMigratingLegacy ? 'disabled' : ''} onclick="window.app.importLegacyData()">
             ${isMigratingLegacy ? '⏳ Importando...' : `📥 Importar datos antiguos${legacyMigrationInfo.draws.length > 0 ? ` (${legacyMigrationInfo.draws.length})` : ''}`}
@@ -3401,13 +3598,16 @@
       ` : '';
 
       const topHtml = `
-        <div class="organizer-bar">
+        <div class="organizer-bar ${isSuper ? 'super-admin' : ''}">
           <div style="display:flex;align-items:center;gap:10px;min-width:0;">
             <div class="avatar-circle ${orgPhoto ? 'has-photo' : ''}" style="width:40px;height:40px;font-size:1.05rem;">
               ${orgPhoto ? `<img src="${escapeHtml(orgPhoto)}" alt="${escapeHtml(orgName)}" class="avatar-img" referrerpolicy="no-referrer" />` : orgInitial}
             </div>
             <div style="min-width:0;">
-              <div style="font-weight:900;font-size:0.9rem;color:var(--pine);line-height:1.2;word-break:break-word;">${escapeHtml(orgName)}</div>
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                <span style="font-weight:900;font-size:0.9rem;color:var(--pine);line-height:1.2;word-break:break-word;">${escapeHtml(orgName)}</span>
+                ${isSuper ? `<span class="super-admin-badge">👑 Super Admin</span>` : ''}
+              </div>
               <div style="font-size:0.72rem;color:var(--muted);word-break:break-all;">${escapeHtml(orgEmail)}</div>
             </div>
           </div>
@@ -3425,7 +3625,7 @@
 
         ${legacyBannerHtml}
 
-        <div class="admin-tabs ${isSuper ? '' : 'cols-3'}">
+        <div class="admin-tabs ${isSuper ? 'cols-5' : 'cols-3'}">
           <button type="button" class="admin-tab-btn ${adminTab === 'current' ? 'active' : ''}" onclick="window.app.setAdminTab('current')">
             <span>🎲</span>
             <span>Sorteo</span>
@@ -3439,10 +3639,14 @@
               <span>🎭</span>
               <span>Avatares${pendingReqCount > 0 ? `<span class="tab-notif-pill">${pendingReqCount}</span>` : ''}</span>
             </button>
+            <button type="button" class="admin-tab-btn ${adminTab === 'users' ? 'active' : ''}" onclick="window.app.setAdminTab('users')">
+              <span>👑</span>
+              <span>Usuarios</span>
+            </button>
           ` : ''}
           <button type="button" class="admin-tab-btn ${adminTab === 'draws' ? 'active' : ''}" onclick="window.app.setAdminTab('draws')">
             <span>🗂️</span>
-            <span>Mis Sorteos</span>
+            <span>Sorteos</span>
           </button>
         </div>
       `;
@@ -3767,6 +3971,71 @@
                 </button>
               `}
             </div>
+          </div>
+        `;
+      } else if (adminTab === 'users' && isSuper) {
+        const summary = getSuperAdminUsersSummary();
+        const formatLastSeen = (ts) => {
+          if (!ts) return 'Sin registro reciente';
+          try {
+            return new Date(ts).toLocaleString('es-ES', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+          } catch (e) {
+            return '-';
+          }
+        };
+
+        bodyHtml = `
+          <div class="admin-section">
+            <div class="section-label">👑 Usuarios Registrados (Super Admin)</div>
+            <div class="kpi-grid">
+              <div class="kpi-card">
+                <div class="kpi-num">${summary.users.length}</div>
+                <div class="kpi-lbl">Organizadores</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-num">${summary.totalDraws}</div>
+                <div class="kpi-lbl">Sorteos</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-num">${summary.totalParticipants}</div>
+                <div class="kpi-lbl">Participantes</div>
+              </div>
+            </div>
+
+            ${summary.users.length > 0 ? summary.users.map(u => {
+              const init = escapeHtml((u.displayName || u.email || 'U').trim().charAt(0).toUpperCase());
+              return `
+                <div class="admin-card-item" style="${u.isSuper ? 'border-color:var(--gold);background:#FFFDF5;' : ''}">
+                  <div style="display:flex;align-items:center;gap:11px;">
+                    <div class="avatar-circle ${u.photoURL ? 'has-photo' : ''}" style="width:44px;height:44px;font-size:1.15rem;">
+                      ${u.photoURL ? `<img src="${escapeHtml(u.photoURL)}" alt="${escapeHtml(u.displayName)}" class="avatar-img" referrerpolicy="no-referrer" />` : init}
+                    </div>
+                    <div style="min-width:0;flex:1;">
+                      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                        <span style="font-weight:900;font-size:0.95rem;color:var(--pine);">${escapeHtml(u.displayName)}</span>
+                        ${u.isSuper ? `<span class="super-admin-badge">👑 Super Admin</span>` : ''}
+                      </div>
+                      <div style="font-size:0.75rem;color:var(--muted);word-break:break-all;">${escapeHtml(u.email)}</div>
+                      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;">
+                        <span class="status-tag ${u.drawCount > 0 ? 'tag-locked' : 'tag-new'}">🎄 ${u.drawCount} sorteo${u.drawCount === 1 ? '' : 's'}</span>
+                        <span class="status-tag tag-gold">👥 ${u.totalParticipants} pers.</span>
+                      </div>
+                      <div style="font-size:0.71rem;color:var(--muted);margin-top:4px;">🕒 Último acceso: ${escapeHtml(formatLastSeen(u.lastLoginAt))}</div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('') : `
+              <p style="font-size:0.85rem;color:var(--muted);text-align:center;padding:12px 0;">
+                Todavía no hay organizadores registrados en la nube (pulsa «Sincronizar» o verifica las reglas de Firestore para <code>organizers</code>).
+              </p>
+            `}
           </div>
         `;
       } else if (adminTab === 'draws') {
@@ -4167,6 +4436,8 @@
           currentDrawId = (urlDrawId && guestDrawsMap.has(urlDrawId)) ? urlDrawId : null;
           ownerDrawsMap.clear();
           avatarRequests = [];
+          superAdminOrganizersMap.clear();
+          superAdminDrawStatsMap.clear();
           legacyRawSnapshotData = null;
           legacyMigrationInfo = null;
           rebuildDrawsArray();
@@ -4198,7 +4469,7 @@
       },
 
       setAdminTab(tab) {
-        if (tab === 'avatars' && !isSuperAdminUser()) return;
+        if ((tab === 'avatars' || tab === 'users') && !isSuperAdminUser()) return;
         adminTab = tab;
         confirmDeleteDrawId = null;
         confirmDeleteFolderId = null;
@@ -4255,6 +4526,32 @@
                 reqQs.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() }));
                 list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                 avatarRequests = list;
+              }
+              if (organizersColRef) {
+                const orgQs = await getDocs(organizersColRef);
+                superAdminOrganizersMap.clear();
+                orgQs.forEach(docSnap => {
+                  superAdminOrganizersMap.set(docSnap.id, { uid: docSnap.id, ...docSnap.data() });
+                });
+              }
+              if (drawsColRef) {
+                const allDrawsQs = await getDocs(drawsColRef);
+                superAdminDrawStatsMap.clear();
+                allDrawsQs.forEach(docSnap => {
+                  const data = docSnap.data() || {};
+                  const ownerId = data.ownerId || 'sin_dueno';
+                  const prev = superAdminDrawStatsMap.get(ownerId) || {
+                    count: 0,
+                    totalParticipants: 0,
+                    lastActivityAt: 0,
+                    ownerEmail: data.ownerEmail || ''
+                  };
+                  prev.count += 1;
+                  prev.totalParticipants += Array.isArray(data.participants) ? data.participants.length : 0;
+                  prev.lastActivityAt = Math.max(prev.lastActivityAt, data.updatedAt || data.createdAt || 0);
+                  if (!prev.ownerEmail && data.ownerEmail) prev.ownerEmail = data.ownerEmail;
+                  superAdminDrawStatsMap.set(ownerId, prev);
+                });
               }
               await checkLegacyMigration();
             }
@@ -4782,11 +5079,32 @@
           }
 
           if (legacyMigrationInfo.hasPendingAvatars) {
-            const foldersToSave = legacyMigrationInfo.avatarFolders || avatarFolders;
-            const catalogToSave = legacyMigrationInfo.avatarCatalog || avatarCatalog;
+            const mergedFoldersMap = new Map();
+            (legacyMigrationInfo.avatarFolders || []).forEach(f => {
+              if (f && f.id) mergedFoldersMap.set(f.id, f);
+            });
+            avatarFolders.forEach(f => {
+              if (f && f.id && !mergedFoldersMap.has(f.id)) mergedFoldersMap.set(f.id, f);
+            });
+            const mergedCatalogMap = new Map();
+            (legacyMigrationInfo.avatarCatalog || []).forEach(a => {
+              if (a && a.id) mergedCatalogMap.set(a.id, a);
+            });
+            avatarCatalog.forEach(a => {
+              if (a && a.id && !mergedCatalogMap.has(a.id)) mergedCatalogMap.set(a.id, a);
+            });
+
+            avatarFolders = Array.from(mergedFoldersMap.values());
+            avatarCatalog = Array.from(mergedCatalogMap.values());
+            sortAvatarFolders();
+            sortAvatarCatalog();
+            ensureValidActiveFolder();
+            localStorage.setItem(AVATAR_FOLDERS_BACKUP_KEY, JSON.stringify(avatarFolders));
+            localStorage.setItem(AVATAR_CATALOG_BACKUP_KEY, JSON.stringify(avatarCatalog));
+
             await setDoc(avatarsDocRef, stripUndefinedDeep({
-              avatarFolders: foldersToSave,
-              avatarCatalog: catalogToSave,
+              avatarFolders,
+              avatarCatalog,
               updatedAt: Date.now()
             }), { merge: true });
             avatarsCloudDocExists = true;
