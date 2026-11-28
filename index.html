@@ -1657,10 +1657,23 @@
       }
     }
 
+    function normalizeExclusionPair(pair) {
+      if (Array.isArray(pair) && pair.length >= 2 && pair[0] && pair[1]) {
+        return { a: String(pair[0]), b: String(pair[1]) };
+      }
+      if (pair && typeof pair === 'object' && pair.a && pair.b) {
+        return { a: String(pair.a), b: String(pair.b) };
+      }
+      return null;
+    }
+
     function sanitizeSingleDrawForStorage(d) {
       if (!d || typeof d !== 'object') return null;
       return stripUndefinedDeep({
         ...d,
+        exclusions: Array.isArray(d.exclusions)
+          ? d.exclusions.map(normalizeExclusionPair).filter(Boolean)
+          : [],
         participants: (d.participants || []).map(p => ({
           ...p,
           avatar: p.avatar ?? null,
@@ -2001,9 +2014,10 @@
 
       const forbidden = new Set();
       (draw.exclusions || []).forEach(pair => {
-        if (Array.isArray(pair) && pair.length === 2) {
-          forbidden.add(`${pair[0]}->${pair[1]}`);
-          forbidden.add(`${pair[1]}->${pair[0]}`);
+        const norm = normalizeExclusionPair(pair);
+        if (norm) {
+          forbidden.add(`${norm.a}->${norm.b}`);
+          forbidden.add(`${norm.b}->${norm.a}`);
         }
       });
 
@@ -3455,8 +3469,10 @@
         const optionsB = pList.map((p, idx) => `<option value="${escapeHtml(p.id)}" ${idx === 1 ? 'selected' : ''}>${escapeHtml(p.name)}</option>`).join('');
         const exclHtml = (draw.exclusions || []).length > 0
           ? (draw.exclusions || []).map((pair, idx) => {
-              const a = pList.find(x => x.id === pair[0]);
-              const b = pList.find(x => x.id === pair[1]);
+              const norm = normalizeExclusionPair(pair);
+              if (!norm) return '';
+              const a = pList.find(x => x.id === norm.a);
+              const b = pList.find(x => x.id === norm.b);
               if (!a || !b) return '';
               return `
                 <div style="display:flex;align-items:center;justify-content:space-between;background:#FFFFFF;border:1.5px solid var(--border);border-radius:12px;padding:7px 11px;margin-top:7px;">
@@ -4365,12 +4381,13 @@
           return;
         }
         if (!Array.isArray(draw.exclusions)) draw.exclusions = [];
-        const exists = draw.exclusions.some(p => (p[0] === a && p[1] === b) || (p[0] === b && p[1] === a));
+        draw.exclusions = draw.exclusions.map(normalizeExclusionPair).filter(Boolean);
+        const exists = draw.exclusions.some(p => (p.a === a && p.b === b) || (p.a === b && p.b === a));
         if (exists) {
           showToast('Esa pareja ya está bloqueada');
           return;
         }
-        draw.exclusions.push([a, b]);
+        draw.exclusions.push({ a, b });
         saveState();
         renderAdminScreen();
         showToast('🚫 Pareja bloqueada');
@@ -4465,7 +4482,9 @@
         if (!draw) return;
         const wasDrawn = draw.status === 'drawn';
         draw.participants = (draw.participants || []).filter(p => p.id !== userId);
-        draw.exclusions = (draw.exclusions || []).filter(pair => pair[0] !== userId && pair[1] !== userId);
+        draw.exclusions = (draw.exclusions || [])
+          .map(normalizeExclusionPair)
+          .filter(pair => pair && pair.a !== userId && pair.b !== userId);
         saveState();
         renderAdminScreen();
         showToast(wasDrawn ? '⚠️ Participante eliminado. Vuelve a lanzar el sorteo para reajustar parejas.' : '🗑️ Participante eliminado');
