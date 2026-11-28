@@ -39,7 +39,7 @@
       background-size: 22px 22px;
       color: var(--ink);
       min-height: 100vh;
-      padding: 16px 10px 40px;
+      padding: 16px 10px calc(78px + env(safe-area-inset-bottom, 0px));
       display: flex;
       justify-content: center;
       align-items: flex-start;
@@ -727,24 +727,108 @@
       transform: translateY(0);
     }
 
+    .save-badge.floating {
+      position: absolute;
+      top: -10px;
+      right: 12px;
+      z-index: 3;
+      box-shadow: 0 2px 6px rgba(22, 101, 52, 0.16);
+    }
+
     /* Tarjetas editables con auto-guardado */
     .wish-edit-card {
+      position: relative;
       background: #FFFFFF;
       border: 2.5px solid var(--border);
       border-radius: 18px;
-      padding: 12px 13px;
+      padding: 11px 12px;
       margin-bottom: 10px;
       box-shadow: 0 3px 0 #E5DAC6;
+    }
+
+    .wish-card-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .wish-card-fields {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .wish-thumb-slot {
+      display: none;
+      flex-shrink: 0;
+    }
+
+    .wish-thumb-slot.visible {
+      display: block;
+    }
+
+    .wish-product-thumb {
+      width: 56px;
+      height: 56px;
+      border-radius: 13px;
+      border: 2px solid var(--border);
+      background: #FFFDF8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      transition: transform 0.12s ease, border-color 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .wish-product-thumb:hover {
+      transform: scale(1.04);
+      border-color: var(--gold);
+    }
+
+    .wish-thumb-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #FFFFFF;
+    }
+
+    .wish-thumb-favicon {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+
+    .wish-thumb-open-badge {
+      position: absolute;
+      bottom: 3px;
+      right: 3px;
+      width: 16px;
+      height: 16px;
+      border-radius: 5px;
+      background: rgba(27, 67, 50, 0.86);
+      color: #FFFFFF;
+      font-size: 0.62rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
     }
 
     .wish-edit-top {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .wish-title-input {
       flex: 1;
+      width: 100%;
       min-width: 0;
       padding: 9px 11px;
       border-radius: 12px;
@@ -763,9 +847,9 @@
     }
 
     .wish-sub-fields {
-      margin-top: 8px;
-      margin-left: 10px;
-      padding-left: 10px;
+      margin-top: 7px;
+      margin-left: 4px;
+      padding-left: 8px;
       border-left: 2.5px dashed var(--border);
       display: flex;
       flex-direction: column;
@@ -832,6 +916,7 @@
     }
 
     .nowish-edit-card {
+      position: relative;
       background: #FFF5F5;
       border: 2px solid #F3B8BC;
       border-radius: 16px;
@@ -839,12 +924,13 @@
       margin-bottom: 9px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       box-shadow: 0 3px 0 #F1D0D2;
     }
 
     .nowish-input {
       flex: 1;
+      width: 100%;
       min-width: 0;
       padding: 8px 10px;
       border-radius: 11px;
@@ -1725,6 +1811,76 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
+
+    @media (max-width: 720px) {
+      .toast {
+        bottom: calc(58px + env(safe-area-inset-bottom, 0px));
+      }
+    }
+
+    /* Botón flotante discreto de música navideña */
+    @keyframes musicSubtlePulse {
+      0%, 100% {
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28), 0 2px 0 #B6852A, 0 0 0 0 rgba(253, 224, 141, 0);
+      }
+      50% {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 2px 0 #B6852A, 0 0 12px 2px rgba(253, 224, 141, 0.42);
+      }
+    }
+
+    .music-float-btn {
+      position: fixed;
+      right: 14px;
+      bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+      z-index: 940;
+      background: linear-gradient(145deg, #FFFDF7 0%, #F5E6C8 100%);
+      color: var(--pine-dark);
+      border: 2px solid var(--gold);
+      border-radius: 99px;
+      padding: 8px 14px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 900;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28), 0 2px 0 #B6852A;
+      animation: musicSubtlePulse 3.2s ease-in-out infinite;
+      transition: transform 0.12s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .music-float-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .music-float-btn:active {
+      transform: translateY(2px);
+    }
+
+    .music-float-btn.playing {
+      background: linear-gradient(145deg, var(--crimson) 0%, var(--crimson-dark) 100%);
+      color: #FFFFFF;
+      border-color: #FDE68A;
+      box-shadow: 0 4px 16px rgba(176, 30, 36, 0.42), 0 2px 0 #5C0B0F;
+      animation: none;
+    }
+
+    @media (max-width: 520px) {
+      .music-float-btn {
+        right: 10px;
+        bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+        padding: 7px 12px;
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .music-float-btn {
+        animation: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1737,6 +1893,18 @@
     </div>
     <div class="festive-stripe"></div>
   </div>
+
+  <audio id="bgChristmasAudio" loop preload="none" hidden aria-hidden="true">
+    <source src="./audio/navidad26.m4a" type="audio/mp4" />
+  </audio>
+  <button
+    id="musicToggleBtn"
+    type="button"
+    class="music-float-btn"
+    aria-pressed="false"
+    title="Activar música navideña de fondo"
+    onclick="window.app.toggleBackgroundMusic()"
+  >🎵 Música</button>
 
   <div id="toastEl" class="toast"></div>
 
@@ -2162,6 +2330,130 @@
       return 'https://' + clean;
     }
 
+    function isValidHttpWishUrl(urlStr) {
+      if (!urlStr) return false;
+      try {
+        const u = new URL(urlStr);
+        return (u.protocol === 'http:' || u.protocol === 'https:') && u.hostname.includes('.');
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function isGenericOrBadPreviewImg(imgUrl) {
+      const s = String(imgUrl || '').trim();
+      if (!/^https?:\/\//i.test(s)) return true;
+      if (/\.svg(\?|$)/i.test(s)) return true;
+      if (/ShoppingPortal\/logo|amazondefault|x-locale\/(common|communities)|sprite|spacer|pixel|blank\.gif|1x1|favicon|logo[-_.]|icon[-_.]/i.test(s)) {
+        return true;
+      }
+      return false;
+    }
+
+    const wishPreviewCache = new Map();
+    const wishPreviewInFlight = new Map();
+    const wishUrlDebounceTimers = {};
+
+    async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), timeoutMs);
+      try {
+        return await fetch(url, { ...options, signal: ctrl.signal });
+      } finally {
+        clearTimeout(t);
+      }
+    }
+
+    async function resolveWishPreviewImage(rawUrl) {
+      const cleanUrl = normalizeWishUrl(rawUrl);
+      if (!isValidHttpWishUrl(cleanUrl)) return '';
+      if (/\.(jpe?g|png|webp|gif|avif)(\?.*)?$/i.test(cleanUrl)) {
+        return cleanUrl;
+      }
+      if (wishPreviewCache.has(cleanUrl)) {
+        return wishPreviewCache.get(cleanUrl);
+      }
+      if (wishPreviewInFlight.has(cleanUrl)) {
+        return wishPreviewInFlight.get(cleanUrl);
+      }
+
+      const job = (async () => {
+        // 1. Intento rápido con OpenGraph vía Microlink
+        try {
+          const r = await fetchWithTimeout(`https://api.microlink.io/?url=${encodeURIComponent(cleanUrl)}`, {}, 4500);
+          if (r.ok) {
+            const j = await r.json();
+            const ogImg = j?.data?.image?.url || '';
+            if (ogImg && !isGenericOrBadPreviewImg(ogImg)) {
+              wishPreviewCache.set(cleanUrl, ogImg);
+              return ogImg;
+            }
+          }
+        } catch (e) {}
+
+        // 2. Respaldo con renderizado ligero Jina Reader (CORS habilitado) para tiendas como Decathlon, Casa del Libro, etc.
+        try {
+          const r2 = await fetchWithTimeout(`https://r.jina.ai/${cleanUrl}`, {
+            headers: { 'Accept': 'application/json', 'X-With-Images-Summary': 'true' }
+          }, 6500);
+          if (r2.ok) {
+            const j2 = await r2.json();
+            const candidates = Object.values(j2?.data?.images || {}).filter(u => !isGenericOrBadPreviewImg(u));
+            if (candidates.length > 0) {
+              const preferred = candidates.find(u =>
+                /media-amazon\.com\/images\/I\/|mediadecathlon|elcorteingles|zara\.net|fnac-static|pccomponentes|casadellibro|product|articulo|large/i.test(u)
+              ) || candidates[0];
+              wishPreviewCache.set(cleanUrl, preferred);
+              return preferred;
+            }
+          }
+        } catch (e) {}
+
+        wishPreviewCache.set(cleanUrl, '');
+        return '';
+      })();
+
+      wishPreviewInFlight.set(cleanUrl, job);
+      try {
+        return await job;
+      } finally {
+        wishPreviewInFlight.delete(cleanUrl);
+      }
+    }
+
+    function buildWishThumbAnchorHtml(w) {
+      const cleanUrl = normalizeWishUrl(w?.url || '');
+      if (!isValidHttpWishUrl(cleanUrl)) return '';
+      let hostname = '';
+      try { hostname = new URL(cleanUrl).hostname; } catch (e) {}
+      const faviconUrl = hostname
+        ? `https://www.google.com/s2/favicons?sz=128&domain_url=${encodeURIComponent(hostname)}`
+        : '';
+      const imgSrc = w?.image && !isGenericOrBadPreviewImg(w.image) ? String(w.image).trim() : '';
+
+      return `
+        <a href="${escapeHtml(cleanUrl)}" target="_blank" rel="noopener noreferrer" class="wish-product-thumb" title="Abrir producto en nueva pestaña">
+          ${imgSrc
+            ? `<img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(w?.title || 'Producto')}" class="wish-thumb-img" loading="lazy" referrerpolicy="no-referrer" data-fallback="${escapeHtml(faviconUrl)}" onerror="window.app.onWishThumbError(this)" />`
+            : (faviconUrl
+              ? `<img src="${escapeHtml(faviconUrl)}" alt="" class="wish-thumb-favicon" loading="lazy" referrerpolicy="no-referrer" onerror="window.app.onWishThumbError(this)" />`
+              : `<span style="font-size:1.35rem;">🛍️</span>`)}
+          <span class="wish-thumb-open-badge">↗</span>
+        </a>
+      `;
+    }
+
+    function refreshWishThumbSlotsInDom(wishObj) {
+      if (!wishObj || !wishObj.id) return;
+      const cleanUrl = normalizeWishUrl(wishObj.url || '');
+      const valid = isValidHttpWishUrl(cleanUrl);
+      const html = valid ? buildWishThumbAnchorHtml(wishObj) : '';
+      document.querySelectorAll(`[data-wish-thumb-slot="${CSS.escape ? CSS.escape(wishObj.id) : wishObj.id}"]`).forEach(slot => {
+        slot.classList.toggle('visible', valid);
+        slot.innerHTML = html;
+      });
+    }
+
     function isWishEmpty(w) {
       if (!w || typeof w !== 'object') return true;
       return !String(w.title || '').trim() && !String(w.note || '').trim() && !String(w.url || '').trim();
@@ -2233,12 +2525,16 @@
             color: String(p.sizes?.color || '')
           },
           wishes: Array.isArray(p.wishes)
-            ? p.wishes.filter(w => !isWishEmpty(w)).map(w => ({
-                ...w,
-                title: String(w.title || '').trim(),
-                note: String(w.note || '').trim(),
-                url: normalizeWishUrl(w.url || '')
-              }))
+            ? p.wishes.filter(w => !isWishEmpty(w)).map(w => {
+                const normUrl = normalizeWishUrl(w.url || '');
+                return {
+                  ...w,
+                  title: String(w.title || '').trim(),
+                  note: String(w.note || '').trim(),
+                  url: normUrl,
+                  image: normUrl ? String(w.image || '').trim() : ''
+                };
+              })
             : [],
           noWishes: Array.isArray(p.noWishes)
             ? p.noWishes.map(item => String(item || '').trim()).filter(Boolean)
@@ -3849,13 +4145,46 @@
         </div>
       `;
 
-      const statusSubText = draw.status === 'countdown'
-        ? '⏳ Espera'
-        : (user.revealed ? '🎁 Abierto' : '🔒 Sobre');
+      const statusSubText = unansweredForMe > 0
+        ? `💬 ${unansweredForMe} preg.`
+        : (draw.status === 'countdown' ? '⏳ Espera' : (user.revealed ? '🎁 Abierto' : '🔒 Sobre'));
 
       const wishesSubText = unansweredForMe > 0
         ? `💬 ${unansweredForMe} preg.`
         : `${filledWishesCount} idea${filledWishesCount === 1 ? '' : 's'}`;
+
+      const renderIncomingQuestionsSection = (showWhenEmpty = false, marginTop = '14px', marginBottom = '0') => {
+        if (questionsForMe.length === 0 && !showWhenEmpty) return '';
+        return `
+          <div class="anon-qa-box" style="margin-top:${marginTop};margin-bottom:${marginBottom};border-color:var(--crimson);">
+            <div class="section-label" style="color:var(--crimson);margin-bottom:6px;">🕵️ Preguntas secretas para ti</div>
+            <div class="anon-badge-pill" style="background:#FDE8E8;color:var(--crimson-dark);border-color:#F3B8BC;">
+              🔒 Alguien que te regala pregunta en 100 % anonimato
+            </div>
+            ${questionsForMe.length > 0 ? questionsForMe.map(q => `
+              <div class="anon-qa-item">
+                <div style="font-weight:900;color:var(--ink);margin-bottom:6px;">❓ "${escapeHtml(q.question)}"</div>
+                ${q.answer ? `
+                  <div style="font-size:0.82rem;font-weight:800;color:var(--pine);background:#ECFDF5;padding:7px 10px;border-radius:10px;">
+                    ✅ Tu respuesta: "${escapeHtml(q.answer)}"
+                  </div>
+                ` : `
+                  <div style="display:flex;gap:7px;">
+                    <input id="answerQ_${escapeHtml(q.id)}" type="text" class="input-christmas" style="padding:8px 11px;font-size:0.85rem;" placeholder="Escribe tu respuesta..." onkeydown="if(event.key==='Enter')window.app.answerAnonQuestion('${escapeHtml(q.id)}')" />
+                    <button type="button" class="btn-3d-pill green-solid" onclick="window.app.answerAnonQuestion('${escapeHtml(q.id)}')">
+                      Responder
+                    </button>
+                  </div>
+                `}
+              </div>
+            `).join('') : `
+              <div style="font-size:0.82rem;color:var(--muted);padding:4px 2px;line-height:1.4;">
+                Todavía no te han hecho ninguna pregunta anónima. Si quien te regala tiene alguna duda, aparecerá aquí.
+              </div>
+            `}
+          </div>
+        `;
+      };
 
       const tabsHtml = `
         <div class="user-tabs">
@@ -3902,6 +4231,7 @@
                 <div class="cd-unit"><span id="cd-secs" class="cd-num">${cd.secs}</span><span class="cd-lbl">Seg</span></div>
               </div>
             </div>
+            ${renderIncomingQuestionsSection(false, '14px', '0')}
             <div class="guided-next-box">
               <button type="button" class="btn-big btn-green" onclick="window.app.setUserTab('avatar')">
                 🎭 Siguiente paso: Elegir Mi Avatar →
@@ -3928,6 +4258,7 @@
                   ✨ Abrir mi sobre secreto
                 </button>
               </div>
+              ${renderIncomingQuestionsSection(false, '14px', '0')}
               <div class="guided-next-box">
                 <button type="button" class="btn-big btn-green" onclick="window.app.setUserTab('avatar')">
                   🎭 Siguiente paso: Elegir Mi Avatar →
@@ -3978,19 +4309,28 @@
 
               ${target ? `
                 <div class="section-label">📜 Lo que desea ${escapeHtml(target.name)}:</div>
-                ${tWishes.length > 0 ? tWishes.map(w => `
-                  <div class="wish-item">
-                    <div style="flex:1;min-width:180px;">
-                      <div style="font-weight:900;font-size:0.98rem;">🎁 ${escapeHtml(w.title || 'Deseo sin título')}</div>
-                      ${w.note ? `<div style="font-size:0.82rem;color:var(--muted);margin-top:3px;">${escapeHtml(w.note)}</div>` : ''}
-                      ${w.url ? `
-                        <a href="${escapeHtml(normalizeWishUrl(w.url))}" target="_blank" rel="noopener noreferrer" class="btn-3d-pill gold wish-link-anchor">
-                          🔗 Ver enlace
-                        </a>
+                ${tWishes.length > 0 ? tWishes.map(w => {
+                  const cleanTargetUrl = normalizeWishUrl(w.url || '');
+                  const hasTargetThumb = isValidHttpWishUrl(cleanTargetUrl);
+                  return `
+                    <div class="wish-item" style="flex-wrap:nowrap;align-items:center;">
+                      ${hasTargetThumb ? `
+                        <div data-wish-thumb-slot="${escapeHtml(w.id)}" class="wish-thumb-slot visible">
+                          ${buildWishThumbAnchorHtml(w)}
+                        </div>
                       ` : ''}
+                      <div style="flex:1;min-width:0;">
+                        <div style="font-weight:900;font-size:0.98rem;">🎁 ${escapeHtml(w.title || 'Deseo sin título')}</div>
+                        ${w.note ? `<div style="font-size:0.82rem;color:var(--muted);margin-top:3px;">${escapeHtml(w.note)}</div>` : ''}
+                        ${cleanTargetUrl ? `
+                          <a href="${escapeHtml(cleanTargetUrl)}" target="_blank" rel="noopener noreferrer" class="btn-3d-pill gold wish-link-anchor">
+                            🔗 Ver enlace
+                          </a>
+                        ` : ''}
+                      </div>
                     </div>
-                  </div>
-                `).join('') : `
+                  `;
+                }).join('') : `
                   <div class="wish-item" style="justify-content:center;color:var(--muted);font-size:0.86rem;">
                     ${escapeHtml(target.name)} aún no ha apuntado ideas. ¡Puedes preguntarle en secreto abajo!
                   </div>
@@ -4017,13 +4357,15 @@
                     </div>
                   `).join('') : ''}
                   <div style="display:flex;gap:7px;margin-top:8px;">
-                    <input id="anonQuestionInput" type="text" class="input-christmas" placeholder="Ej: ¿Qué talla usas o prefieres algo de lectura?" />
+                    <input id="anonQuestionInput" type="text" class="input-christmas" placeholder="Ej: ¿Qué talla usas o prefieres algo de lectura?" onkeydown="if(event.key==='Enter')window.app.sendAnonQuestion()" />
                     <button type="button" class="btn-3d-pill green-solid" style="flex-shrink:0;" onclick="window.app.sendAnonQuestion()">
                       Enviar
                     </button>
                   </div>
                 </div>
               ` : ''}
+
+              ${renderIncomingQuestionsSection(true, '14px', '0')}
 
               <div class="guided-next-box">
                 <button type="button" class="btn-big btn-green" onclick="window.app.setUserTab('avatar')">
@@ -4034,82 +4376,67 @@
           }
         }
       } else if (userTab === 'mywishes') {
-        const incomingQuestionsHtml = questionsForMe.length > 0 ? `
-          <div class="anon-qa-box" style="margin-top:0;margin-bottom:16px;border-color:var(--crimson);">
-            <div class="section-label" style="color:var(--crimson);margin-bottom:6px;">🕵️ Preguntas secretas para ti</div>
-            <div class="anon-badge-pill" style="background:#FDE8E8;color:var(--crimson-dark);border-color:#F3B8BC;">
-              🔒 Alguien que te regala pregunta en 100 % anonimato
-            </div>
-            ${questionsForMe.map(q => `
-              <div class="anon-qa-item">
-                <div style="font-weight:900;color:var(--ink);margin-bottom:6px;">❓ "${escapeHtml(q.question)}"</div>
-                ${q.answer ? `
-                  <div style="font-size:0.82rem;font-weight:800;color:var(--pine);background:#ECFDF5;padding:7px 10px;border-radius:10px;">
-                    ✅ Tu respuesta: "${escapeHtml(q.answer)}"
-                  </div>
-                ` : `
-                  <div style="display:flex;gap:7px;">
-                    <input id="answerQ_${escapeHtml(q.id)}" type="text" class="input-christmas" style="padding:8px 11px;font-size:0.85rem;" placeholder="Escribe tu respuesta..." />
-                    <button type="button" class="btn-3d-pill green-solid" onclick="window.app.answerAnonQuestion('${escapeHtml(q.id)}')">
-                      Responder
-                    </button>
-                  </div>
-                `}
-              </div>
-            `).join('')}
-          </div>
-        ` : '';
+        const incomingQuestionsHtml = renderIncomingQuestionsSection(false, '0', '16px');
 
         const wishesListHtml = user.wishes.length > 0
           ? user.wishes.map((w, idx) => {
               const showUrl = expandedWishUrlIds.has(w.id) || Boolean((w.url || '').trim());
+              const cleanUserUrl = normalizeWishUrl(w.url || '');
+              const hasUserThumb = isValidHttpWishUrl(cleanUserUrl);
               return `
                 <div class="wish-edit-card">
-                  <div class="wish-edit-top">
-                    <input
-                      id="wishTitle_${escapeHtml(w.id)}"
-                      type="text"
-                      class="wish-title-input"
-                      value="${escapeHtml(w.title || '')}"
-                      placeholder="🎁 Idea de regalo #${idx + 1}..."
-                      oninput="window.app.updateWishField('${escapeHtml(w.id)}', 'title', this.value)"
-                    />
-                    <span id="saved_wish_${escapeHtml(w.id)}" class="save-badge">✅ Guardado</span>
-                    <button
-                      type="button"
-                      class="wish-icon-btn ${showUrl ? 'has-url' : ''}"
-                      title="Añadir o mostrar enlace URL"
-                      onclick="window.app.toggleWishUrlField('${escapeHtml(w.id)}')"
-                    >🔗</button>
-                    <button
-                      type="button"
-                      class="wish-icon-btn danger"
-                      title="Borrar deseo"
-                      onclick="window.app.removeWish('${escapeHtml(w.id)}')"
-                    >🗑️</button>
-                  </div>
-                  <div class="wish-sub-fields">
-                    <div class="wish-sub-row">
-                      <input
-                        type="text"
-                        class="wish-sub-input"
-                        value="${escapeHtml(w.note || '')}"
-                        placeholder="↳ Nota opcional (color, tienda, edición...)"
-                        oninput="window.app.updateWishField('${escapeHtml(w.id)}', 'note', this.value)"
-                      />
+                  <span id="saved_wish_${escapeHtml(w.id)}" class="save-badge floating">✅ Guardado</span>
+                  <div class="wish-card-main">
+                    <div id="wishThumbSlot_${escapeHtml(w.id)}" data-wish-thumb-slot="${escapeHtml(w.id)}" class="wish-thumb-slot ${hasUserThumb ? 'visible' : ''}">
+                      ${hasUserThumb ? buildWishThumbAnchorHtml(w) : ''}
                     </div>
-                    ${showUrl ? `
-                      <div class="wish-sub-row">
+                    <div class="wish-card-fields">
+                      <div class="wish-edit-top">
                         <input
-                          id="wishUrl_${escapeHtml(w.id)}"
-                          type="url"
-                          class="wish-sub-input"
-                          value="${escapeHtml(w.url || '')}"
-                          placeholder="🔗 https://... (enlace opcional)"
-                          oninput="window.app.updateWishField('${escapeHtml(w.id)}', 'url', this.value)"
+                          id="wishTitle_${escapeHtml(w.id)}"
+                          type="text"
+                          class="wish-title-input"
+                          value="${escapeHtml(w.title || '')}"
+                          placeholder="🎁 Idea de regalo #${idx + 1}..."
+                          oninput="window.app.updateWishField('${escapeHtml(w.id)}', 'title', this.value)"
                         />
+                        <button
+                          type="button"
+                          class="wish-icon-btn ${showUrl ? 'has-url' : ''}"
+                          title="Añadir o mostrar enlace URL"
+                          onclick="window.app.toggleWishUrlField('${escapeHtml(w.id)}')"
+                        >🔗</button>
+                        <button
+                          type="button"
+                          class="wish-icon-btn danger"
+                          title="Borrar deseo"
+                          onclick="window.app.removeWish('${escapeHtml(w.id)}')"
+                        >🗑️</button>
                       </div>
-                    ` : ''}
+                      <div class="wish-sub-fields">
+                        <div class="wish-sub-row">
+                          <input
+                            type="text"
+                            class="wish-sub-input"
+                            value="${escapeHtml(w.note || '')}"
+                            placeholder="↳ Nota opcional (color, tienda, edición...)"
+                            oninput="window.app.updateWishField('${escapeHtml(w.id)}', 'note', this.value)"
+                          />
+                        </div>
+                        ${showUrl ? `
+                          <div class="wish-sub-row">
+                            <input
+                              id="wishUrl_${escapeHtml(w.id)}"
+                              type="url"
+                              class="wish-sub-input"
+                              value="${escapeHtml(w.url || '')}"
+                              placeholder="🔗 https://... (enlace opcional)"
+                              oninput="window.app.updateWishField('${escapeHtml(w.id)}', 'url', this.value)"
+                            />
+                          </div>
+                        ` : ''}
+                      </div>
+                    </div>
                   </div>
                 </div>
               `;
@@ -4119,6 +4446,7 @@
         const noWishesListHtml = user.noWishes.length > 0
           ? user.noWishes.map((nw, idx) => `
               <div class="nowish-edit-card">
+                <span id="saved_nowish_${idx}" class="save-badge floating">✅ Guardado</span>
                 <input
                   id="noWishInput_${idx}"
                   type="text"
@@ -4127,7 +4455,6 @@
                   placeholder="🚫 Ej: Tazas, colonias, calcetines..."
                   oninput="window.app.updateNoWish(${idx}, this.value)"
                 />
-                <span id="saved_nowish_${idx}" class="save-badge">✅ Guardado</span>
                 <button type="button" class="wish-icon-btn danger" title="Quitar" onclick="window.app.removeNoWish(${idx})">🗑️</button>
               </div>
             `).join('')
@@ -4268,6 +4595,28 @@
       if (nextDrawerScrollEl && prevDrawerScrollTop > 0) {
         nextDrawerScrollEl.scrollTop = prevDrawerScrollTop;
       }
+
+      // Hidratar en segundo plano miniaturas de productos para deseos con enlace que aún no tengan imagen guardada
+      const visibleWishes = userTab === 'mywishes'
+        ? (user?.wishes || []).map(w => ({ w, own: true }))
+        : (userTab === 'status' && user?.revealed ? (target?.wishes || []).map(w => ({ w, own: false })) : []);
+      visibleWishes.forEach(({ w, own }) => {
+        if (!w || w.image) return;
+        const cleanUrl = normalizeWishUrl(w.url || '');
+        if (!isValidHttpWishUrl(cleanUrl) || wishPreviewCache.has(cleanUrl)) {
+          if (wishPreviewCache.get(cleanUrl)) {
+            w.image = wishPreviewCache.get(cleanUrl);
+            refreshWishThumbSlotsInDom(w);
+          }
+          return;
+        }
+        resolveWishPreviewImage(cleanUrl).then(imgUrl => {
+          if (!imgUrl || normalizeWishUrl(w.url || '') !== cleanUrl) return;
+          w.image = imgUrl;
+          refreshWishThumbSlotsInDom(w);
+          if (own) scheduleAutosave();
+        });
+      });
     }
 
     /* --- PANTALLA 4: PANEL DE ORGANIZACIÓN (CUENTA GOOGLE) --- */
@@ -5013,6 +5362,21 @@
         if (el) el.focus();
       },
 
+      onWishThumbError(imgEl) {
+        if (!imgEl) return;
+        const fb = imgEl.dataset?.fallback || '';
+        if (fb && imgEl.src !== fb && !imgEl.dataset.triedFallback) {
+          imgEl.dataset.triedFallback = '1';
+          imgEl.className = 'wish-thumb-favicon';
+          imgEl.src = fb;
+          return;
+        }
+        const span = document.createElement('span');
+        span.style.fontSize = '1.35rem';
+        span.textContent = '🛍️';
+        imgEl.replaceWith(span);
+      },
+
       updateWishField(wishId, field, value) {
         const draw = getCurrentDraw();
         const user = draw?.participants?.find(p => p.id === selectedUserId);
@@ -5020,7 +5384,31 @@
         ensureUserEditableStructures(user);
         const w = user.wishes.find(x => x.id === wishId);
         if (!w) return;
-        w[field] = value;
+
+        if (field === 'url') {
+          const prevClean = normalizeWishUrl(w.url || '');
+          w.url = value;
+          const nextClean = normalizeWishUrl(value);
+          if (nextClean !== prevClean) {
+            w.image = '';
+            refreshWishThumbSlotsInDom(w);
+            clearTimeout(wishUrlDebounceTimers[wishId]);
+            if (isValidHttpWishUrl(nextClean)) {
+              wishUrlDebounceTimers[wishId] = setTimeout(async () => {
+                const imgUrl = await resolveWishPreviewImage(nextClean);
+                if (normalizeWishUrl(w.url || '') !== nextClean) return;
+                if (imgUrl) {
+                  w.image = imgUrl;
+                  refreshWishThumbSlotsInDom(w);
+                  scheduleAutosave(`saved_wish_${wishId}`);
+                }
+              }, 650);
+            }
+          }
+        } else {
+          w[field] = value;
+        }
+
         updateMyWishesTabCounterInPlace();
         scheduleAutosave(`saved_wish_${wishId}`);
       },
@@ -5038,6 +5426,7 @@
         const user = draw?.participants?.find(p => p.id === selectedUserId);
         if (!user) return;
         ensureUserEditableStructures(user);
+        clearTimeout(wishUrlDebounceTimers[wishId]);
         user.wishes = user.wishes.filter(w => w.id !== wishId);
         expandedWishUrlIds.delete(wishId);
         saveState();
@@ -5981,12 +6370,47 @@
         refreshLegacyMigrationInfo();
         renderAdminScreen();
         showToast(`✨ ¡Listo! ${avatarCatalog.length} avatares únicos en ${avatarFolders.length} categorías.`);
+      },
+
+      async toggleBackgroundMusic() {
+        const audioEl = document.getElementById('bgChristmasAudio');
+        const btnEl = document.getElementById('musicToggleBtn');
+        if (!audioEl || !btnEl) return;
+        audioEl.volume = 0.30;
+        if (audioEl.paused) {
+          try {
+            await audioEl.play();
+          } catch (e) {
+            showToast('⚠️ No se pudo reproducir el audio en este navegador');
+          }
+        } else {
+          audioEl.pause();
+        }
       }
     };
+
+    function initBackgroundMusic() {
+      const audioEl = document.getElementById('bgChristmasAudio');
+      const btnEl = document.getElementById('musicToggleBtn');
+      if (!audioEl || !btnEl) return;
+      audioEl.volume = 0.30;
+      const syncUi = () => {
+        const isPlaying = !audioEl.paused && !audioEl.ended;
+        btnEl.classList.toggle('playing', isPlaying);
+        btnEl.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+        btnEl.title = isPlaying ? 'Pausar música navideña' : 'Activar música navideña de fondo';
+        btnEl.textContent = isPlaying ? '🔊 Sonando' : '🎵 Música';
+      };
+      audioEl.addEventListener('play', syncUi);
+      audioEl.addEventListener('pause', syncUi);
+      audioEl.addEventListener('ended', syncUi);
+      syncUi();
+    }
 
     window.addEventListener('beforeunload', () => flushAutosave(true));
 
     /* Arranque inicial */
+    initBackgroundMusic();
     renderAll();
     initCloudStorage();
   </script>
