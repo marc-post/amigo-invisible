@@ -4426,9 +4426,22 @@
           <div class="admin-section">
             <div class="section-label">📲 Compartir y Controlar Sorteo</div>
             <div style="display:flex;flex-direction:column;gap:10px;">
-              <button type="button" class="btn-big btn-green" onclick="window.app.shareWhatsappInvite()">
+              <button type="button" class="btn-big btn-green" onclick="window.app.shareWhatsappInvite('app')">
                 📲 Enviar Invitación por WhatsApp
               </button>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                ${typeof navigator !== 'undefined' && navigator.share ? `
+                  <button type="button" class="btn-3d-pill" style="flex:1;justify-content:center;font-size:0.76rem;padding:7px 10px;" onclick="window.app.shareWhatsappInvite('native')">
+                    📤 Elegir app
+                  </button>
+                ` : ''}
+                <button type="button" class="btn-3d-pill" style="flex:1;justify-content:center;font-size:0.76rem;padding:7px 10px;" onclick="window.app.shareWhatsappInvite('web')">
+                  🌐 WhatsApp Web
+                </button>
+                <button type="button" class="btn-3d-pill gold" style="flex:1;justify-content:center;font-size:0.76rem;padding:7px 10px;" onclick="window.app.shareWhatsappInvite('copy')">
+                  📋 Copiar invitación
+                </button>
+              </div>
               <button type="button" class="btn-big btn-red" onclick="window.app.executeLiveDraw()">
                 🎰 Lanzar / Repetir Sorteo en Directo
               </button>
@@ -5334,7 +5347,7 @@
         }
       },
 
-      shareWhatsappInvite() {
+      async shareWhatsappInvite(mode = 'app') {
         const draw = getAdminCurrentDraw();
         if (!draw) return;
         const baseUrl = window.location.href.split('?')[0].split('#')[0];
@@ -5348,15 +5361,47 @@
           `🎰 *Día del sorteo:* ${drawDateFormatted}`,
           `💰 *Presupuesto máx.:* ${draw.budget || 'Sin límite'}`,
           ``,
-          `✨ Entra en el enlace, elige tu nombre y ve añadiendo tu lista de deseos. Cuando salga el sorteo también podrás hacer *preguntas 100% anónimas* a tu amigo invisible 🕵️`,
+          `✨ Entra en el enlace, elige tu nombre y añade un PIN único (¡sin registro!). Escoge tu avatar, añade tu lista de deseos/bloqueos y ¡espera la hora del sorteo! Cuando conozcas a tu amigo invisible también podrás hacerle preguntas anónimas y ver sus listas 🕵️`,
           ``,
           `👉 ${shortUrl}`
         ].join('\n');
 
         copyTextFallback(message);
-        const waUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-        window.open(waUrl, '_blank', 'noopener,noreferrer');
-        showToast('📲 Abriendo WhatsApp (mensaje también copiado)');
+        const encoded = encodeURIComponent(message);
+
+        if (mode === 'copy') {
+          showToast('📋 Invitación copiada al portapapeles');
+          return;
+        }
+
+        if (mode === 'web') {
+          window.open(`https://web.whatsapp.com/send?text=${encoded}`, '_blank', 'noopener,noreferrer');
+          showToast('🌐 Abriendo WhatsApp Web (mensaje también copiado)');
+          return;
+        }
+
+        if (mode === 'native' && navigator.share) {
+          try {
+            await navigator.share({ text: message });
+            return;
+          } catch (e) {
+            if (e && e.name === 'AbortError') return;
+          }
+        }
+
+        const ua = navigator.userAgent || '';
+        if (/Android/i.test(ua)) {
+          // Forzar paquete oficial personal com.whatsapp (evita WhatsApp Business com.whatsapp.w4b)
+          const fallbackWeb = encodeURIComponent(`https://web.whatsapp.com/send?text=${encoded}`);
+          window.location.href = `intent://send?text=${encoded}#Intent;scheme=whatsapp;package=com.whatsapp;S.browser_fallback_url=${fallbackWeb};end`;
+        } else if (/iPhone|iPad|iPod/i.test(ua)) {
+          // En iOS, whatsapp:// pertenece a WhatsApp personal (evita Universal Link wa.me capturado por Business)
+          window.location.href = `whatsapp://send?text=${encoded}`;
+        } else {
+          // En PC (Windows/Mac), abrir protocolo whatsapp:// directamente sin pasar por wa.me
+          window.location.href = `whatsapp://send?text=${encoded}`;
+        }
+        showToast('📲 Abriendo WhatsApp personal (mensaje también copiado)');
       },
 
       executeLiveDraw() {
