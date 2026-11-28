@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Amigo Invisible · Postal de Navidad</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23164A32'/%3E%3Crect x='14' y='28' width='36' height='24' rx='4' fill='%23B01E24'/%3E%3Crect x='11' y='21' width='42' height='9' rx='3' fill='%23D62828'/%3E%3Crect x='29' y='21' width='6' height='31' fill='%23FDE08D'/%3E%3Crect x='14' y='37' width='36' height='5' fill='%23FDE08D'/%3E%3Cpath d='M32 21c-6 0-11-4-11-8 0-2.8 2.2-5 5-5 4.2 0 6 5.5 6 13zm0 0c6 0 11-4 11-8 0-2.8-2.2-5-5-5-4.2 0-6 5.5-6 13z' fill='none' stroke='%23FDE08D' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Mountains+of+Christmas:wght@700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
@@ -407,7 +408,7 @@
 
     .avatar-img.badge {
       object-fit: contain;
-      padding: 5px;
+      object-position: center center;
       background: #FFFFFF;
     }
 
@@ -1266,6 +1267,7 @@
     }
 
     .avatar-tile {
+      position: relative;
       background: #FFFFFF;
       border: 2px solid var(--border);
       border-radius: 16px;
@@ -1280,10 +1282,32 @@
       transition: transform 0.08s, border-color 0.15s;
     }
 
+    .avatar-tile:hover {
+      border-color: var(--pine);
+      transform: translateY(-1px);
+    }
+
     .avatar-tile.selected {
       border-color: var(--crimson);
       background: #FFF5F5;
       box-shadow: 0 3px 0 var(--crimson-dark);
+    }
+
+    .avatar-check-badge {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      background: var(--crimson);
+      color: #FFFFFF;
+      font-size: 0.68rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     }
 
     .avatar-tile-name {
@@ -1292,6 +1316,231 @@
       color: var(--ink);
       line-height: 1.15;
       word-break: break-word;
+    }
+
+    /* Escaparate vistoso de categorías desplegables para selección de avatar */
+    .cat-showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .cat-card {
+      position: relative;
+      background: linear-gradient(145deg, #FFFFFF 0%, #FDF7EA 100%);
+      border: 2px solid #DDD0B8;
+      border-radius: 18px;
+      padding: 11px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      box-shadow: 0 4px 0 #DDD0B8;
+      transition: transform 0.1s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .cat-card:hover {
+      border-color: var(--pine);
+      transform: translateY(-1px);
+    }
+
+    .cat-card:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #DDD0B8;
+    }
+
+    .cat-card.has-user-pick {
+      border-color: var(--gold);
+      background: linear-gradient(145deg, #FFFDF5 0%, #FEF3C7 100%);
+      box-shadow: 0 4px 0 #D97706;
+    }
+
+    .cat-card.open {
+      background: linear-gradient(145deg, var(--pine) 0%, var(--pine-dark) 100%);
+      border-color: var(--gold);
+      color: #FFFFFF;
+      box-shadow: 0 4px 0 #0D261B;
+    }
+
+    .cat-card.full-span {
+      grid-column: 1 / -1;
+    }
+
+    .cat-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .cat-icon-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      border: 1.5px solid rgba(217, 119, 6, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .cat-card.open .cat-icon-badge {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(253, 230, 138, 0.65);
+      box-shadow: none;
+    }
+
+    .cat-mini-stack {
+      display: flex;
+      align-items: center;
+    }
+
+    .cat-mini-thumb {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid #FFFFFF;
+      background: var(--paper);
+      overflow: hidden;
+      margin-left: -7px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cat-mini-thumb:first-child {
+      margin-left: 0;
+    }
+
+    .cat-mini-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cat-mini-thumb img.badge,
+    .cat-mini-thumb img.flag {
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    .cat-card-title {
+      font-weight: 900;
+      font-size: 0.9rem;
+      color: var(--pine);
+      line-height: 1.15;
+    }
+
+    .cat-card.open .cat-card-title {
+      color: #FFFFFF;
+    }
+
+    .cat-card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      width: 100%;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    .cat-card.open .cat-card-meta {
+      color: #FDE68A;
+    }
+
+    .cat-chevron-pill {
+      padding: 2px 8px;
+      border-radius: 99px;
+      background: rgba(27, 67, 50, 0.08);
+      color: var(--pine);
+      font-size: 0.68rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .cat-card.open .cat-chevron-pill {
+      background: #FDE68A;
+      color: var(--pine-dark);
+    }
+
+    @keyframes drawerUnfold {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .avatar-category-drawer {
+      grid-column: 1 / -1;
+      background: #FFFDF8;
+      border: 2.5px solid var(--pine);
+      border-radius: 20px;
+      padding: 12px;
+      box-shadow: 0 8px 22px rgba(27, 67, 50, 0.15);
+      animation: drawerUnfold 0.18s ease-out;
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-bottom: 9px;
+      margin-bottom: 9px;
+      border-bottom: 1.5px dashed var(--border);
+    }
+
+    .drawer-scroll-area {
+      max-height: 315px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 4px 3px;
+    }
+
+    .drawer-scroll-area::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .drawer-scroll-area::-webkit-scrollbar-thumb {
+      background: #C8B99E;
+      border-radius: 99px;
+    }
+
+    .drawer-avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    @media (max-width: 440px) {
+      .drawer-avatar-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 330px) {
+      .drawer-avatar-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .drawer-footer {
+      margin-top: 10px;
+      padding-top: 9px;
+      border-top: 1.5px dashed var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     /* Pie de página */
@@ -1516,6 +1765,7 @@
     const AVATAR_FOLDERS_BACKUP_KEY = 'amigo_invisible_avatar_folders_v4';
     const AVATAR_CATALOG_BACKUP_KEY = 'amigo_invisible_avatar_catalog_v4';
     const AVATAR_REQUESTS_BACKUP_KEY = 'amigo_invisible_avatar_requests_v1';
+    const LEGACY_DISMISSED_KEY = 'amigo_invisible_legacy_dismissed_v1';
 
     // Emails con permisos de super-admin (catálogo global de avatares e importación desde estado_global)
     // Cambia este email por tu cuenta real de Google (el mismo que pondrás en las reglas de Firestore)
@@ -1535,84 +1785,194 @@
     ];
 
     const DEFAULT_AVATAR_CATALOG = [
-      // 🎬 Actores
-      { id: 'act_antonio', name: 'Antonio Banderas', folder: 'actores', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Antonio_Banderas_2019_(cropped).jpg?width=300' },
-      { id: 'act_belen_rueda', name: 'Belén Rueda', folder: 'actores', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Premios_Goya_2020_-_Bel%C3%A9n_Rueda_(cropped).jpg?width=300' },
-      { id: 'act_blanca_suarez', name: 'Blanca Suárez', folder: 'actores', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Blanca_suarez_cropped.jpg?width=300' },
-      { id: 'act_carmen_machi', name: 'Carmen Machi', folder: 'actores', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Carmen_Machi_(cropped).jpg?width=300' },
-      { id: 'act_ester_exposito', name: 'Ester Expósito', folder: 'actores', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Ester_Exp%C3%B3sito_2025_(facecrop).jpg?width=300' },
-      { id: 'act_javier_bardem', name: 'Javier Bardem', folder: 'actores', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Javier_Bardem_at_Berlinale_2024_Ausschnitt.jpg?width=300' },
-      { id: 'act_loles_leon', name: 'Loles León', folder: 'actores', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Loles_Le%C3%B3n._(21635491842)_(cropped).jpg?width=300' },
-      { id: 'act_mario_casas', name: 'Mario Casas', folder: 'actores', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Premios_Goya_2021_-_Mario_Casas_(cropped).jpg?width=300' },
-      { id: 'act_penelope', name: 'Penélope Cruz', folder: 'actores', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Pen%C3%A9lope_Cruz_2018.jpg?width=300' },
-      { id: 'act_santiago_segura', name: 'Santiago Segura', folder: 'actores', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Santiago_Segura_2018.jpg?width=300' },
-      { id: 'act_silvia_abril', name: 'Silvia Abril', folder: 'actores', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Silvia_abril.jpg?width=300' },
-      { id: 'act_ursula_corbero', name: 'Úrsula Corberó', folder: 'actores', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/%C3%9Arsula_Corber%C3%B3-65349_(cropped).jpg?width=300' },
-      { id: 'act_yolanda_ramos', name: 'Yolanda Ramos', folder: 'actores', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Yolanda_Ramos.jpg?width=300' },
-
-      // 🏳️ Banderas
-      { id: 'flg_andalucia', name: 'Andalucía', folder: 'banderas', kind: 'flag', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Andaluc%C3%ADa.svg?width=300' },
-      { id: 'flg_canarias', name: 'Canarias', folder: 'banderas', kind: 'flag', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_the_Canary_Islands.svg?width=300' },
-      { id: 'flg_cataluna', name: 'Cataluña', folder: 'banderas', kind: 'flag', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Catalonia.svg?width=300' },
-      { id: 'flg_espana', name: 'España', folder: 'banderas', kind: 'flag', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Spain.svg?width=300' },
-      { id: 'flg_galicia', name: 'Galicia', folder: 'banderas', kind: 'flag', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Galicia.svg?width=300' },
-      { id: 'flg_madrid', name: 'Madrid', folder: 'banderas', kind: 'flag', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_the_Community_of_Madrid.svg?width=300' },
-      { id: 'flg_pais_vasco', name: 'País Vasco', folder: 'banderas', kind: 'flag', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_the_Basque_Country.svg?width=300' },
-      { id: 'flg_valencia', name: 'Valencia', folder: 'banderas', kind: 'flag', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_the_Land_of_Valencia_(official).svg?width=300' },
-
-      // 🎤 Cantantes
-      { id: 'can_aitana', name: 'Aitana', folder: 'cantantes', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Aitana_2019.jpg?width=300' },
-      { id: 'can_alaska', name: 'Alaska', folder: 'cantantes', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/AlaskaOlvido.jpg?width=300' },
-      { id: 'can_bad_gyal', name: 'Bad Gyal', folder: 'cantantes', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Premios_Goya_2026_-_Bad_Gyal_(cropped).jpg?width=300' },
-      { id: 'can_bisbal', name: 'David Bisbal', folder: 'cantantes', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/David_Bisbal_2014.jpg?width=300' },
-      { id: 'can_julio', name: 'Julio Iglesias', folder: 'cantantes', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Julio_Iglesias_in_2011.jpg?width=300' },
-      { id: 'can_lola_flores', name: 'Lola Flores', folder: 'cantantes', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Lola_Flores_1965.jpg?width=300' },
-      { id: 'can_lola_indigo', name: 'Lola Índigo', folder: 'cantantes', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Goyas_2025_-_Lola_%C3%8Dndigo.jpg?width=300' },
-      { id: 'can_monica_naranjo', name: 'Mónica Naranjo', folder: 'cantantes', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/M%C3%B3nica_Naranjo.jpg?width=300' },
-      { id: 'can_rocio_jurado', name: 'Rocío Jurado', folder: 'cantantes', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Roc%C3%ADo_Jurado_-_Antena_Edici%C3%B3n_Argentina_1968.jpg?width=300' },
-      { id: 'can_rosalia', name: 'Rosalía', folder: 'cantantes', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Rosal%C3%ADa_2019.jpg?width=300' },
-
-      // 🏃 Deporte
-      { id: 'dep_aitana_bonmati', name: 'Aitana Bonmatí', folder: 'deporte', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Aitana_Bonmat%C3%AD_20190421_(cropped).jpg?width=300' },
-      { id: 'dep_alexia_putellas', name: 'Alexia Putellas', folder: 'deporte', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Premios_Goya_2026_-_Alexia_Putellas_(cropped).jpg?width=300' },
-      { id: 'dep_ana_peleteiro', name: 'Ana Peleteiro', folder: 'deporte', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Ana_Peleteiro_(ESP)_2019.jpg?width=300' },
-      { id: 'dep_alcaraz', name: 'Carlos Alcaraz', folder: 'deporte', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Carlos_Alcaraz_2023.jpg?width=300' },
-      { id: 'dep_carolina_marin', name: 'Carolina Marín', folder: 'deporte', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Carolina_Mar%C3%ADn_2014_(cropped).jpg?width=300' },
-      { id: 'dep_alonso', name: 'Fernando Alonso', folder: 'deporte', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Fernando_Alonso_2016_Malaysia_2.jpg?width=300' },
-      { id: 'dep_jenni_hermoso', name: 'Jenni Hermoso', folder: 'deporte', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Jennifer_Hermoso_(cropped).jpg?width=300' },
-      { id: 'dep_mireia_belmonte', name: 'Mireia Belmonte', folder: 'deporte', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/(Mireia_Belmonte)_XII_Prix_Di%C3%A1logo_(18675968451).jpg?width=300' },
-      { id: 'dep_olga_carmona', name: 'Olga Carmona', folder: 'deporte', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Olga_Carmona_2020_02_(cropped).png?width=300' },
-      { id: 'dep_pau_gasol', name: 'Pau Gasol', folder: 'deporte', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Pau_Gasol_2016.jpg?width=300' },
-      { id: 'dep_paula_badosa', name: 'Paula Badosa', folder: 'deporte', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Paula_Badosa_Gibert_(41818342315).jpg?width=300' },
-      { id: 'dep_nadal', name: 'Rafa Nadal', folder: 'deporte', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Rafael_Nadal_10,_Aegon_Championships,_London,_UK_-_Diliff_(cropped).jpg?width=300' },
-      { id: 'dep_salma_paralluelo', name: 'Salma Paralluelo', folder: 'deporte', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Salma_Paralluelo_2026_(cropped).jpg?width=300' },
-
-      // 🏰 Disney
-      { id: 'dis_mickey', name: 'Mickey Mouse', folder: 'disney', kind: 'badge', url: 'https://static.wikia.nocookie.net/disney/images/2/2e/Disney_Mickey_Mouse.png' },
-      { id: 'dis_mulan', name: 'Mulán', folder: 'disney', kind: 'portrait', url: 'https://static.wikia.nocookie.net/disney/images/0/04/Profile_-_Mulan.jpeg' },
-
-      // ⚽ Escudos fútbol
-      { id: 'fut_athletic', name: 'Athletic Club', folder: 'futbol', kind: 'badge', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Club_Athletic_Bilbao_logo.svg?width=300' },
-      { id: 'fut_atleti', name: 'Atlético de Madrid', folder: 'futbol', kind: 'badge', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Atletico_Madrid_Logo_2024.svg?width=300' },
-      { id: 'fut_barca', name: 'FC Barcelona', folder: 'futbol', kind: 'badge', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/FC_Barcelona_(crest).svg?width=300' },
-      { id: 'fut_betis', name: 'Real Betis', folder: 'futbol', kind: 'badge', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Real_betis_logo.svg?width=300' },
-      { id: 'fut_madrid', name: 'Real Madrid', folder: 'futbol', kind: 'badge', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Real_Madrid_CF.svg?width=300' },
-      { id: 'fut_sevilla', name: 'Sevilla FC', folder: 'futbol', kind: 'badge', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Sevilla_FC_logo.svg?width=300' },
-      { id: 'fut_valencia', name: 'Valencia CF', folder: 'futbol', kind: 'badge', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Valenciacf.svg?width=300' },
-
-      // 📺 Famoseo (sin Belén Esteban)
-      { id: 'fam_carmen_lomana', name: 'Carmen Lomana', folder: 'famoseo', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Carmen_Lomana_en_Lo_Siguiente_de_TVE.jpg?width=300' },
-      { id: 'fam_cristina_pedroche', name: 'Cristina Pedroche', folder: 'famoseo', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Cristina_Pedroche.jpg?width=300' },
-      { id: 'fam_cristinini', name: 'Cristinini', folder: 'famoseo', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Cristinini1.png?width=300' },
-      { id: 'fam_broncano', name: 'David Broncano', folder: 'famoseo', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/David_Broncano_2018.jpg?width=300' },
-      { id: 'fam_ibai', name: 'Ibai Llanos', folder: 'famoseo', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Ibai_Llanos_2022.jpg?width=300' },
-      { id: 'fam_ines_hernand', name: 'Inés Hernand', folder: 'famoseo', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/In%C3%A9s_Hernand.jpg?width=300' },
-      { id: 'fam_jordi_hurtado', name: 'Jordi Hurtado', folder: 'famoseo', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Jordi_Hurtado_2015.jpg?width=300' },
-      { id: 'fam_juan_y_medio', name: 'Juan y Medio', folder: 'famoseo', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Juan_y_Medio_2018.jpg?width=300' },
-      { id: 'fam_leticia_sabater', name: 'Leticia Sabater', folder: 'famoseo', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Madrid_Pride_2025_-_Leticia_Sabater_-_250706_210210.jpg?width=300' },
-      { id: 'fam_maria_pombo', name: 'María Pombo', folder: 'famoseo', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/25th_Laureus_World_Sports_Awards_-_Red_Carpet_-_Mar%C3%ADa_Pombo_-_240422_191705-2.jpg?width=300' },
-      { id: 'fam_mercedes_mila', name: 'Mercedes Milá', folder: 'famoseo', kind: 'portrait', url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Mercedes_Mil%C3%A1.jpg?width=300' }
+      { id: 'fut_milan', name: 'AC Milan', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/ac-milan.webp' },
+      { id: 'can_aitana', name: 'Aitana', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/aitana.webp' },
+      { id: 'dep_aitana_bonmati', name: 'Aitana Bonmatí', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/aitana-bonmati.webp' },
+      { id: 'fam_chicote', name: 'Alberto Chicote', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/alberto-chicote.webp' },
+      { id: 'can_alejandro_sanz', name: 'Alejandro Sanz', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/alejandro-sanz.webp' },
+      { id: 'flg_alemania', name: 'Alemania', folder: 'banderas', kind: 'flag', url: './avatars/banderas/alemania.webp' },
+      { id: 'dep_alexia_putellas', name: 'Alexia Putellas', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/alexia-putellas.webp' },
+      { id: 'fut_almeria', name: 'Almería', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/almeria.webp' },
+      { id: 'can_amaia_montero', name: 'Amaia Montero', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/amaia-montero.webp' },
+      { id: 'dep_ana_peleteiro', name: 'Ana Peleteiro', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/ana-peleteiro.webp' },
+      { id: 'flg_andalucia', name: 'Andalucía', folder: 'banderas', kind: 'flag', url: './avatars/banderas/andalucia.webp' },
+      { id: 'act_angelina_jolie', name: 'Angelina Jolie', folder: 'actores', kind: 'portrait', url: './avatars/actores/angelina-jolie.webp' },
+      { id: 'act_antonio', name: 'Antonio Banderas', folder: 'actores', kind: 'portrait', url: './avatars/actores/antonio-banderas.webp' },
+      { id: 'flg_aragon', name: 'Aragón', folder: 'banderas', kind: 'flag', url: './avatars/banderas/aragon.webp' },
+      { id: 'flg_argentina', name: 'Argentina', folder: 'banderas', kind: 'flag', url: './avatars/banderas/argentina.webp' },
+      { id: 'dis_ariel', name: 'Ariel', folder: 'disney', kind: 'portrait', url: './avatars/disney/ariel.webp' },
+      { id: 'flg_asturias', name: 'Asturias', folder: 'banderas', kind: 'flag', url: './avatars/banderas/asturias.webp' },
+      { id: 'fut_athletic', name: 'Athletic Club', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/athletic-club.webp' },
+      { id: 'fut_atleti', name: 'Atlético de Madrid', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/atletico-de-madrid.webp' },
+      { id: 'can_bad_bunny', name: 'Bad Bunny', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/bad-bunny.webp' },
+      { id: 'can_bad_gyal', name: 'Bad Gyal', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/bad-gyal.webp' },
+      { id: 'fut_bayern', name: 'Bayern Múnich', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/bayern-munich.webp' },
+      { id: 'act_belen_rueda', name: 'Belén Rueda', folder: 'actores', kind: 'portrait', url: './avatars/actores/belen-rueda.webp' },
+      { id: 'can_beyonce', name: 'Beyoncé', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/beyonce.webp' },
+      { id: 'dis_blancanieves', name: 'Blancanieves', folder: 'disney', kind: 'portrait', url: './avatars/disney/blancanieves.webp' },
+      { id: 'act_brad_pitt', name: 'Brad Pitt', folder: 'actores', kind: 'portrait', url: './avatars/actores/brad-pitt.webp' },
+      { id: 'flg_brasil', name: 'Brasil', folder: 'banderas', kind: 'flag', url: './avatars/banderas/brasil.webp' },
+      { id: 'can_bruno_mars', name: 'Bruno Mars', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/bruno-mars.webp' },
+      { id: 'dis_buzz_lightyear', name: 'Buzz Lightyear', folder: 'disney', kind: 'portrait', url: './avatars/disney/buzz-lightyear.webp' },
+      { id: 'flg_canarias', name: 'Canarias', folder: 'banderas', kind: 'flag', url: './avatars/banderas/canarias.webp' },
+      { id: 'flg_cantabria', name: 'Cantabria', folder: 'banderas', kind: 'flag', url: './avatars/banderas/cantabria.webp' },
+      { id: 'dep_alcaraz', name: 'Carlos Alcaraz', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/carlos-alcaraz.webp' },
+      { id: 'fam_carmen_lomana', name: 'Carmen Lomana', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/carmen-lomana.webp' },
+      { id: 'act_carmen_machi', name: 'Carmen Machi', folder: 'actores', kind: 'portrait', url: './avatars/actores/carmen-machi.webp' },
+      { id: 'dep_carolina_marin', name: 'Carolina Marín', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/carolina-marin.webp' },
+      { id: 'flg_cyl', name: 'Castilla y León', folder: 'banderas', kind: 'flag', url: './avatars/banderas/castilla-y-leon.webp' },
+      { id: 'flg_clm', name: 'Castilla-La Mancha', folder: 'banderas', kind: 'flag', url: './avatars/banderas/castilla-la-mancha.webp' },
+      { id: 'flg_cataluna', name: 'Cataluña', folder: 'banderas', kind: 'flag', url: './avatars/banderas/cataluna.webp' },
+      { id: 'fut_celta', name: 'Celta de Vigo', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/celta-de-vigo.webp' },
+      { id: 'dis_cenicienta', name: 'Cenicienta', folder: 'disney', kind: 'portrait', url: './avatars/disney/cenicienta.webp' },
+      { id: 'flg_colombia', name: 'Colombia', folder: 'banderas', kind: 'flag', url: './avatars/banderas/colombia.webp' },
+      { id: 'flg_valencia', name: 'Comunidad Valenciana', folder: 'banderas', kind: 'flag', url: './avatars/banderas/comunidad-valenciana.webp' },
+      { id: 'dep_cristiano_ronaldo', name: 'Cristiano Ronaldo', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/cristiano-ronaldo.webp' },
+      { id: 'fam_cristina_pedroche', name: 'Cristina Pedroche', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/cristina-pedroche.webp' },
+      { id: 'can_bisbal', name: 'David Bisbal', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/david-bisbal.webp' },
+      { id: 'fam_broncano', name: 'David Broncano', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/david-broncano.webp' },
+      { id: 'can_ed_sheeran', name: 'Ed Sheeran', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/ed-sheeran.webp' },
+      { id: 'fam_rubius', name: 'El Rubius', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/el-rubius.webp' },
+      { id: 'fam_elon_musk', name: 'Elon Musk', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/elon-musk.webp' },
+      { id: 'dis_elsa', name: 'Elsa', folder: 'disney', kind: 'portrait', url: './avatars/disney/elsa.webp' },
+      { id: 'can_elton_john', name: 'Elton John', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/elton-john.webp' },
+      { id: 'flg_espana', name: 'España', folder: 'banderas', kind: 'flag', url: './avatars/banderas/espana.webp' },
+      { id: 'flg_eeuu', name: 'Estados Unidos', folder: 'banderas', kind: 'flag', url: './avatars/banderas/estados-unidos.webp' },
+      { id: 'act_ester_exposito', name: 'Ester Expósito', folder: 'actores', kind: 'portrait', url: './avatars/actores/ester-exposito.webp' },
+      { id: 'flg_extremadura', name: 'Extremadura', folder: 'banderas', kind: 'flag', url: './avatars/banderas/extremadura.webp' },
+      { id: 'fut_barca', name: 'FC Barcelona', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/fc-barcelona.webp' },
+      { id: 'dep_alonso', name: 'Fernando Alonso', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/fernando-alonso.webp' },
+      { id: 'flg_francia', name: 'Francia', folder: 'banderas', kind: 'flag', url: './avatars/banderas/francia.webp' },
+      { id: 'can_freddie_mercury', name: 'Freddie Mercury', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/freddie-mercury.webp' },
+      { id: 'flg_galicia', name: 'Galicia', folder: 'banderas', kind: 'flag', url: './avatars/banderas/galicia.webp' },
+      { id: 'dis_genio', name: 'Genio', folder: 'disney', kind: 'portrait', url: './avatars/disney/genio.webp' },
+      { id: 'act_george_clooney', name: 'George Clooney', folder: 'actores', kind: 'portrait', url: './avatars/actores/george-clooney.webp' },
+      { id: 'fut_getafe', name: 'Getafe CF', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/getafe-cf.webp' },
+      { id: 'act_harrison_ford', name: 'Harrison Ford', folder: 'actores', kind: 'portrait', url: './avatars/actores/harrison-ford.webp' },
+      { id: 'dis_hercules', name: 'Hércules', folder: 'disney', kind: 'portrait', url: './avatars/disney/hercules.webp' },
+      { id: 'fam_ibai', name: 'Ibai Llanos', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/ibai-llanos.webp' },
+      { id: 'dep_topuria', name: 'Ilia Topuria', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/ilia-topuria.webp' },
+      { id: 'flg_baleares', name: 'Islas Baleares', folder: 'banderas', kind: 'flag', url: './avatars/banderas/islas-baleares.webp' },
+      { id: 'flg_italia', name: 'Italia', folder: 'banderas', kind: 'flag', url: './avatars/banderas/italia.webp' },
+      { id: 'dis_jafar', name: 'Jafar', folder: 'disney', kind: 'portrait', url: './avatars/disney/jafar.webp' },
+      { id: 'flg_japon', name: 'Japón', folder: 'banderas', kind: 'flag', url: './avatars/banderas/japon.webp' },
+      { id: 'act_javier_bardem', name: 'Javier Bardem', folder: 'actores', kind: 'portrait', url: './avatars/actores/javier-bardem.webp' },
+      { id: 'fam_joaquin_reyes', name: 'Joaquín Reyes', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/joaquin-reyes.webp' },
+      { id: 'fam_jordi_hurtado', name: 'Jordi Hurtado', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/jordi-hurtado.webp' },
+      { id: 'fam_juan_y_medio', name: 'Juan y Medio', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/juan-y-medio.webp' },
+      { id: 'can_julio', name: 'Julio Iglesias', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/julio-iglesias.webp' },
+      { id: 'fam_arguinano', name: 'Karlos Arguiñano', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/karlos-arguinano.webp' },
+      { id: 'can_karol_g', name: 'Karol G', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/karol-g.webp' },
+      { id: 'fam_kim_kardashian', name: 'Kim Kardashian', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/kim-kardashian.webp' },
+      { id: 'fam_kylie_jenner', name: 'Kylie Jenner', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/kylie-jenner.webp' },
+      { id: 'flg_la_rioja', name: 'La Rioja', folder: 'banderas', kind: 'flag', url: './avatars/banderas/la-rioja.webp' },
+      { id: 'can_lady_gaga', name: 'Lady Gaga', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/lady-gaga.webp' },
+      { id: 'dep_lamine_yamal', name: 'Lamine Yamal', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/lamine-yamal.webp' },
+      { id: 'act_leonardo_dicaprio', name: 'Leonardo DiCaprio', folder: 'actores', kind: 'portrait', url: './avatars/actores/leonardo-dicaprio.webp' },
+      { id: 'fam_leticia_sabater', name: 'Leticia Sabater', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/leticia-sabater.webp' },
+      { id: 'dep_lindsey_vonn', name: 'Lindsey Vonn', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/lindsey-vonn.webp' },
+      { id: 'dep_lionel_messi', name: 'Lionel Messi', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/lionel-messi.webp' },
+      { id: 'fut_liverpool', name: 'Liverpool FC', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/liverpool-fc.webp' },
+      { id: 'can_lola_flores', name: 'Lola Flores', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/lola-flores.webp' },
+      { id: 'can_lola_indigo', name: 'Lola Índigo', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/lola-indigo.webp' },
+      { id: 'flg_madrid', name: 'Madrid', folder: 'banderas', kind: 'flag', url: './avatars/banderas/madrid.webp' },
+      { id: 'fut_malaga', name: 'Málaga CF', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/malaga-cf.webp' },
+      { id: 'dis_malefica', name: 'Maléfica', folder: 'disney', kind: 'portrait', url: './avatars/disney/malefica.webp' },
+      { id: 'fut_united', name: 'Manchester United', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/manchester-united.webp' },
+      { id: 'act_margot_robbie', name: 'Margot Robbie', folder: 'actores', kind: 'portrait', url: './avatars/actores/margot-robbie.webp' },
+      { id: 'fam_maria_pombo', name: 'María Pombo', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/maria-pombo.webp' },
+      { id: 'dep_maria_sharapova', name: 'Maria Sharapova', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/maria-sharapova.webp' },
+      { id: 'act_mario_casas', name: 'Mario Casas', folder: 'actores', kind: 'portrait', url: './avatars/actores/mario-casas.webp' },
+      { id: 'flg_marruecos', name: 'Marruecos', folder: 'banderas', kind: 'flag', url: './avatars/banderas/marruecos.webp' },
+      { id: 'fam_mercedes_mila', name: 'Mercedes Milá', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/mercedes-mila.webp' },
+      { id: 'act_meryl_streep', name: 'Meryl Streep', folder: 'actores', kind: 'portrait', url: './avatars/actores/meryl-streep.webp' },
+      { id: 'flg_mexico', name: 'México', folder: 'banderas', kind: 'flag', url: './avatars/banderas/mexico.webp' },
+      { id: 'can_michael_jackson', name: 'Michael Jackson', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/michael-jackson.webp' },
+      { id: 'dep_michael_jordan', name: 'Michael Jordan', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/michael-jordan.webp' },
+      { id: 'dis_mickey', name: 'Mickey Mouse', folder: 'disney', kind: 'portrait', url: './avatars/disney/mickey-mouse.webp' },
+      { id: 'dis_minnie_mouse', name: 'Minnie Mouse', folder: 'disney', kind: 'portrait', url: './avatars/disney/minnie-mouse.webp' },
+      { id: 'dep_mireia_belmonte', name: 'Mireia Belmonte', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/mireia-belmonte.webp' },
+      { id: 'dis_mulan', name: 'Mulán', folder: 'disney', kind: 'portrait', url: './avatars/disney/mulan.webp' },
+      { id: 'flg_murcia', name: 'Murcia', folder: 'banderas', kind: 'flag', url: './avatars/banderas/murcia.webp' },
+      { id: 'flg_navarra', name: 'Navarra', folder: 'banderas', kind: 'flag', url: './avatars/banderas/navarra.webp' },
+      { id: 'fam_oprah_winfrey', name: 'Oprah Winfrey', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/oprah-winfrey.webp' },
+      { id: 'fut_osasuna', name: 'Osasuna', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/osasuna.webp' },
+      { id: 'fam_motos', name: 'Pablo Motos', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/pablo-motos.webp' },
+      { id: 'flg_pais_vasco', name: 'País Vasco', folder: 'banderas', kind: 'flag', url: './avatars/banderas/pais-vasco.webp' },
+      { id: 'fam_paris_hilton', name: 'Paris Hilton', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/paris-hilton.webp' },
+      { id: 'fut_psg', name: 'Paris Saint-Germain', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/paris-saint-germain.webp' },
+      { id: 'dis_pato_donald', name: 'Pato Donald', folder: 'disney', kind: 'portrait', url: './avatars/disney/pato-donald.webp' },
+      { id: 'act_penelope', name: 'Penélope Cruz', folder: 'actores', kind: 'portrait', url: './avatars/actores/penelope-cruz.webp' },
+      { id: 'dis_peter_pan', name: 'Peter Pan', folder: 'disney', kind: 'portrait', url: './avatars/disney/peter-pan.webp' },
+      { id: 'dis_pocahontas', name: 'Pocahontas', folder: 'disney', kind: 'portrait', url: './avatars/disney/pocahontas.webp' },
+      { id: 'flg_portugal', name: 'Portugal', folder: 'banderas', kind: 'flag', url: './avatars/banderas/portugal.webp' },
+      { id: 'can_quevedo', name: 'Quevedo', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/quevedo.webp' },
+      { id: 'dep_nadal', name: 'Rafa Nadal', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/rafa-nadal.webp' },
+      { id: 'dis_rafiki', name: 'Rafiki', folder: 'disney', kind: 'portrait', url: './avatars/disney/rafiki.webp' },
+      { id: 'dis_rapunzel', name: 'Rapunzel', folder: 'disney', kind: 'portrait', url: './avatars/disney/rapunzel.webp' },
+      { id: 'dis_rayo_mcqueen', name: 'Rayo McQueen', folder: 'disney', kind: 'portrait', url: './avatars/disney/rayo-mcqueen.webp' },
+      { id: 'fut_rayo', name: 'Rayo Vallecano', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/rayo-vallecano.webp' },
+      { id: 'fut_betis', name: 'Real Betis', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/real-betis.webp' },
+      { id: 'fut_madrid', name: 'Real Madrid', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/real-madrid.webp' },
+      { id: 'fut_real_sociedad', name: 'Real Sociedad', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/real-sociedad.webp' },
+      { id: 'flg_reino_unido', name: 'Reino Unido', folder: 'banderas', kind: 'flag', url: './avatars/banderas/reino-unido.webp' },
+      { id: 'dep_salma_paralluelo', name: 'Salma Paralluelo', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/salma-paralluelo.webp' },
+      { id: 'act_santiago_segura', name: 'Santiago Segura', folder: 'actores', kind: 'portrait', url: './avatars/actores/santiago-segura.webp' },
+      { id: 'act_scarlett_johansson', name: 'Scarlett Johansson', folder: 'actores', kind: 'portrait', url: './avatars/actores/scarlett-johansson.webp' },
+      { id: 'dep_serena_williams', name: 'Serena Williams', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/serena-williams.webp' },
+      { id: 'fut_sevilla', name: 'Sevilla FC', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/sevilla-fc.webp' },
+      { id: 'can_shakira', name: 'Shakira', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/shakira.webp' },
+      { id: 'dep_simone_biles', name: 'Simone Biles', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/simone-biles.webp' },
+      { id: 'fam_tamara', name: 'Tamara Falcó', folder: 'famoseo', kind: 'portrait', url: './avatars/famoseo/tamara-falco.webp' },
+      { id: 'can_taylor_swift', name: 'Taylor Swift', folder: 'cantantes', kind: 'portrait', url: './avatars/cantantes/taylor-swift.webp' },
+      { id: 'act_tom_cruise', name: 'Tom Cruise', folder: 'actores', kind: 'portrait', url: './avatars/actores/tom-cruise.webp' },
+      { id: 'act_ursula_corbero', name: 'Úrsula Corberó', folder: 'actores', kind: 'portrait', url: './avatars/actores/ursula-corbero.webp' },
+      { id: 'dis_vaiana', name: 'Vaiana', folder: 'disney', kind: 'portrait', url: './avatars/disney/vaiana.webp' },
+      { id: 'fut_valencia', name: 'Valencia CF', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/valencia-cf.webp' },
+      { id: 'dep_del_bosque', name: 'Vicente del Bosque', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/vicente-del-bosque.webp' },
+      { id: 'fut_villarreal', name: 'Villarreal CF', folder: 'futbol', kind: 'badge', url: './avatars/escudos-futbol/villarreal-cf.webp' },
+      { id: 'act_will_smith', name: 'Will Smith', folder: 'actores', kind: 'portrait', url: './avatars/actores/will-smith.webp' },
+      { id: 'dis_woody', name: 'Woody', folder: 'disney', kind: 'portrait', url: './avatars/disney/woody.webp' },
+      { id: 'act_zendaya', name: 'Zendaya', folder: 'actores', kind: 'portrait', url: './avatars/actores/zendaya.webp' },
+      { id: 'dep_zidane', name: 'Zinedine Zidane', folder: 'deporte', kind: 'portrait', url: './avatars/deporte/zinedine-zidane.webp' }
     ];
+
+    // Mapa de equivalencia de IDs antiguos (retrocompatibilidad y eliminación de duplicados)
+    const LEGACY_AVATAR_ID_MAP = {
+      banderas: 'act_antonio', arturo: 'act_arturo_valls', belenrueda: 'act_belen_rueda', blancasuarez: 'act_blanca_suarez',
+      braysefe: 'act_brays_efe', carmenmachi: 'act_carmen_machi', ernestosevilla: 'act_ernesto_sevilla', esterexposito: 'act_ester_exposito',
+      tejero: 'act_fernando_tejero', joaquinreyes: 'fam_joaquin_reyes', act_joaquin_reyes: 'fam_joaquin_reyes', joseluisgil: 'act_jose_luis_gil', lolesleon: 'act_loles_leon',
+      almodovar: 'act_almodovar', penelope: 'act_penelope', segura: 'act_santiago_segura', silviaabril: 'act_silvia_abril',
+      ursulacorbero: 'act_ursula_corbero', yolandaramos: 'act_yolanda_ramos',
+      flag_and: 'flg_andalucia', flag_arg: 'flg_argentina', flag_ast: 'flg_asturias', flag_bra: 'flg_brasil',
+      flag_can: 'flg_canarias', flag_cyl: 'flg_cyl', flag_clm: 'flg_clm', flag_cat: 'flg_cataluna',
+      flag_esp: 'flg_espana', flag_ext: 'flg_extremadura', flag_fra: 'flg_francia', flag_gal: 'flg_galicia',
+      flag_mad: 'flg_madrid', flag_eus: 'flg_pais_vasco', flag_por: 'flg_portugal', flag_val: 'flg_valencia',
+      aitana: 'can_aitana', alaska: 'can_alaska', badgyal: 'can_bad_gyal', camilo: 'can_camilo_sesto',
+      bisbal: 'can_bisbal', estopa: 'can_estopa', pantoja: 'can_pantoja', sabina: 'can_sabina',
+      julio: 'can_julio', lola: 'can_lola_flores', lolaindigo: 'can_lola_indigo', monicanaranjo: 'can_monica_naranjo',
+      omar: 'can_omar_montes', quevedo: 'can_quevedo', raphael: 'can_raphael', robe: 'can_robe',
+      rociojurado: 'can_rocio_jurado', rosalia: 'can_rosalia',
+      aitanabonmati: 'dep_aitana_bonmati', alexia: 'dep_alexia_putellas', anapeleteiro: 'dep_ana_peleteiro', iniesta: 'dep_iniesta',
+      puyol: 'dep_puyol', alcaraz: 'dep_alcaraz', carolinamarin: 'dep_carolina_marin', alonso: 'dep_alonso',
+      torres: 'dep_torres', pique: 'dep_pique', casillas: 'dep_casillas', topuria: 'dep_topuria',
+      jennihermoso: 'dep_jenni_hermoso', joaquin: 'dep_joaquin', luisenrique: 'dep_luis_enrique', marquez: 'dep_marquez',
+      mireiabelmonte: 'dep_mireia_belmonte', olgacarmona: 'dep_olga_carmona', gasol: 'dep_pau_gasol', paulabadosa: 'dep_paula_badosa',
+      nadal: 'dep_nadal', ronaldinho: 'dep_ronaldinho', salmaparalluelo: 'dep_salma_paralluelo', ramos: 'dep_ramos',
+      delbosque: 'dep_del_bosque', zidane: 'dep_zidane',
+      disney_mickey: 'dis_mickey', disney_mulan: 'dis_mulan',
+      escudo_ath: 'fut_athletic', escudo_atm: 'fut_atleti', escudo_dep: 'fut_depor', escudo_fcb: 'fut_barca',
+      escudo_get: 'fut_getafe', escudo_mal: 'fut_malaga', escudo_ray: 'fut_rayo', escudo_rm: 'fut_madrid',
+      escudo_rso: 'fut_real_sociedad', escudo_vld: 'fut_valladolid', escudo_alm: 'fut_almeria', escudo_val: 'fut_valencia',
+      buenafuente: 'fam_buenafuente', chicote: 'fam_chicote', auron: 'fam_auron', berto: 'fam_berto',
+      carmenlomana: 'fam_carmen_lomana', chiquito: 'fam_chiquito', pedroche: 'fam_cristina_pedroche', cristinini: 'fam_cristinini',
+      dabiz: 'fam_dabiz', broncano: 'fam_broncano', rubius: 'fam_rubius', flo: 'fam_flo',
+      ayuso: 'fam_ayuso', ibai: 'fam_ibai', ineshernand: 'fam_ines_hernand', jesusgil: 'fam_jesus_gil',
+      evole: 'fam_evole', hurtado: 'fam_jordi_hurtado', mota: 'fam_mota', pedrerol: 'fam_pedrerol',
+      arguinano: 'fam_arguinano', leticiasabater: 'fam_leticia_sabater', revilla: 'fam_revilla', mariapombo: 'fam_maria_pombo',
+      rajoy: 'fam_rajoy', matias: 'fam_matias', mercedesmila: 'fam_mercedes_mila', motos: 'fam_motos',
+      ramontxu: 'fam_ramontxu', dali: 'fam_dali', tamara: 'fam_tamara'
+    };
 
     /* =====================================================================
        UTILIDADES SEGURAS Y ORDENACIÓN ALFABÉTICA
@@ -1668,6 +2028,130 @@
       avatarCatalog.sort((a, b) =>
         String(a.name || '').localeCompare(String(b.name || ''), 'es', { sensitivity: 'base' })
       );
+    }
+
+    function normalizeTextKey(str) {
+      return String(str || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+    }
+
+    function canonicalAvatarNameKey(name) {
+      const k = normalizeTextKey(name);
+      const aliases = {
+        'at de madrid': 'atletico de madrid',
+        'athletic bilbao': 'athletic club',
+        'c valenciana': 'comunidad valenciana',
+        'valencia': 'comunidad valenciana',
+        'ud almeria': 'almeria',
+        'k arguinano': 'karlos arguinano',
+        'p almodovar': 'pedro almodovar',
+        'v del bosque': 'vicente del bosque'
+      };
+      return aliases[k] || k;
+    }
+
+    function avatarUrlPriority(url) {
+      const u = String(url || '');
+      if (u.startsWith('data:')) return 3;
+      if (u.startsWith('./avatars/') || u.startsWith('avatars/')) return 2;
+      return 1;
+    }
+
+    function normalizeFolderId(folderId) {
+      const f = String(folderId || '').trim();
+      if (f === 'futbolistas') return 'deporte';
+      if (f === 'escudos') return 'futbol';
+      return f || 'famoseo';
+    }
+
+    function normalizeSingleAvatarItem(item) {
+      if (!item || typeof item !== 'object') return null;
+      const rawId = String(item.id || '').trim();
+      const id = LEGACY_AVATAR_ID_MAP[rawId] || rawId;
+      const name = String(item.name || '').trim();
+      if (!id || !name) return null;
+      let url = String(item.url || '').trim();
+      if (!url && item.wiki) {
+        url = `https://commons.wikimedia.org/wiki/Special:FilePath/${String(item.wiki).trim()}?width=300`;
+      }
+      if (!url) return null;
+      let kind = String(item.kind || 'portrait').trim();
+      if (kind === 'crest') kind = 'badge';
+      else if (kind === 'face') kind = 'portrait';
+      const folder = normalizeFolderId(item.folder);
+      return { id, name, folder, kind, url };
+    }
+
+    function normalizeAndDedupeAvatars(rawFolders, rawCatalog) {
+      const folderByLabel = new Map();
+      const folderIdRemap = new Map([
+        ['futbolistas', 'deporte'],
+        ['escudos', 'futbol']
+      ]);
+
+      (Array.isArray(rawFolders) ? rawFolders : []).forEach(f => {
+        if (!f || !f.id || !f.label) return;
+        const mappedId = normalizeFolderId(f.id);
+        const labelKey = normalizeTextKey(stripLeadingEmoji(f.label));
+        if (!labelKey) return;
+        if (folderByLabel.has(labelKey)) {
+          folderIdRemap.set(f.id, folderByLabel.get(labelKey).id);
+        } else {
+          const cleanFolder = { id: mappedId, label: String(f.label).trim() };
+          folderByLabel.set(labelKey, cleanFolder);
+          folderIdRemap.set(f.id, mappedId);
+        }
+      });
+
+      const finalFolders = Array.from(folderByLabel.values());
+      if (finalFolders.length === 0) {
+        DEFAULT_AVATAR_FOLDERS.forEach(f => finalFolders.push({ ...f }));
+      }
+      const validFolderIds = new Set(finalFolders.map(f => f.id));
+
+      const byId = new Map();
+      const byNameKey = new Map();
+
+      (Array.isArray(rawCatalog) ? rawCatalog : []).forEach(raw => {
+        const clean = normalizeSingleAvatarItem(raw);
+        if (!clean) return;
+        const targetFolder = folderIdRemap.get(clean.folder) || clean.folder;
+        clean.folder = validFolderIds.has(targetFolder) ? targetFolder : (finalFolders[0]?.id || 'famoseo');
+
+        const nameKey = canonicalAvatarNameKey(clean.name);
+        const scopedNameKey = nameKey ? `${clean.folder}:${nameKey}` : '';
+        const existingByName = scopedNameKey ? byNameKey.get(scopedNameKey) : null;
+        if (existingByName) {
+          if (avatarUrlPriority(clean.url) > avatarUrlPriority(existingByName.url)) {
+            existingByName.url = clean.url;
+            existingByName.name = clean.name;
+            existingByName.kind = clean.kind;
+          }
+          return;
+        }
+        if (byId.has(clean.id)) {
+          const existingById = byId.get(clean.id);
+          if (avatarUrlPriority(clean.url) > avatarUrlPriority(existingById.url)) {
+            existingById.url = clean.url;
+            existingById.name = clean.name;
+            existingById.kind = clean.kind;
+            existingById.folder = clean.folder;
+          }
+          return;
+        }
+
+        byId.set(clean.id, clean);
+        if (scopedNameKey) byNameKey.set(scopedNameKey, clean);
+      });
+
+      return {
+        folders: finalFolders,
+        catalog: Array.from(byId.values())
+      };
     }
 
     function normalizeWishUrl(raw) {
@@ -1785,17 +2269,24 @@
     // En modelo multi-organizador, los sorteos siempre llegan de Firestore (nunca datos de ejemplo)
     let draws = [];
 
-    let avatarFolders = safeReadJson(AVATAR_FOLDERS_BACKUP_KEY, DEFAULT_AVATAR_FOLDERS.map(f => ({ ...f })));
-    if (!Array.isArray(avatarFolders) || avatarFolders.length === 0) {
-      avatarFolders = DEFAULT_AVATAR_FOLDERS.map(f => ({ ...f }));
-    }
+    const initialNormalizedAvatars = normalizeAndDedupeAvatars(
+      safeReadJson(AVATAR_FOLDERS_BACKUP_KEY, DEFAULT_AVATAR_FOLDERS.map(f => ({ ...f }))),
+      safeReadJson(AVATAR_CATALOG_BACKUP_KEY, DEFAULT_AVATAR_CATALOG.map(c => ({ ...c })))
+    );
+    let avatarFolders = initialNormalizedAvatars.folders;
     sortAvatarFolders();
 
-    let avatarCatalog = safeReadJson(AVATAR_CATALOG_BACKUP_KEY, DEFAULT_AVATAR_CATALOG.map(c => ({ ...c })));
-    if (!Array.isArray(avatarCatalog) || avatarCatalog.length === 0) {
-      avatarCatalog = DEFAULT_AVATAR_CATALOG.map(c => ({ ...c }));
-    }
+    let avatarCatalog = initialNormalizedAvatars.catalog.length > 0
+      ? initialNormalizedAvatars.catalog
+      : DEFAULT_AVATAR_CATALOG.map(c => ({ ...c }));
     sortAvatarCatalog();
+
+    let legacyDismissed = safeReadJson(LEGACY_DISMISSED_KEY, { bannerDismissed: false, reqIds: [], drawIds: [], avatarsMigrated: false });
+    if (!legacyDismissed || typeof legacyDismissed !== 'object') {
+      legacyDismissed = { bannerDismissed: false, reqIds: [], drawIds: [], avatarsMigrated: false };
+    }
+    if (!Array.isArray(legacyDismissed.reqIds)) legacyDismissed.reqIds = [];
+    if (!Array.isArray(legacyDismissed.drawIds)) legacyDismissed.drawIds = [];
 
     let avatarRequests = [];
 
@@ -1818,6 +2309,7 @@
     let justJoinedWelcome = false;
 
     let activeAvatarFolder = avatarFolders[0]?.id || 'actores';
+    let openUserAvatarFolder = null;
     let adminEditingAvatarUserId = null;
     let newParticipantAvatar = null;
     let newMemberNameDraft = '';
@@ -1848,6 +2340,7 @@
     let avatarRequestsColRef = null;
     let organizersColRef = null;
     let legacyStateDocRef = null;
+    let legacySorteosDocRef = null;
     let stateDocRef = null; // Alias de solo lectura hacia estado_global
     let currentUser = null;
     let cloudStatus = 'connecting'; // 'connecting' | 'connected' | 'error'
@@ -1932,6 +2425,9 @@
     function ensureValidActiveFolder() {
       if (!avatarFolders.some(f => f.id === activeAvatarFolder)) {
         activeAvatarFolder = avatarFolders[0]?.id || 'actores';
+      }
+      if (openUserAvatarFolder && !avatarFolders.some(f => f.id === openUserAvatarFolder)) {
+        openUserAvatarFolder = null;
       }
       if (!avatarFolders.some(f => f.id === newAvatarFolderDraft)) {
         newAvatarFolderDraft = avatarFolders[0]?.id || 'actores';
@@ -2027,7 +2523,10 @@
 
     function getAvatarById(avatarId) {
       if (!avatarId) return null;
-      return avatarCatalog.find(a => a.id === avatarId) || null;
+      const mappedId = LEGACY_AVATAR_ID_MAP[avatarId] || avatarId;
+      return avatarCatalog.find(a => a.id === avatarId || a.id === mappedId)
+        || DEFAULT_AVATAR_CATALOG.find(a => a.id === avatarId || a.id === mappedId)
+        || null;
     }
 
     function getAvatarDisplay(personOrAvatarId, fallbackName = '?') {
@@ -2297,27 +2796,62 @@
 
     let legacyRawSnapshotData = null;
 
+    async function saveLegacyDismissedState() {
+      localStorage.setItem(LEGACY_DISMISSED_KEY, JSON.stringify(legacyDismissed));
+      if (db && organizersColRef && isSuperAdminUser()) {
+        try {
+          await setDoc(doc(organizersColRef, currentUser.uid), stripUndefinedDeep({
+            uid: currentUser.uid,
+            legacyDismissed
+          }), { merge: true });
+        } catch (e) {}
+      }
+    }
+
     function refreshLegacyMigrationInfo() {
       if (!legacyRawSnapshotData || !isSuperAdminUser()) {
         legacyMigrationInfo = null;
         return;
       }
+      if (legacyDismissed.bannerDismissed) {
+        legacyMigrationInfo = {
+          hasPending: false,
+          draws: [],
+          totalLegacyDraws: 0,
+          hasPendingAvatars: false,
+          missingAvatarsCount: 0,
+          missingFoldersCount: 0,
+          avatarFolders: legacyRawSnapshotData.avatarFolders || [],
+          avatarCatalog: legacyRawSnapshotData.avatarCatalog || [],
+          avatarRequests: []
+        };
+        return;
+      }
+
+      const dismissedDraws = new Set(legacyDismissed.drawIds || []);
+      const dismissedReqs = new Set(legacyDismissed.reqIds || []);
+
       const allLegacyDraws = Array.isArray(legacyRawSnapshotData.draws) ? legacyRawSnapshotData.draws : [];
-      const pendingDraws = allLegacyDraws.filter(d => d && d.id && !ownerDrawsMap.has(d.id));
-      const legacyFolders = Array.isArray(legacyRawSnapshotData.avatarFolders) && legacyRawSnapshotData.avatarFolders.length > 0
-        ? legacyRawSnapshotData.avatarFolders : [];
-      const legacyCatalog = Array.isArray(legacyRawSnapshotData.avatarCatalog) && legacyRawSnapshotData.avatarCatalog.length > 0
-        ? legacyRawSnapshotData.avatarCatalog : [];
-      const existingFolderIds = new Set(avatarFolders.map(f => f.id));
-      const existingAvatarIds = new Set(avatarCatalog.map(a => a.id));
-      const missingLegacyFolders = legacyFolders.filter(f => f && f.id && !existingFolderIds.has(f.id));
-      const missingLegacyAvatars = legacyCatalog.filter(a => a && a.id && !existingAvatarIds.has(a.id));
-      const hasPendingAvatars = (!avatarsCloudDocExists && (legacyFolders.length > 0 || legacyCatalog.length > 0))
+      const pendingDraws = allLegacyDraws.filter(d => d && d.id && !ownerDrawsMap.has(d.id) && !dismissedDraws.has(d.id));
+
+      const rawLegacyFolders = Array.isArray(legacyRawSnapshotData.avatarFolders) ? legacyRawSnapshotData.avatarFolders : [];
+      const rawLegacyCatalog = Array.isArray(legacyRawSnapshotData.avatarCatalog) ? legacyRawSnapshotData.avatarCatalog : [];
+      const normLegacy = normalizeAndDedupeAvatars(rawLegacyFolders, rawLegacyCatalog);
+
+      const existingFolderLabels = new Set(avatarFolders.map(f => normalizeTextKey(stripLeadingEmoji(f.label))));
+      const existingAvatarNames = new Set(avatarCatalog.map(a => canonicalAvatarNameKey(a.name)));
+      const missingLegacyFolders = normLegacy.folders.filter(f => f && !existingFolderLabels.has(normalizeTextKey(stripLeadingEmoji(f.label))));
+      const missingLegacyAvatars = normLegacy.catalog.filter(a => a && !existingAvatarNames.has(canonicalAvatarNameKey(a.name)));
+
+      const hasPendingAvatars = !legacyDismissed.avatarsMigrated && (
+        (!avatarsCloudDocExists && normLegacy.catalog.length > 0)
         || missingLegacyFolders.length > 0
-        || missingLegacyAvatars.length > 0;
+        || missingLegacyAvatars.length > 0
+      );
+
       const legacyReqs = Array.isArray(legacyRawSnapshotData.avatarRequests) ? legacyRawSnapshotData.avatarRequests : [];
       const existingReqIds = new Set(avatarRequests.map(r => r.id));
-      const pendingReqs = legacyReqs.filter(r => r && r.id && !existingReqIds.has(r.id));
+      const pendingReqs = legacyReqs.filter(r => r && r.id && !existingReqIds.has(r.id) && !dismissedReqs.has(r.id));
 
       const hasPending = pendingDraws.length > 0 || hasPendingAvatars || pendingReqs.length > 0;
       legacyMigrationInfo = {
@@ -2327,8 +2861,8 @@
         hasPendingAvatars,
         missingAvatarsCount: missingLegacyAvatars.length,
         missingFoldersCount: missingLegacyFolders.length,
-        avatarFolders: legacyFolders,
-        avatarCatalog: legacyCatalog,
+        avatarFolders: normLegacy.folders,
+        avatarCatalog: normLegacy.catalog,
         avatarRequests: pendingReqs
       };
     }
@@ -2340,9 +2874,47 @@
         return;
       }
       try {
-        const snap = await getDoc(legacyStateDocRef);
-        if (snap.exists()) {
-          legacyRawSnapshotData = snap.data() || null;
+        const combinedDrawsMap = new Map();
+        const combinedFolders = [];
+        const combinedCatalog = [];
+        const combinedReqsMap = new Map();
+        let foundAny = false;
+
+        // 1. Leer ruta antigua más reciente: app_state/estado_global
+        try {
+          const snapA = await getDoc(legacyStateDocRef);
+          if (snapA.exists()) {
+            foundAny = true;
+            const dA = snapA.data() || {};
+            (Array.isArray(dA.draws) ? dA.draws : []).forEach(d => { if (d && d.id) combinedDrawsMap.set(d.id, d); });
+            if (Array.isArray(dA.avatarFolders)) combinedFolders.push(...dA.avatarFolders);
+            if (Array.isArray(dA.avatarCatalog)) combinedCatalog.push(...dA.avatarCatalog);
+            (Array.isArray(dA.avatarRequests) ? dA.avatarRequests : []).forEach(r => { if (r && r.id) combinedReqsMap.set(r.id, r); });
+          }
+        } catch (e) {}
+
+        // 2. Leer también ruta histórica original: sorteos/estado_global (donde estaban avatares antiguos personalizados)
+        if (legacySorteosDocRef) {
+          try {
+            const snapB = await getDoc(legacySorteosDocRef);
+            if (snapB.exists()) {
+              foundAny = true;
+              const dB = snapB.data() || {};
+              (Array.isArray(dB.draws) ? dB.draws : []).forEach(d => { if (d && d.id && !combinedDrawsMap.has(d.id)) combinedDrawsMap.set(d.id, d); });
+              if (Array.isArray(dB.avatarFolders)) combinedFolders.push(...dB.avatarFolders);
+              if (Array.isArray(dB.avatarCatalog)) combinedCatalog.push(...dB.avatarCatalog);
+              (Array.isArray(dB.avatarRequests) ? dB.avatarRequests : []).forEach(r => { if (r && r.id && !combinedReqsMap.has(r.id)) combinedReqsMap.set(r.id, r); });
+            }
+          } catch (e) {}
+        }
+
+        if (foundAny) {
+          legacyRawSnapshotData = {
+            draws: Array.from(combinedDrawsMap.values()),
+            avatarFolders: combinedFolders,
+            avatarCatalog: combinedCatalog,
+            avatarRequests: Array.from(combinedReqsMap.values())
+          };
           refreshLegacyMigrationInfo();
           if (currentScreen === 'admin' && !isUserTypingInInput()) {
             renderAdminScreen();
@@ -2364,16 +2936,15 @@
         if (snap.exists()) {
           avatarsCloudDocExists = true;
           const data = snap.data() || {};
-          if (Array.isArray(data.avatarFolders) && data.avatarFolders.length > 0) {
-            avatarFolders = data.avatarFolders;
-            sortAvatarFolders();
-            localStorage.setItem(AVATAR_FOLDERS_BACKUP_KEY, JSON.stringify(avatarFolders));
-          }
-          if (Array.isArray(data.avatarCatalog) && data.avatarCatalog.length > 0) {
-            avatarCatalog = data.avatarCatalog;
-            sortAvatarCatalog();
-            localStorage.setItem(AVATAR_CATALOG_BACKUP_KEY, JSON.stringify(avatarCatalog));
-          }
+          const rawFolders = Array.isArray(data.avatarFolders) && data.avatarFolders.length > 0 ? data.avatarFolders : avatarFolders;
+          const rawCatalog = Array.isArray(data.avatarCatalog) && data.avatarCatalog.length > 0 ? data.avatarCatalog : avatarCatalog;
+          const cleaned = normalizeAndDedupeAvatars(rawFolders, rawCatalog);
+          avatarFolders = cleaned.folders;
+          avatarCatalog = cleaned.catalog;
+          sortAvatarFolders();
+          sortAvatarCatalog();
+          localStorage.setItem(AVATAR_FOLDERS_BACKUP_KEY, JSON.stringify(avatarFolders));
+          localStorage.setItem(AVATAR_CATALOG_BACKUP_KEY, JSON.stringify(avatarCatalog));
           ensureValidActiveFolder();
         } else {
           avatarsCloudDocExists = false;
@@ -2552,9 +3123,21 @@
       unsubSuperAdminOrganizers = onSnapshot(organizersColRef, (qs) => {
         superAdminOrganizersMap.clear();
         qs.forEach(docSnap => {
-          superAdminOrganizersMap.set(docSnap.id, { uid: docSnap.id, ...docSnap.data() });
+          const pData = { uid: docSnap.id, ...docSnap.data() };
+          superAdminOrganizersMap.set(docSnap.id, pData);
+          if (currentUser && docSnap.id === currentUser.uid && pData.legacyDismissed) {
+            const cloudD = pData.legacyDismissed;
+            legacyDismissed = {
+              bannerDismissed: Boolean(legacyDismissed.bannerDismissed || cloudD.bannerDismissed),
+              avatarsMigrated: Boolean(legacyDismissed.avatarsMigrated || cloudD.avatarsMigrated),
+              reqIds: Array.from(new Set([...(legacyDismissed.reqIds || []), ...(cloudD.reqIds || [])])),
+              drawIds: Array.from(new Set([...(legacyDismissed.drawIds || []), ...(cloudD.drawIds || [])]))
+            };
+            localStorage.setItem(LEGACY_DISMISSED_KEY, JSON.stringify(legacyDismissed));
+            refreshLegacyMigrationInfo();
+          }
         });
-        if (currentScreen === 'admin' && adminTab === 'users' && !isUserTypingInInput()) {
+        if (currentScreen === 'admin' && !isUserTypingInInput()) {
           renderAdminScreen();
         }
       }, (err) => {
@@ -2640,6 +3223,7 @@
         avatarRequestsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'avatar_requests');
         organizersColRef = collection(db, 'artifacts', appId, 'public', 'data', 'organizers');
         legacyStateDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'app_state', 'estado_global');
+        legacySorteosDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'sorteos', 'estado_global');
         stateDocRef = legacyStateDocRef;
 
         onAuthStateChanged(auth, async (user) => {
@@ -2774,16 +3358,19 @@
             avatarFolders,
             avatarCatalog,
             updatedAt: Date.now()
-          }), { merge: true });
+          }));
           avatarsCloudDocExists = true;
           cloudStatus = 'connected';
           cloudErrorMsg = '';
+          return true;
         } catch (e) {
           cloudStatus = 'error';
           cloudErrorMsg = e?.message || 'Error al guardar el catálogo de avatares';
           console.warn('Error al guardar avatares:', e);
+          return false;
         }
       }
+      return false;
     }
 
     async function saveState(targetDraw = null) {
@@ -2796,8 +3383,19 @@
     /* =====================================================================
        SELECTOR DE AVATARES POR CARPETAS (REUTILIZABLE)
        ===================================================================== */
+    function splitFolderIconAndTitle(label) {
+      const raw = String(label || '').trim();
+      const title = stripLeadingEmoji(raw);
+      const iconPart = raw.slice(0, raw.length - title.length).trim();
+      return {
+        icon: iconPart || '🎭',
+        title: title || raw || 'Categoría'
+      };
+    }
+
     function buildCategorizedAvatarPickerHtml(selectedAvatarId, callbackMethodName) {
       ensureValidActiveFolder();
+      const effectiveSelId = selectedAvatarId ? (LEGACY_AVATAR_ID_MAP[selectedAvatarId] || selectedAvatarId) : null;
       const folderTabs = avatarFolders.map(f => `
         <button type="button" class="folder-pill ${activeAvatarFolder === f.id ? 'active' : ''}" onclick="window.app.setAvatarFolder('${escapeHtml(f.id)}')">
           ${escapeHtml(f.label)}
@@ -2807,10 +3405,11 @@
       const items = avatarCatalog.filter(a => a.folder === activeAvatarFolder);
       const tiles = items.length > 0
         ? items.map(a => {
-            const isSel = selectedAvatarId === a.id;
+            const isSel = Boolean(effectiveSelId && (a.id === selectedAvatarId || a.id === effectiveSelId));
             const cls = a.kind === 'badge' ? 'avatar-img badge' : (a.kind === 'flag' ? 'avatar-img flag' : 'avatar-img');
             return `
               <button type="button" class="avatar-tile ${isSel ? 'selected' : ''}" onclick="window.app.${callbackMethodName}('${escapeHtml(a.id)}')">
+                ${isSel ? '<span class="avatar-check-badge">✓</span>' : ''}
                 <div class="avatar-circle has-photo" style="width:48px;height:48px;">
                   <img src="${escapeHtml(a.url)}" alt="${escapeHtml(a.name)}" class="${cls}" loading="lazy" onerror="this.style.display='none'" />
                 </div>
@@ -2826,6 +3425,114 @@
           <div class="avatar-grid">${tiles}</div>
         </div>
       `;
+    }
+
+    function buildUserAvatarShowcaseHtml(user) {
+      ensureValidActiveFolder();
+      const selectedAvatarId = user?.avatar || null;
+      const effectiveSelId = selectedAvatarId ? (LEGACY_AVATAR_ID_MAP[selectedAvatarId] || selectedAvatarId) : null;
+      const selectedAvObj = getAvatarById(selectedAvatarId);
+
+      const renderDrawerForFolder = (folderObj) => {
+        const { icon, title } = splitFolderIconAndTitle(folderObj.label);
+        const items = avatarCatalog.filter(a => a.folder === folderObj.id);
+        const tilesHtml = items.length > 0
+          ? items.map(a => {
+              const isSel = Boolean(effectiveSelId && (a.id === selectedAvatarId || a.id === effectiveSelId));
+              const cls = a.kind === 'badge' ? 'avatar-img badge' : (a.kind === 'flag' ? 'avatar-img flag' : 'avatar-img');
+              return `
+                <button type="button" class="avatar-tile ${isSel ? 'selected' : ''}" onclick="window.app.selectMyAvatar('${escapeHtml(a.id)}')">
+                  ${isSel ? '<span class="avatar-check-badge">✓</span>' : ''}
+                  <div class="avatar-circle has-photo" style="width:52px;height:52px;">
+                    <img src="${escapeHtml(a.url)}" alt="${escapeHtml(a.name)}" class="${cls}" loading="lazy" onerror="this.style.display='none'" />
+                  </div>
+                  <span class="avatar-tile-name">${escapeHtml(a.name)}</span>
+                </button>
+              `;
+            }).join('')
+          : `<p style="grid-column:1/-1;text-align:center;font-size:0.82rem;color:var(--muted);padding:14px;">Sin avatares en esta categoría.</p>`;
+
+        return `
+          <div id="openAvatarDrawerBox" class="avatar-category-drawer">
+            <div class="drawer-header">
+              <div style="display:flex;align-items:center;gap:7px;min-width:0;">
+                <span style="font-size:1.2rem;">${escapeHtml(icon)}</span>
+                <span style="font-weight:900;font-size:0.95rem;color:var(--pine);">${escapeHtml(title)}</span>
+                <span class="status-tag tag-gold">${items.length}</span>
+              </div>
+              <button type="button" class="btn-3d-pill" style="padding:5px 11px;font-size:0.74rem;flex-shrink:0;" onclick="window.app.toggleUserAvatarFolder(null)">
+                ▲ Plegar
+              </button>
+            </div>
+            <div id="userAvatarDrawerScroll" class="drawer-scroll-area">
+              <div class="drawer-avatar-grid">${tilesHtml}</div>
+            </div>
+            <div class="drawer-footer">
+              <span style="font-size:0.76rem;font-weight:800;color:var(--muted);">
+                ${selectedAvObj ? `✅ Elegido: <strong style="color:var(--pine);">${escapeHtml(selectedAvObj.name)}</strong>` : '👆 Toca cualquier avatar para ponértelo'}
+              </span>
+              <button type="button" class="btn-3d-pill green-solid" style="padding:6px 13px;font-size:0.78rem;" onclick="window.app.setUserTab('mywishes')">
+                📝 Ir a Mis Deseos →
+              </button>
+            </div>
+          </div>
+        `;
+      };
+
+      const chunks = [];
+      const total = avatarFolders.length;
+      for (let i = 0; i < total; i++) {
+        const f = avatarFolders[i];
+        const { icon, title } = splitFolderIconAndTitle(f.label);
+        const folderItems = avatarCatalog.filter(a => a.folder === f.id);
+        const isOpen = openUserAvatarFolder === f.id;
+        const hasUserPick = Boolean(selectedAvObj && selectedAvObj.folder === f.id);
+        const isLoneLast = (total % 2 === 1) && (i === total - 1);
+
+        const previewsHtml = folderItems.slice(0, 3).map(a => {
+          const cls = a.kind === 'badge' ? 'badge' : (a.kind === 'flag' ? 'flag' : '');
+          return `
+            <span class="cat-mini-thumb">
+              <img src="${escapeHtml(a.url)}" alt="" class="${cls}" loading="lazy" onerror="this.parentElement.style.display='none'" />
+            </span>
+          `;
+        }).join('');
+
+        chunks.push(`
+          <button
+            type="button"
+            class="cat-card ${isOpen ? 'open' : ''} ${!isOpen && hasUserPick ? 'has-user-pick' : ''} ${isLoneLast ? 'full-span' : ''}"
+            onclick="window.app.toggleUserAvatarFolder('${escapeHtml(f.id)}')"
+          >
+            <div class="cat-card-top">
+              <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+                <span class="cat-icon-badge">${escapeHtml(icon)}</span>
+                ${isLoneLast ? `<span class="cat-card-title">${escapeHtml(title)}</span>` : ''}
+              </div>
+              <div class="cat-mini-stack">${previewsHtml}</div>
+            </div>
+            ${!isLoneLast ? `<div class="cat-card-title">${escapeHtml(title)}</div>` : ''}
+            <div class="cat-card-meta">
+              <span>${hasUserPick && !isOpen ? '★ Tu avatar · ' : ''}${folderItems.length} avatar${folderItems.length === 1 ? '' : 'es'}</span>
+              <span class="cat-chevron-pill">${isOpen ? 'Cerrar ▲' : 'Abrir ▼'}</span>
+            </div>
+          </button>
+        `);
+
+        // Al cerrar cada fila de 2 tarjetas (o la última), si alguna de esa fila está abierta, desplegar justo debajo
+        const isRowEnd = (i % 2 === 1) || (i === total - 1);
+        if (isRowEnd && openUserAvatarFolder) {
+          const rowStart = (i % 2 === 1) ? i - 1 : i;
+          for (let r = rowStart; r <= i; r++) {
+            if (avatarFolders[r] && avatarFolders[r].id === openUserAvatarFolder) {
+              chunks.push(renderDrawerForFolder(avatarFolders[r]));
+              break;
+            }
+          }
+        }
+      }
+
+      return `<div class="cat-showcase-grid">${chunks.join('')}</div>`;
     }
 
     /* =====================================================================
@@ -3093,6 +3800,11 @@
             <button type="button" class="key-btn" onclick="window.app.pressPin('0')">0</button>
             <button type="button" class="key-btn ok" onclick="window.app.submitPin()">Entrar ✓</button>
           </div>
+          ${!isCreating ? `
+            <p style="margin-top:16px;padding:10px 12px;border-radius:12px;background:rgba(27,67,50,0.06);border:1.5px dashed rgba(27,67,50,0.22);font-size:0.8rem;color:var(--muted);line-height:1.4;">
+              🔑 Si has olvidado tu PIN, comunícaselo al organizador de tu sorteo.
+            </p>
+          ` : ''}
         </div>
       `;
     }
@@ -3115,7 +3827,7 @@
         <div class="welcome-banner">
           🎉 <strong>¡Gracias por unirte, ${escapeHtml(user.name)}!</strong> Tu nombre ya está protegido con tu PIN.
           ${draw.status === 'countdown'
-            ? 'Aquí tienes la cuenta atrás para el sorteo. Sigue los botones de paso siguiente para rellenar tus deseos y elegir tu avatar.'
+            ? 'Aquí tienes la cuenta atrás para el sorteo. Sigue los botones de paso siguiente para elegir tu avatar y rellenar tus deseos.'
             : '¡El sorteo ya se ha celebrado! Pulsa en el sobre lacrado para descubrir a quién regalas.'}
         </div>
       ` : '';
@@ -3152,15 +3864,15 @@
             <span>Mi amigo invisible</span>
             <span class="tab-sub-pill">${statusSubText}</span>
           </button>
-          <button type="button" class="tab-btn ${userTab === 'mywishes' ? 'active' : ''}" onclick="window.app.setUserTab('mywishes')">
-            <span class="tab-icon-badge">📝</span>
-            <span>Mis Deseos</span>
-            <span id="userTabWishesPill" class="tab-sub-pill">${wishesSubText}</span>
-          </button>
           <button type="button" class="tab-btn ${userTab === 'avatar' ? 'active' : ''}" onclick="window.app.setUserTab('avatar')">
             <span class="tab-icon-badge ${user.avatar ? 'has-photo' : ''}">${getAvatarDisplay(user)}</span>
             <span>Mi Avatar</span>
             <span class="tab-sub-pill">${user.avatar ? 'Foto' : 'Inicial'}</span>
+          </button>
+          <button type="button" class="tab-btn ${userTab === 'mywishes' ? 'active' : ''}" onclick="window.app.setUserTab('mywishes')">
+            <span class="tab-icon-badge">📝</span>
+            <span>Mis Deseos</span>
+            <span id="userTabWishesPill" class="tab-sub-pill">${wishesSubText}</span>
           </button>
           <button type="button" class="tab-btn ${userTab === 'multisorteo' ? 'active' : ''}" onclick="window.app.setUserTab('multisorteo')">
             <span class="tab-icon-badge">📜</span>
@@ -3191,8 +3903,8 @@
               </div>
             </div>
             <div class="guided-next-box">
-              <button type="button" class="btn-big btn-green" onclick="window.app.setUserTab('mywishes')">
-                📝 Siguiente paso: Rellenar Mis Deseos →
+              <button type="button" class="btn-big btn-green" onclick="window.app.setUserTab('avatar')">
+                🎭 Siguiente paso: Elegir Mi Avatar →
               </button>
             </div>
           `;
@@ -3217,8 +3929,8 @@
                 </button>
               </div>
               <div class="guided-next-box">
-                <button type="button" class="btn-big btn-green" onclick="window.app.setUserTab('mywishes')">
-                  📝 Siguiente paso: Rellenar Mis Deseos →
+                <button type="button" class="btn-big btn-green" onclick="window.app.setUserTab('avatar')">
+                  🎭 Siguiente paso: Elegir Mi Avatar →
                 </button>
               </div>
             `;
@@ -3314,8 +4026,8 @@
               ` : ''}
 
               <div class="guided-next-box">
-                <button type="button" class="btn-big btn-green" onclick="window.app.setUserTab('mywishes')">
-                  📝 Siguiente paso: Rellenar Mis Deseos →
+                <button type="button" class="btn-big btn-green" onclick="window.app.setUserTab('avatar')">
+                  🎭 Siguiente paso: Elegir Mi Avatar →
                 </button>
               </div>
             `;
@@ -3461,33 +4173,41 @@
           <button type="button" class="btn-3d-pill red" style="width:100%;margin-top:6px;" onclick="window.app.addBlankNoWish()">
             ➕ Añadir algo que NO quiero
           </button>
-
-          <div class="guided-next-box">
-            <button type="button" class="btn-big btn-gold" onclick="window.app.setUserTab('avatar')">
-              🎭 Siguiente paso: Elegir Mi Avatar →
-            </button>
-          </div>
         `;
       } else if (userTab === 'avatar') {
         tabContentHtml = `
-          <div class="admin-section" style="text-align:center;">
-            <div class="avatar-circle ${user.avatar ? 'has-photo' : ''}" style="width:74px;height:74px;font-size:2rem;margin:0 auto 8px;">
-              ${getAvatarDisplay(user)}
-            </div>
-            <div style="font-weight:900;font-size:0.95rem;color:var(--pine);">
-              Actual: ${escapeHtml(getCelebNameLabel(user.avatar, user.name))}
+          <div class="admin-section" style="padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:11px;min-width:0;">
+              <div class="avatar-circle ${user.avatar ? 'has-photo' : ''}" style="width:58px;height:58px;font-size:1.6rem;flex-shrink:0;">
+                ${getAvatarDisplay(user)}
+              </div>
+              <div style="min-width:0;">
+                <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;color:var(--muted);">Tu avatar elegido</div>
+                <div style="font-weight:900;font-size:0.96rem;color:var(--pine);line-height:1.2;word-break:break-word;">
+                  ${escapeHtml(getCelebNameLabel(user.avatar, user.name))}
+                </div>
+              </div>
             </div>
             ${user.avatar ? `
-              <button type="button" class="btn-3d-pill red" style="margin-top:10px;" onclick="window.app.selectMyAvatar(null)">
-                🔄 Volver a mi inicial
+              <button type="button" class="btn-3d-pill red" style="padding:6px 12px;font-size:0.76rem;flex-shrink:0;" onclick="window.app.selectMyAvatar(null)">
+                🔄 Usar inicial
               </button>
             ` : ''}
           </div>
 
-          <div class="section-label">🎭 Elige tu avatar</div>
-          ${buildCategorizedAvatarPickerHtml(user.avatar, 'selectMyAvatar')}
+          <div class="section-label">
+            <span>🎭 Elige una categoría</span>
+            <span style="font-size:0.74rem;font-family:'Nunito',sans-serif;color:var(--muted);font-weight:800;">Toca para desplegar</span>
+          </div>
+          ${buildUserAvatarShowcaseHtml(user)}
 
-          <div class="avatar-request-card">
+          <div class="guided-next-box" style="margin-top:14px;margin-bottom:14px;">
+            <button type="button" class="btn-big btn-gold" onclick="window.app.setUserTab('mywishes')">
+              📝 Siguiente paso: Rellenar Mis Deseos →
+            </button>
+          </div>
+
+          <div class="avatar-request-card" style="margin-top:0;">
             <div style="font-weight:900;font-size:0.88rem;color:var(--pine);margin-bottom:4px;">
               📩 ¿No encuentras el avatar que quieres?
             </div>
@@ -3541,7 +4261,13 @@
         `;
       }
 
+      const prevDrawerScrollEl = document.getElementById('userAvatarDrawerScroll');
+      const prevDrawerScrollTop = prevDrawerScrollEl ? prevDrawerScrollEl.scrollTop : 0;
       container.innerHTML = welcomeHtml + topBarHtml + tabsHtml + tabContentHtml;
+      const nextDrawerScrollEl = document.getElementById('userAvatarDrawerScroll');
+      if (nextDrawerScrollEl && prevDrawerScrollTop > 0) {
+        nextDrawerScrollEl.scrollTop = prevDrawerScrollTop;
+      }
     }
 
     /* --- PANTALLA 4: PANEL DE ORGANIZACIÓN (CUENTA GOOGLE) --- */
@@ -3591,9 +4317,14 @@
               legacyMigrationInfo.avatarRequests.length > 0 ? `<strong>${legacyMigrationInfo.avatarRequests.length} solicitud${legacyMigrationInfo.avatarRequests.length === 1 ? '' : 'es'} de avatar</strong>` : ''
             ].filter(Boolean).join(', ')} pendiente${(legacyMigrationInfo.draws.length + (legacyMigrationInfo.hasPendingAvatars ? 1 : 0) + legacyMigrationInfo.avatarRequests.length) === 1 ? '' : 's'} de importar conservando enlaces originales.
           </p>
-          <button type="button" class="btn-big btn-gold" ${isMigratingLegacy ? 'disabled' : ''} onclick="window.app.importLegacyData()">
-            ${isMigratingLegacy ? '⏳ Importando...' : `📥 Importar datos antiguos${legacyMigrationInfo.draws.length > 0 ? ` (${legacyMigrationInfo.draws.length})` : ''}`}
-          </button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn-big btn-gold" style="flex:1;min-width:190px;" ${isMigratingLegacy ? 'disabled' : ''} onclick="window.app.importLegacyData()">
+              ${isMigratingLegacy ? '⏳ Importando...' : `📥 Importar datos antiguos${legacyMigrationInfo.draws.length > 0 ? ` (${legacyMigrationInfo.draws.length})` : ''}`}
+            </button>
+            <button type="button" class="btn-3d-pill" style="flex-shrink:0;" onclick="window.app.dismissLegacyMigrationBanner()">
+              ✕ Ocultar aviso
+            </button>
+          </div>
         </div>
       ` : '';
 
@@ -3959,15 +4690,18 @@
                 `;
               }).join('')}
             </div>
-            <div style="margin-top:14px;text-align:center;">
+            <div style="margin-top:14px;display:flex;flex-direction:column;gap:9px;align-items:center;">
+              <button type="button" class="btn-big btn-green" onclick="window.app.repairAndCompleteAvatarCatalog()">
+                ✨ Limpiar duplicados y recuperar avatares que faltan
+              </button>
               ${confirmRestoreCatalog ? `
                 <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-                  <button type="button" class="btn-3d-pill red-solid" onclick="window.app.confirmRestoreAvatarCatalog()">Sí, restaurar catálogo original</button>
+                  <button type="button" class="btn-3d-pill red-solid" onclick="window.app.confirmRestoreAvatarCatalog()">Sí, restaurar catálogo completo (${DEFAULT_AVATAR_CATALOG.length})</button>
                   <button type="button" class="btn-3d-pill" onclick="window.app.cancelConfirmations()">Cancelar</button>
                 </div>
               ` : `
                 <button type="button" class="btn-3d-pill gold" onclick="window.app.askRestoreAvatarCatalog()">
-                  🔄 Restaurar catálogo de fábrica
+                  🔄 Restaurar catálogo completo de fábrica (${DEFAULT_AVATAR_CATALOG.length})
                 </button>
               `}
             </div>
@@ -4119,6 +4853,7 @@
         selectedUserId = null;
         enteredPin = '';
         justJoinedWelcome = false;
+        openUserAvatarFolder = null;
         currentScreen = 'grid';
         if (!currentDrawId && lastGuestDrawId && draws.some(d => d.id === lastGuestDrawId)) {
           currentDrawId = lastGuestDrawId;
@@ -4339,6 +5074,24 @@
         activeAvatarFolder = folderId;
         if (currentScreen === 'dashboard') renderDashboardScreen();
         else if (currentScreen === 'admin') renderAdminScreen();
+      },
+
+      toggleUserAvatarFolder(folderId) {
+        if (!folderId || openUserAvatarFolder === folderId) {
+          openUserAvatarFolder = null;
+          renderDashboardScreen();
+          return;
+        }
+        const prevScrollEl = document.getElementById('userAvatarDrawerScroll');
+        if (prevScrollEl) prevScrollEl.scrollTop = 0;
+        openUserAvatarFolder = folderId;
+        renderDashboardScreen();
+        requestAnimationFrame(() => {
+          const drawerEl = document.getElementById('openAvatarDrawerBox');
+          if (drawerEl) {
+            drawerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        });
       },
 
       selectMyAvatar(avatarId) {
@@ -4801,6 +5554,11 @@
       async dismissAvatarRequest(reqId) {
         if (!isSuperAdminUser()) return;
         avatarRequests = avatarRequests.filter(r => r.id !== reqId);
+        if (!legacyDismissed.reqIds.includes(reqId)) {
+          legacyDismissed.reqIds.push(reqId);
+          saveLegacyDismissedState();
+        }
+        refreshLegacyMigrationInfo();
         if (db && avatarRequestsColRef) {
           try {
             await deleteDoc(doc(avatarRequestsColRef, reqId));
@@ -4809,7 +5567,7 @@
           }
         }
         renderAdminScreen();
-        showToast('✅ Solicitud completada');
+        showToast('✅ Solicitud completada y ocultada');
       },
 
       setNewAvatarDraft(field, value) {
@@ -4948,7 +5706,7 @@
         renderAdminScreen();
       },
 
-      confirmRestoreAvatarCatalog() {
+      async confirmRestoreAvatarCatalog() {
         if (!isSuperAdminUser()) return;
         avatarFolders = DEFAULT_AVATAR_FOLDERS.map(f => ({ ...f }));
         avatarCatalog = DEFAULT_AVATAR_CATALOG.map(a => ({ ...a }));
@@ -4956,9 +5714,14 @@
         sortAvatarCatalog();
         confirmRestoreCatalog = false;
         ensureValidActiveFolder();
-        saveAvatarCatalogState();
+        const savedInCloud = await saveAvatarCatalogState();
+        legacyDismissed.avatarsMigrated = true;
+        await saveLegacyDismissedState();
+        refreshLegacyMigrationInfo();
         renderAdminScreen();
-        showToast('🔄 Catálogo original restaurado');
+        showToast(savedInCloud
+          ? `🔄 Catálogo de fábrica (${avatarCatalog.length} avatares) guardado en Firestore`
+          : `⚠️ Catálogo restaurado en local, pero falló Firestore: ${cloudErrorMsg || 'revisa permisos'}`);
       },
 
       /* --- Organización general (Sorteos y clave) --- */
@@ -4978,6 +5741,11 @@
         ownerDrawsMap.delete(drawId);
         guestDrawsMap.delete(drawId);
         rebuildDrawsArray();
+        if (isSuperAdminUser() && !legacyDismissed.drawIds.includes(drawId)) {
+          legacyDismissed.drawIds.push(drawId);
+          saveLegacyDismissedState();
+          refreshLegacyMigrationInfo();
+        }
         if (currentDrawId === drawId) {
           currentDrawId = getMyOwnedDraws()[0]?.id || null;
         }
@@ -5078,42 +5846,43 @@
             importedCount++;
           }
 
-          if (legacyMigrationInfo.hasPendingAvatars) {
-            const mergedFoldersMap = new Map();
-            (legacyMigrationInfo.avatarFolders || []).forEach(f => {
-              if (f && f.id) mergedFoldersMap.set(f.id, f);
-            });
-            avatarFolders.forEach(f => {
-              if (f && f.id && !mergedFoldersMap.has(f.id)) mergedFoldersMap.set(f.id, f);
-            });
-            const mergedCatalogMap = new Map();
-            (legacyMigrationInfo.avatarCatalog || []).forEach(a => {
-              if (a && a.id) mergedCatalogMap.set(a.id, a);
-            });
-            avatarCatalog.forEach(a => {
-              if (a && a.id && !mergedCatalogMap.has(a.id)) mergedCatalogMap.set(a.id, a);
-            });
+          // Fusionar y desduplicar catálogo base completo + avatares antiguos + avatares actuales
+          const combinedFolders = [
+            ...DEFAULT_AVATAR_FOLDERS,
+            ...(legacyRawSnapshotData?.avatarFolders || []),
+            ...avatarFolders
+          ];
+          const combinedCatalog = [
+            ...(legacyRawSnapshotData?.avatarCatalog || []),
+            ...avatarCatalog,
+            ...DEFAULT_AVATAR_CATALOG
+          ];
+          const deduped = normalizeAndDedupeAvatars(combinedFolders, combinedCatalog);
+          avatarFolders = deduped.folders;
+          avatarCatalog = deduped.catalog;
+          sortAvatarFolders();
+          sortAvatarCatalog();
+          ensureValidActiveFolder();
+          localStorage.setItem(AVATAR_FOLDERS_BACKUP_KEY, JSON.stringify(avatarFolders));
+          localStorage.setItem(AVATAR_CATALOG_BACKUP_KEY, JSON.stringify(avatarCatalog));
 
-            avatarFolders = Array.from(mergedFoldersMap.values());
-            avatarCatalog = Array.from(mergedCatalogMap.values());
-            sortAvatarFolders();
-            sortAvatarCatalog();
-            ensureValidActiveFolder();
-            localStorage.setItem(AVATAR_FOLDERS_BACKUP_KEY, JSON.stringify(avatarFolders));
-            localStorage.setItem(AVATAR_CATALOG_BACKUP_KEY, JSON.stringify(avatarCatalog));
-
-            await setDoc(avatarsDocRef, stripUndefinedDeep({
-              avatarFolders,
-              avatarCatalog,
-              updatedAt: Date.now()
-            }), { merge: true });
-            avatarsCloudDocExists = true;
-          }
+          await setDoc(avatarsDocRef, stripUndefinedDeep({
+            avatarFolders,
+            avatarCatalog,
+            updatedAt: Date.now()
+          }), { merge: true });
+          avatarsCloudDocExists = true;
 
           for (const oldReq of (legacyMigrationInfo.avatarRequests || [])) {
             if (!oldReq || !oldReq.id) continue;
             await setDoc(doc(avatarRequestsColRef, oldReq.id), stripUndefinedDeep(oldReq), { merge: true });
+            if (!legacyDismissed.reqIds.includes(oldReq.id)) {
+              legacyDismissed.reqIds.push(oldReq.id);
+            }
           }
+
+          legacyDismissed.avatarsMigrated = true;
+          await saveLegacyDismissedState();
 
           rebuildDrawsArray();
           refreshLegacyMigrationInfo();
@@ -5121,8 +5890,8 @@
             currentDrawId = getMyOwnedDraws()[0]?.id || null;
           }
           showToast(importedCount > 0
-            ? `✅ ¡${importedCount} sorteo${importedCount === 1 ? '' : 's'} importado${importedCount === 1 ? '' : 's'} conservando sus enlaces!`
-            : '✅ ¡Datos antiguos importados correctamente!');
+            ? `✅ ¡${importedCount} sorteo${importedCount === 1 ? '' : 's'} y ${avatarCatalog.length} avatares listos sin duplicados!`
+            : `✅ ¡Catálogo reparado (${avatarCatalog.length} avatares sin duplicados) y datos importados!`);
         } catch (e) {
           console.warn('Error al importar desde estado_global:', e);
           showToast(`⚠️ Error al importar: ${e?.message || 'revisa las reglas de Firestore'}`);
@@ -5130,6 +5899,43 @@
           isMigratingLegacy = false;
           renderAll();
         }
+      },
+
+      async dismissLegacyMigrationBanner() {
+        if (!isSuperAdminUser()) return;
+        legacyDismissed.bannerDismissed = true;
+        await saveLegacyDismissedState();
+        refreshLegacyMigrationInfo();
+        renderAdminScreen();
+        showToast('✅ Aviso de migración ocultado permanentemente');
+      },
+
+      async repairAndCompleteAvatarCatalog() {
+        if (!isSuperAdminUser()) return;
+        await checkLegacyMigration();
+        const combinedFolders = [
+          ...DEFAULT_AVATAR_FOLDERS,
+          ...(legacyRawSnapshotData?.avatarFolders || []),
+          ...avatarFolders
+        ];
+        // Prioridad a los avatares personalizados actuales/antiguos y completar con los 122 de fábrica sin duplicar
+        const combinedCatalog = [
+          ...avatarCatalog,
+          ...(legacyRawSnapshotData?.avatarCatalog || []),
+          ...DEFAULT_AVATAR_CATALOG
+        ];
+        const deduped = normalizeAndDedupeAvatars(combinedFolders, combinedCatalog);
+        avatarFolders = deduped.folders;
+        avatarCatalog = deduped.catalog;
+        sortAvatarFolders();
+        sortAvatarCatalog();
+        ensureValidActiveFolder();
+        await saveAvatarCatalogState();
+        legacyDismissed.avatarsMigrated = true;
+        await saveLegacyDismissedState();
+        refreshLegacyMigrationInfo();
+        renderAdminScreen();
+        showToast(`✨ ¡Listo! ${avatarCatalog.length} avatares únicos en ${avatarFolders.length} categorías.`);
       }
     };
 
