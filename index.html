@@ -246,6 +246,12 @@
       padding: 0;
     }
 
+    .tab-icon-badge.initials-only {
+      font-size: 0.85rem;
+      font-weight: 900;
+      letter-spacing: 0.3px;
+    }
+
     .tab-sub-pill {
       font-size: 0.66rem;
       padding: 2px 7px;
@@ -389,8 +395,10 @@
       border-radius: 50%;
       background: var(--crimson);
       color: #FFFFFF;
-      font-size: 1.45rem;
+      font-size: 1.18rem;
       font-weight: 900;
+      letter-spacing: 0.4px;
+      line-height: 1;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -2840,11 +2848,24 @@
         || null;
     }
 
+    function getTwoLetterInitials(rawName) {
+      const words = String(rawName || '').trim().match(/[\p{L}\p{N}]+/gu) || [];
+      if (words.length >= 2) {
+        const first = Array.from(words[0])[0] || '';
+        const second = Array.from(words[1])[0] || '';
+        return (first + second).toLocaleUpperCase('es-ES') || '?';
+      }
+      if (words.length === 1) {
+        return Array.from(words[0]).slice(0, 2).join('').toLocaleUpperCase('es-ES') || '?';
+      }
+      return '?';
+    }
+
     function getAvatarDisplay(personOrAvatarId, fallbackName = '?') {
       const isObj = personOrAvatarId && typeof personOrAvatarId === 'object';
       const avatarId = isObj ? personOrAvatarId.avatar : personOrAvatarId;
       const name = isObj ? (personOrAvatarId.name || '?') : fallbackName;
-      const initial = escapeHtml((name || '?').trim().charAt(0).toUpperCase() || '?');
+      const initial = escapeHtml(getTwoLetterInitials(name));
       const av = getAvatarById(avatarId);
       if (!av || !av.url) return initial;
       const cls = av.kind === 'badge' ? 'avatar-img badge' : (av.kind === 'flag' ? 'avatar-img flag' : 'avatar-img');
@@ -2853,7 +2874,7 @@
 
     function getCelebNameLabel(avatarId, fallbackName) {
       const av = getAvatarById(avatarId);
-      return av ? av.name : `Inicial (${(fallbackName || '?').trim().charAt(0).toUpperCase()})`;
+      return av ? av.name : `Iniciales (${getTwoLetterInitials(fallbackName)})`;
     }
 
     /* =====================================================================
@@ -4012,7 +4033,7 @@
           return `
             <div class="wish-item">
               <div style="display:flex;align-items:center;gap:10px;">
-                <div class="avatar-circle ${p.avatar ? 'has-photo' : ''}" style="width:42px;height:42px;font-size:1.1rem;">${getAvatarDisplay(p)}</div>
+                <div class="avatar-circle ${p.avatar ? 'has-photo' : ''}" style="width:42px;height:42px;font-size:0.95rem;">${getAvatarDisplay(p)}</div>
                 <span style="font-weight:900;">${escapeHtml(p.name)}</span>
               </div>
               <span style="font-weight:900;color:var(--crimson);">➔ 🎁 ${escapeHtml(t ? t.name : '—')}</span>
@@ -4091,7 +4112,7 @@
             ← No soy ${escapeHtml(user.name)}, volver atrás
           </button>
 
-          <div class="avatar-circle ${user.avatar ? 'has-photo' : ''}" style="width:68px;height:68px;font-size:1.8rem;margin:0 auto 8px;">
+          <div class="avatar-circle ${user.avatar ? 'has-photo' : ''}" style="width:68px;height:68px;font-size:1.45rem;margin:0 auto 8px;">
             ${getAvatarDisplay(user)}
           </div>
           <h2 class="christmas-title" style="font-size:1.85rem;margin-bottom:6px;">Hola, ${escapeHtml(user.name)}</h2>
@@ -4146,7 +4167,7 @@
       const topBarHtml = `
         <div class="profile-bar-card">
           <div style="display:flex;align-items:center;gap:11px;min-width:0;">
-            <div class="avatar-circle ${user.avatar ? 'has-photo' : ''}" style="width:46px;height:46px;font-size:1.25rem;">
+            <div class="avatar-circle ${user.avatar ? 'has-photo' : ''}" style="width:46px;height:46px;font-size:1.02rem;">
               ${getAvatarDisplay(user)}
             </div>
             <div style="min-width:0;">
@@ -4209,9 +4230,9 @@
             <span class="tab-sub-pill">${statusSubText}</span>
           </button>
           <button type="button" class="tab-btn ${userTab === 'avatar' ? 'active' : ''}" onclick="window.app.setUserTab('avatar')">
-            <span class="tab-icon-badge ${user.avatar ? 'has-photo' : ''}">${getAvatarDisplay(user)}</span>
+            <span class="tab-icon-badge ${user.avatar ? 'has-photo' : 'initials-only'}">${getAvatarDisplay(user)}</span>
             <span>Mi Avatar</span>
-            <span class="tab-sub-pill">${user.avatar ? 'Foto' : 'Inicial'}</span>
+            <span class="tab-sub-pill">${user.avatar ? 'Foto' : 'Iniciales'}</span>
           </button>
           <button type="button" class="tab-btn ${userTab === 'mywishes' ? 'active' : ''}" onclick="window.app.setUserTab('mywishes')">
             <span class="tab-icon-badge">📝</span>
@@ -4293,7 +4314,7 @@
                 <div style="font-size:0.76rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:#FDE68A;margin-bottom:10px;">
                   Este año te toca regalar a:
                 </div>
-                <div class="avatar-circle ${target?.avatar ? 'has-photo' : ''}" style="width:76px;height:76px;font-size:2rem;border-color:#FDE68A;margin:0 auto 8px;">
+                <div class="avatar-circle ${target?.avatar ? 'has-photo' : ''}" style="width:76px;height:76px;font-size:1.62rem;border-color:#FDE68A;margin:0 auto 8px;">
                   ${target ? getAvatarDisplay(target) : '?'}
                 </div>
                 <h3 class="christmas-title" style="color:#FFFFFF;font-size:2.2rem;margin-bottom:12px;">
@@ -4520,7 +4541,7 @@
         tabContentHtml = `
           <div class="admin-section" style="padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
             <div style="display:flex;align-items:center;gap:11px;min-width:0;">
-              <div class="avatar-circle ${user.avatar ? 'has-photo' : ''}" style="width:58px;height:58px;font-size:1.6rem;flex-shrink:0;">
+              <div class="avatar-circle ${user.avatar ? 'has-photo' : ''}" style="width:58px;height:58px;font-size:1.26rem;flex-shrink:0;">
                 ${getAvatarDisplay(user)}
               </div>
               <div style="min-width:0;">
@@ -4532,7 +4553,7 @@
             </div>
             ${user.avatar ? `
               <button type="button" class="btn-3d-pill red" style="padding:6px 12px;font-size:0.76rem;flex-shrink:0;" onclick="window.app.selectMyAvatar(null)">
-                🔄 Usar inicial
+                🔄 Usar iniciales
               </button>
             ` : ''}
           </div>
@@ -4667,7 +4688,7 @@
       const orgName = currentUser.displayName || 'Organizador';
       const orgEmail = currentUser.email || '';
       const orgPhoto = currentUser.photoURL || '';
-      const orgInitial = escapeHtml((orgName || orgEmail || 'G').trim().charAt(0).toUpperCase());
+      const orgInitial = escapeHtml(getTwoLetterInitials(orgName || orgEmail || 'G'));
 
       const legacyBannerHtml = (isSuper && legacyMigrationInfo && legacyMigrationInfo.hasPending) ? `
         <div class="migration-banner">
@@ -4916,7 +4937,7 @@
             ${pList.map(p => `
               <div class="admin-card-item">
                 <div style="display:flex;align-items:center;gap:11px;">
-                  <div class="avatar-circle ${p.avatar ? 'has-photo' : ''}" style="width:46px;height:46px;font-size:1.2rem;">
+                  <div class="avatar-circle ${p.avatar ? 'has-photo' : ''}" style="width:46px;height:46px;font-size:1.02rem;">
                     ${getAvatarDisplay(p)}
                   </div>
                   <div style="min-width:0;flex:1;">
@@ -5120,11 +5141,11 @@
             </div>
 
             ${summary.users.length > 0 ? summary.users.map(u => {
-              const init = escapeHtml((u.displayName || u.email || 'U').trim().charAt(0).toUpperCase());
+              const init = escapeHtml(getTwoLetterInitials(u.displayName || u.email || 'U'));
               return `
                 <div class="admin-card-item" style="${u.isSuper ? 'border-color:var(--gold);background:#FFFDF5;' : ''}">
                   <div style="display:flex;align-items:center;gap:11px;">
-                    <div class="avatar-circle ${u.photoURL ? 'has-photo' : ''}" style="width:44px;height:44px;font-size:1.15rem;">
+                    <div class="avatar-circle ${u.photoURL ? 'has-photo' : ''}" style="width:44px;height:44px;font-size:0.98rem;">
                       ${u.photoURL ? `<img src="${escapeHtml(u.photoURL)}" alt="${escapeHtml(u.displayName)}" class="avatar-img" referrerpolicy="no-referrer" />` : init}
                     </div>
                     <div style="min-width:0;flex:1;">
